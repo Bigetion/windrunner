@@ -3,8 +3,23 @@ import {
   getBaseTailwindOptions,
   compileRuntimeClassNameWithContext,
 } from "./compiler.js";
+import preflightCss from "./preflight.js";
 
 // ─── DOM helpers ──────────────────────────────────────────────────────────────
+
+function injectPreflight(styleId) {
+  if (typeof document !== "object") return;
+  const prefId = `${styleId}-preflight`;
+  const escapedId = prefId.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  if (document.querySelector(`style[data-tailwind-preflight="${escapedId}"]`)) return;
+  const style = document.createElement("style");
+  style.setAttribute("type", "text/css");
+  style.setAttribute("data-tailwind-preflight", prefId);
+  style.appendChild(document.createTextNode(preflightCss));
+  const head = document.head || document.getElementsByTagName("head")[0];
+  // insert before any other styles so JIT rules take priority
+  head.insertBefore(style, head.firstChild);
+}
 
 function findOrCreateRuntimeStyle(id) {
   if (typeof document !== "object") return null;
@@ -30,6 +45,7 @@ function findOrCreateRuntimeStyle(id) {
  */
 export function createWindrunner(options = {}) {
   const styleId       = options.id            || "tailwind-runtime-css";
+  const preflight     = options.preflight !== false; // default: true
   const compatMode    = options.compatMode    || "none";
   const compatStyleId = options.compatStyleId || `${styleId}-full`;
   const tailwindOptions = getBaseTailwindOptions(options);
@@ -181,6 +197,7 @@ export function createWindrunner(options = {}) {
 
   const start = () => {
     if (typeof document !== "object") return;
+    if (preflight) injectPreflight(styleId);
     const runStart = () => { scan(); observe(); };
     if (document.readyState === "loading") {
       if (!domReadyHandler) {
