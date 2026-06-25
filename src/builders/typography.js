@@ -97,6 +97,12 @@ export function buildTypographyDeclaration(baseToken, theme) {
     if (WHITESPACE_MAP[key]) return WHITESPACE_MAP[key];
   }
 
+  // text-wrap-*
+  if (baseToken === "text-wrap")    return "text-wrap: wrap;";
+  if (baseToken === "text-nowrap")  return "text-wrap: nowrap;";
+  if (baseToken === "text-balance") return "text-wrap: balance;";
+  if (baseToken === "text-pretty")  return "text-wrap: pretty;";
+
   // align-* (vertical-align)
   if (baseToken.startsWith("align-")) {
     const key = baseToken.slice(6);
@@ -104,10 +110,18 @@ export function buildTypographyDeclaration(baseToken, theme) {
   }
 
   // line-clamp-*
+  if (baseToken === "line-clamp-none") {
+    return "overflow: visible; display: block; -webkit-box-orient: horizontal; -webkit-line-clamp: unset;";
+  }
   if (baseToken.startsWith("line-clamp-")) {
     const val = resolveThemeValue(theme.lineClamp || {}, baseToken.slice(11));
     if (val !== undefined) {
       return `overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: ${val};`;
+    }
+    // numeric fallback
+    const num = baseToken.slice(11);
+    if (/^\d+$/.test(num)) {
+      return `overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: ${num};`;
     }
   }
 

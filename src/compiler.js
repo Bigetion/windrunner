@@ -27,6 +27,8 @@ import {
   buildZoomDeclaration,
   buildForcedColorDeclaration,
   buildBorderSpacingDeclaration,
+  buildScrollSnapDeclaration,
+  buildAccessibilityDeclaration,
 } from "./builders/misc.js";
 import { buildBlendingDeclaration } from "./builders/blending.js";
 import { buildSpaceBetweenDeclaration, buildDivideDeclaration } from "./builders/space-divide.js";
@@ -65,6 +67,8 @@ function compileBaseToken(baseToken, theme) {
     buildAnimationDeclaration(baseToken) ||
     buildMaskDeclaration(baseToken) ||
     buildContainerQueryDeclaration(baseToken) ||
+    buildScrollSnapDeclaration(baseToken) ||
+    buildAccessibilityDeclaration(baseToken) ||
     buildZoomDeclaration(baseToken, theme) ||
     buildForcedColorDeclaration(baseToken)
   );

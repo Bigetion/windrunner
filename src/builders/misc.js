@@ -76,10 +76,16 @@ export function buildInteractivityDeclaration(baseToken, theme) {
   if (baseToken.startsWith("outline-")) {
     const key = baseToken.slice(8);
     if (OUTLINE_STYLE_MAP[key]) return OUTLINE_STYLE_MAP[key];
+    // outline-offset-{n}: key is "offset-{n}", strip "offset-" prefix
+    if (key.startsWith("offset-")) {
+      const offsetKey = key.slice(7);
+      const offset = resolveThemeValue(theme.outlineOffset || {}, offsetKey);
+      if (offset !== undefined) return `outline-offset: ${offset};`;
+      const arb = resolveArbitraryValue(offsetKey);
+      if (arb !== undefined) return `outline-offset: ${arb};`;
+    }
     const width = resolveThemeValue(theme.outlineWidth || {}, key);
     if (width !== undefined) return `outline-width: ${width};`;
-    const offset = resolveThemeValue(theme.outlineOffset || {}, key);
-    if (offset !== undefined) return `outline-offset: ${offset};`;
     const color = resolveColorWithOpacity(theme.outlineColor || theme.colors || {}, key);
     if (color !== undefined) return `outline-color: ${color};`;
   }
@@ -125,5 +131,49 @@ export function buildBorderSpacingDeclaration(baseToken, theme) {
   const arb = resolveArbitraryValue(rest);
   if (arb !== undefined) return `--tw-border-spacing-x: ${arb}; --tw-border-spacing-y: ${arb}; border-spacing: ${arb};`;
 
+  return undefined;
+}
+
+// ─── Scroll snap ──────────────────────────────────────────────────────────────
+
+const SNAP_TYPE_MAP = {
+  none:      "scroll-snap-type: none;",
+  x:         "scroll-snap-type: x var(--tw-scroll-snap-strictness);",
+  y:         "scroll-snap-type: y var(--tw-scroll-snap-strictness);",
+  both:      "scroll-snap-type: both var(--tw-scroll-snap-strictness);",
+  mandatory: "--tw-scroll-snap-strictness: mandatory;",
+  proximity: "--tw-scroll-snap-strictness: proximity;",
+};
+
+const SNAP_ALIGN_MAP = {
+  start:      "scroll-snap-align: start;",
+  end:        "scroll-snap-align: end;",
+  center:     "scroll-snap-align: center;",
+  "align-none": "scroll-snap-align: none;",
+};
+
+const SNAP_STOP_MAP = {
+  normal: "scroll-snap-stop: normal;",
+  always: "scroll-snap-stop: always;",
+};
+
+export function buildScrollSnapDeclaration(baseToken) {
+  if (!baseToken.startsWith("snap-")) return undefined;
+  const key = baseToken.slice(5);
+  if (SNAP_TYPE_MAP[key])  return SNAP_TYPE_MAP[key];
+  if (SNAP_ALIGN_MAP[key]) return SNAP_ALIGN_MAP[key];
+  if (SNAP_STOP_MAP[key])  return SNAP_STOP_MAP[key];
+  return undefined;
+}
+
+// ─── SR-only (accessibility) ──────────────────────────────────────────────────
+
+export function buildAccessibilityDeclaration(baseToken) {
+  if (baseToken === "sr-only") {
+    return "position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;";
+  }
+  if (baseToken === "not-sr-only") {
+    return "position: static; width: auto; height: auto; padding: 0; margin: 0; overflow: visible; clip: auto; white-space: normal;";
+  }
   return undefined;
 }

@@ -50,12 +50,14 @@ export function buildLayoutDeclaration(baseToken, theme) {
     if (pos !== undefined) return `object-position: ${pos};`;
   }
 
-  // z-index
-  if (baseToken.startsWith("z-")) {
-    const val = resolveThemeValue(theme.zIndex || {}, baseToken.slice(2));
-    if (val !== undefined) return `z-index: ${val};`;
-    const arb = resolveArbitraryValue(baseToken.slice(2));
-    if (arb !== undefined) return `z-index: ${arb};`;
+  // z-index (support negative)
+  if (baseToken.startsWith("z-") || baseToken.startsWith("-z-")) {
+    const negative = baseToken.startsWith("-");
+    const key = negative ? baseToken.slice(3) : baseToken.slice(2);
+    const val = resolveThemeValue(theme.zIndex || {}, key);
+    if (val !== undefined) return `z-index: ${negative ? `-${val}` : val};`;
+    const arb = resolveArbitraryValue(negative ? baseToken.slice(3) : baseToken.slice(2));
+    if (arb !== undefined) return `z-index: ${negative ? `-${arb}` : arb};`;
   }
 
   // order
