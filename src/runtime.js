@@ -61,6 +61,18 @@ export function createWindrunner(options = {}) {
   let domReadyHandler = null;
   let compatLoaded   = false;
 
+  const loadExistingRules = (style) => {
+    if (!style || !style.sheet || insertedRules.size > 0) return;
+    try {
+      const rules = style.sheet.cssRules || [];
+      for (let i = 0; i < rules.length; i += 1) {
+        insertedRules.add(rules[i].cssText);
+      }
+    } catch {
+      // ignore unavailable stylesheet access
+    }
+  };
+
   // ── compat fallback ────────────────────────────────────────────────────────
 
   const ensureCompatStyle = () => {
@@ -97,9 +109,11 @@ export function createWindrunner(options = {}) {
 
   const insertRule = (rule) => {
     if (!rule || insertedRules.has(rule)) return;
-    insertedRules.add(rule);
     if (typeof document !== "object") return;
     if (!styleElement) styleElement = findOrCreateRuntimeStyle(styleId);
+    if (styleElement) loadExistingRules(styleElement);
+    if (insertedRules.has(rule)) return;
+    insertedRules.add(rule);
     if (!styleElement || !styleElement.sheet) return;
     try {
       styleElement.sheet.insertRule(rule, styleElement.sheet.cssRules.length);
