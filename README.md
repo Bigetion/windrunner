@@ -47,6 +47,13 @@ npm install windrunner
 </script>
 ```
 
+### Live demo / Example landing page
+
+Try the example landing page:
+
+- GitHub Pages (example landing): https://bigetion.github.io/windrunner/
+
+
 ### React / Vue
 
 ```js
