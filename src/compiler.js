@@ -206,8 +206,24 @@ export function compileRuntimeClassNameWithContext(className, context) {
   if (!variantSelector) return "";
 
   const finalDeclaration = appendImportant(declaration, parsed.important);
+  const needsSpaceChildSelector = (
+    (parsed.baseToken.startsWith("space-x-") && parsed.baseToken !== "space-x-reverse") ||
+    (parsed.baseToken.startsWith("space-y-") && parsed.baseToken !== "space-y-reverse")
+  );
+  const scopedSelector = needsSpaceChildSelector
+    ? `${variantSelector} > :not(:first-child)`
+    : variantSelector;
+  const ruleBody = `${scopedSelector} { ${finalDeclaration} }`;
 
-  const rule = `${variantSelector} { ${finalDeclaration} }`;
+  if (parsed.breakpoint) {
+    return `@media (min-width: ${context.screens[parsed.breakpoint]}) { ${ruleBody} }`;
+  }
+
+  if (parsed.containerBreakpoint) {
+    return `@container (min-width: ${context.containers[parsed.containerBreakpoint]}) { ${ruleBody} }`;
+  }
+
+  return ruleBody;
 
   // starting: wraps the entire rule (including any media query) in @starting-style
   if (parsed.starting) {

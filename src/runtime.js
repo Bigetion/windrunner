@@ -125,11 +125,19 @@ export function createWindrunner(options = {}) {
     element.classList.forEach((className) => processClassName(className));
   };
 
-  const processClassList = (classListString) => {
-    if (typeof classListString !== "string") return [];
-    return classListString
-      .split(/\s+/)
-      .filter(Boolean)
+  const processClassList = (classList) => {
+    if (!classList) return [];
+
+    const values = typeof classList === "string"
+      ? classList.split(/\s+/)
+      : Array.isArray(classList)
+        ? classList
+        : typeof classList === "object" && typeof classList.forEach === "function"
+          ? Array.from(classList)
+          : [];
+
+    return values
+      .filter((item) => typeof item === "string" && item.length > 0)
       .map((item) => processClassName(item))
       .filter(Boolean);
   };
@@ -161,7 +169,7 @@ export function createWindrunner(options = {}) {
     }
   };
 
-  const observe = (root = document.body || document.documentElement) => {
+  const observe = (root = document.documentElement) => {
     if (typeof MutationObserver !== "function" || !root) return;
     if (observer) observer.disconnect();
 
