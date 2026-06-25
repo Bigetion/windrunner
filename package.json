@@ -6,11 +6,14 @@
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "prepare": "node build.js",
+  "engines": {
+    "node": ">=18"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.esm.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     },
     "./min": {
       "import": "./dist/index.min.js"
@@ -47,8 +50,8 @@
   },
   "homepage": "https://github.com/Bigetion/windrunner#readme",
   "devDependencies": {
-    "esbuild": "^0.19.0",
+    "esbuild": "^0.28.1",
     "typescript": "^5.0.0",
-    "vitest": "^1.6.1"
+    "vitest": "^4.1.9"
   }
 }
