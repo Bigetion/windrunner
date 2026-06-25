@@ -90,3 +90,60 @@ export const BG_REPEAT_MAP = {
   "repeat-round": "background-repeat: round;",
   "repeat-space": "background-repeat: space;",
 };
+
+export const MIX_BLEND_MAP = {
+  "mix-blend-normal":       "mix-blend-mode: normal;",
+  "mix-blend-multiply":     "mix-blend-mode: multiply;",
+  "mix-blend-screen":       "mix-blend-mode: screen;",
+  "mix-blend-overlay":      "mix-blend-mode: overlay;",
+  "mix-blend-darken":       "mix-blend-mode: darken;",
+  "mix-blend-lighten":      "mix-blend-mode: lighten;",
+  "mix-blend-color-dodge":  "mix-blend-mode: color-dodge;",
+  "mix-blend-color-burn":   "mix-blend-mode: color-burn;",
+  "mix-blend-hard-light":   "mix-blend-mode: hard-light;",
+  "mix-blend-soft-light":   "mix-blend-mode: soft-light;",
+  "mix-blend-difference":   "mix-blend-mode: difference;",
+  "mix-blend-exclusion":    "mix-blend-mode: exclusion;",
+  "mix-blend-hue":          "mix-blend-mode: hue;",
+  "mix-blend-saturation":   "mix-blend-mode: saturation;",
+  "mix-blend-color":        "mix-blend-mode: color;",
+  "mix-blend-luminosity":   "mix-blend-mode: luminosity;",
+  "mix-blend-plus-darker":  "mix-blend-mode: plus-darker;",
+  "mix-blend-plus-lighter": "mix-blend-mode: plus-lighter;",
+};
+
+export const BG_BLEND_MAP = {
+  "bg-blend-normal":       "background-blend-mode: normal;",
+  "bg-blend-multiply":     "background-blend-mode: multiply;",
+  "bg-blend-screen":       "background-blend-mode: screen;",
+  "bg-blend-overlay":      "background-blend-mode: overlay;",
+  "bg-blend-darken":       "background-blend-mode: darken;",
+  "bg-blend-lighten":      "background-blend-mode: lighten;",
+  "bg-blend-color-dodge":  "background-blend-mode: color-dodge;",
+  "bg-blend-color-burn":   "background-blend-mode: color-burn;",
+  "bg-blend-hard-light":   "background-blend-mode: hard-light;",
+  "bg-blend-soft-light":   "background-blend-mode: soft-light;",
+  "bg-blend-difference":   "background-blend-mode: difference;",
+  "bg-blend-exclusion":    "background-blend-mode: exclusion;",
+  "bg-blend-hue":          "background-blend-mode: hue;",
+  "bg-blend-saturation":   "background-blend-mode: saturation;",
+  "bg-blend-color":        "background-blend-mode: color;",
+  "bg-blend-luminosity":   "background-blend-mode: luminosity;",
+};
+
+export const TEXT_SHADOW_SIZES = {
+  "2xs":  "0 1px 2px rgb(0 0 0 / 0.10)",
+  xs:     "0 1px 2px rgb(0 0 0 / 0.20)",
+  sm:     "0 1px 3px rgb(0 0 0 / 0.25)",
+  DEFAULT:"0 1px 3px rgb(0 0 0 / 0.30)",
+  md:     "0 2px 4px rgb(0 0 0 / 0.30)",
+  lg:     "0 4px 6px rgb(0 0 0 / 0.25)",
+  xl:     "0 8px 12px rgb(0 0 0 / 0.20)",
+  "2xl":  "0 16px 24px rgb(0 0 0 / 0.15)",
+  none:   "none",
+};
+
+export const FORCED_COLOR_MAP = {
+  "forced-color-adjust-auto": "forced-color-adjust: auto;",
+  "forced-color-adjust-none": "forced-color-adjust: none;",
+};

@@ -1,4 +1,4 @@
-import { INSET_SHADOW_SIZES } from "../maps/effects.maps.js";
+import { INSET_SHADOW_SIZES, TEXT_SHADOW_SIZES } from "../maps/effects.maps.js";
 import { resolveThemeValue, resolveColorWithOpacity } from "../resolvers.js";
 
 export function buildOpacityDeclaration(baseToken, theme) {
@@ -83,6 +83,43 @@ export function buildRingDeclaration(baseToken, theme) {
     resolveColorWithOpacity(ringColorScale, valueKey) ||
     resolveColorWithOpacity(theme.colors || {}, valueKey);
   if (colorValue !== undefined) return `--tw-ring-color: ${colorValue};`;
+
+  return undefined;
+}
+
+export function buildTextShadowDeclaration(baseToken, theme) {
+  if (baseToken === "text-shadow") {
+    const val = (theme.textShadow || TEXT_SHADOW_SIZES).DEFAULT || TEXT_SHADOW_SIZES.DEFAULT;
+    return `text-shadow: ${val};`;
+  }
+
+  if (baseToken.startsWith("text-shadow-")) {
+    const key = baseToken.slice(12);
+    // text-shadow-color
+    const color = resolveColorWithOpacity(theme.colors || {}, key);
+    if (color !== undefined) return `--tw-text-shadow-color: ${color};`;
+    // text-shadow-size
+    const scale = theme.textShadow || TEXT_SHADOW_SIZES;
+    const val = resolveThemeValue(scale, key);
+    if (val !== undefined) return val === "none" ? "text-shadow: none;" : `text-shadow: ${val};`;
+  }
+
+  return undefined;
+}
+
+export function buildRingOffsetDeclaration(baseToken, theme) {
+  if (!baseToken.startsWith("ring-offset-")) return undefined;
+  const key = baseToken.slice(12);
+
+  // ring-offset-{width}
+  const widthVal = resolveThemeValue(theme.ringOffsetWidth || {}, key);
+  if (widthVal !== undefined) {
+    return `--tw-ring-offset-width: ${widthVal}; box-shadow: 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color, #fff), var(--tw-ring-shadow, 0 0 #0000);`;
+  }
+
+  // ring-offset-{color}
+  const color = resolveColorWithOpacity(theme.ringOffsetColor || theme.colors || {}, key);
+  if (color !== undefined) return `--tw-ring-offset-color: ${color};`;
 
   return undefined;
 }

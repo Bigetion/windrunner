@@ -86,3 +86,44 @@ export function buildInteractivityDeclaration(baseToken, theme) {
 
   return undefined;
 }
+
+export function buildZoomDeclaration(baseToken, theme) {
+  if (!baseToken.startsWith("zoom-")) return undefined;
+  const key = baseToken.slice(5);
+  const val = resolveThemeValue(theme.zoom || {}, key);
+  if (val !== undefined) return `zoom: ${val};`;
+  const arb = resolveArbitraryValue(key);
+  if (arb !== undefined) return `zoom: ${arb};`;
+  return undefined;
+}
+
+export function buildForcedColorDeclaration(baseToken) {
+  if (baseToken === "forced-color-adjust-auto") return "forced-color-adjust: auto;";
+  if (baseToken === "forced-color-adjust-none") return "forced-color-adjust: none;";
+  return undefined;
+}
+
+export function buildBorderSpacingDeclaration(baseToken, theme) {
+  if (!baseToken.startsWith("border-spacing-")) return undefined;
+  const rest = baseToken.slice(15); // after "border-spacing-"
+
+  const axisMatchX = rest.match(/^x-(.+)$/);
+  if (axisMatchX) {
+    const val = resolveThemeValue(theme.borderSpacing || theme.spacing || {}, axisMatchX[1]);
+    if (val !== undefined) return `--tw-border-spacing-x: ${val}; border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y, 0);`;
+  }
+
+  const axisMatchY = rest.match(/^y-(.+)$/);
+  if (axisMatchY) {
+    const val = resolveThemeValue(theme.borderSpacing || theme.spacing || {}, axisMatchY[1]);
+    if (val !== undefined) return `--tw-border-spacing-y: ${val}; border-spacing: var(--tw-border-spacing-x, 0) var(--tw-border-spacing-y);`;
+  }
+
+  const val = resolveThemeValue(theme.borderSpacing || theme.spacing || {}, rest);
+  if (val !== undefined) return `--tw-border-spacing-x: ${val}; --tw-border-spacing-y: ${val}; border-spacing: ${val};`;
+
+  const arb = resolveArbitraryValue(rest);
+  if (arb !== undefined) return `--tw-border-spacing-x: ${arb}; --tw-border-spacing-y: ${arb}; border-spacing: ${arb};`;
+
+  return undefined;
+}

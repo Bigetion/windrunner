@@ -15,11 +15,9 @@ export function buildBackgroundDeclaration(baseToken, theme) {
   if (key.startsWith("origin-")) return BG_ORIGIN_MAP[key.slice(7)] ?? undefined;
   if (BG_REPEAT_MAP[key]) return BG_REPEAT_MAP[key];
 
-  // bg-size
+  // bg-size (any value from theme, not just 3 keywords)
   const bgSize = resolveThemeValue(theme.backgroundSize || {}, key);
-  if (bgSize !== undefined && (key === "auto" || key === "cover" || key === "contain")) {
-    return `background-size: ${bgSize};`;
-  }
+  if (bgSize !== undefined) return `background-size: ${bgSize};`;
 
   // bg-position
   const bgPos = resolveThemeValue(theme.backgroundPosition || {}, key);

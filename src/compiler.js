@@ -12,6 +12,8 @@ import {
   buildInsetShadowDeclaration,
   buildInsetRingDeclaration,
   buildRingDeclaration,
+  buildTextShadowDeclaration,
+  buildRingOffsetDeclaration,
 } from "./builders/effects.js";
 import { buildBackgroundDeclaration, buildGradientDeclaration } from "./builders/backgrounds.js";
 import { buildTransformDeclaration } from "./builders/transforms.js";
@@ -22,7 +24,12 @@ import {
   buildMaskDeclaration,
   buildContainerQueryDeclaration,
   buildInteractivityDeclaration,
+  buildZoomDeclaration,
+  buildForcedColorDeclaration,
+  buildBorderSpacingDeclaration,
 } from "./builders/misc.js";
+import { buildBlendingDeclaration } from "./builders/blending.js";
+import { buildSpaceBetweenDeclaration, buildDivideDeclaration } from "./builders/space-divide.js";
 
 // ─── Master compile dispatcher ────────────────────────────────────────────────
 
@@ -31,16 +38,21 @@ function compileBaseToken(baseToken, theme) {
     buildLayoutDeclaration(baseToken, theme) ||
     buildPositionInsetDeclaration(baseToken, theme) ||
     buildSpacingDeclaration(baseToken, theme) ||
+    buildSpaceBetweenDeclaration(baseToken, theme) ||
     buildGapDeclaration(baseToken, theme) ||
     buildDimensionDeclaration(baseToken, theme) ||
     buildFlexGridDeclaration(baseToken, theme) ||
     buildBorderDeclaration(baseToken, theme) ||
     buildBorderRadiusDeclaration(baseToken, theme) ||
+    buildBorderSpacingDeclaration(baseToken, theme) ||
+    buildDivideDeclaration(baseToken, theme) ||
     buildOpacityDeclaration(baseToken, theme) ||
     buildShadowDeclaration(baseToken, theme) ||
     buildInsetShadowDeclaration(baseToken, theme) ||
     buildInsetRingDeclaration(baseToken, theme) ||
     buildRingDeclaration(baseToken, theme) ||
+    buildRingOffsetDeclaration(baseToken, theme) ||
+    buildTextShadowDeclaration(baseToken, theme) ||
     buildTransitionDeclaration(baseToken) ||
     buildTransformDeclaration(baseToken, theme) ||
     buildFilterDeclaration(baseToken, theme) ||
@@ -48,10 +60,13 @@ function compileBaseToken(baseToken, theme) {
     buildGradientDeclaration(baseToken, theme) ||
     buildColorDeclaration(baseToken, theme) ||
     buildTypographyDeclaration(baseToken, theme) ||
+    buildBlendingDeclaration(baseToken) ||
     buildInteractivityDeclaration(baseToken, theme) ||
     buildAnimationDeclaration(baseToken) ||
     buildMaskDeclaration(baseToken) ||
-    buildContainerQueryDeclaration(baseToken)
+    buildContainerQueryDeclaration(baseToken) ||
+    buildZoomDeclaration(baseToken, theme) ||
+    buildForcedColorDeclaration(baseToken)
   );
 }
 
