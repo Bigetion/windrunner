@@ -52,6 +52,7 @@ npm install windrunner
 Try the example landing page:
 
 - GitHub Pages (example landing): https://bigetion.github.io/windrunner/
+ - CodeSandbox (example landing): https://xj6q66.csb.app
 
 
 ### React / Vue
