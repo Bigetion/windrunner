@@ -1,0 +1,54 @@
+{
+  "name": "windrunner",
+  "version": "1.0.0",
+  "description": "Zero-config Tailwind v4 runtime — compile utility classes on-demand in the browser, no build step required",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./min": {
+      "import": "./dist/index.min.js"
+    },
+    "./dist/index.esm.js": "./dist/index.esm.js",
+    "./dist/index.min.js": "./dist/index.min.js"
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "node build.js",
+    "test": "vitest --run",
+    "dev": "node -e \"import('./src/index.js').then(m => console.log(m.compileRuntimeClassName('flex')))\""
+  },
+  "keywords": [
+    "tailwind",
+    "tailwindcss",
+    "windrunner",
+    "runtime",
+    "css",
+    "browser",
+    "zero-config",
+    "utility-first"
+  ],
+  "author": "Bigetion",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bigetion/windrunner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Bigetion/windrunner/issues"
+  },
+  "homepage": "https://github.com/Bigetion/windrunner#readme",
+  "devDependencies": {
+    "esbuild": "^0.19.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.1"
+  }
+}
