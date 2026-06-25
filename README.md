@@ -183,18 +183,50 @@ windrunner({
 });
 ```
 
+## Preventing FOUC
+
+Because windrunner compiles CSS at runtime, browsers may briefly render unstyled content before styles are injected (Flash of Unstyled Content). The recommended fix:
+
+```html
+<head>
+  <!-- 1. Hide the page before styles are ready -->
+  <style>html { opacity: 0; transition: opacity 0.2s ease; }</style>
+
+  <!-- 2. Reveal after windrunner finishes its first scan -->
+  <script type="module">
+    import { windrunner } from "windrunner";
+    windrunner({
+      autoStart: true,
+      onReady: () => document.documentElement.style.opacity = "1",
+    });
+  </script>
+</head>
+```
+
+The `onReady` callback fires after the initial DOM scan completes and CSS rules are injected, ensuring the page is fully styled before it becomes visible. The `transition` gives a smooth 200ms fade-in instead of an abrupt pop.
+
+## Preflight
+
+windrunner injects a CSS reset (based on Tailwind's preflight) automatically. To opt out:
+
+```js
+windrunner({ autoStart: true, preflight: false });
+```
+
 ## vs Tailwind Play CDN
 
 | | windrunner | Tailwind Play CDN |
 |---|---|---|
-| Size | ~68 KB min | ~350 KB |
+| Size | ~78 KB min | ~350 KB |
 | Dependencies | 0 | 0 |
 | Tailwind version | v4 | v4 |
 | Works in Node.js | ✓ (compile only) | ✗ |
 | Custom theme | ✓ | ✓ |
 | Arbitrary values | ✓ | ✓ |
+| Preflight | ✓ | ✓ |
+| FOUC prevention | ✓ (onReady) | ✗ |
 | Plugins | ✗ | ✓ |
-| Full utility coverage | Most | Full |
+| Full utility coverage | ✓ | ✓ |
 
 ## License
 

@@ -198,7 +198,22 @@ export function createWindrunner(options = {}) {
   const start = () => {
     if (typeof document !== "object") return;
     if (preflight) injectPreflight(styleId);
-    const runStart = () => { scan(); observe(); };
+
+    const fireReady = () => {
+      if (typeof options.onReady !== "function") return;
+      if (typeof requestAnimationFrame === "function") {
+        requestAnimationFrame(() => requestAnimationFrame(() => options.onReady()));
+      } else {
+        setTimeout(() => options.onReady(), 16);
+      }
+    };
+
+    const runStart = () => {
+      scan();
+      observe();
+      fireReady();
+    };
+
     if (document.readyState === "loading") {
       if (!domReadyHandler) {
         domReadyHandler = () => { domReadyHandler = null; runStart(); };

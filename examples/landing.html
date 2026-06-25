@@ -8,10 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+  <!-- FOUC prevention: hide until styled -->
+  <style>html{opacity:0;transition:opacity .2s ease}</style>
   <!-- windrunner: zero-config Tailwind v4 runtime, no build step -->
   <script type="module">
     import { windrunner } from "../dist/index.esm.js";
-    windrunner({ autoStart: true });
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
   </script>
   <style>
     /* Keyframes for animations (can't be JIT-compiled) */
@@ -401,18 +403,6 @@
     <p class="text-xs text-slate-600">© 2025 Nexora, Inc. All rights reserved.</p>
   </div>
 </footer>
-
-<!-- windrunner stats -->
-<script type="module">
-  import { windrunner } from "../dist/index.esm.js";
-  const wind = windrunner({ autoStart: false });
-  window.addEventListener("DOMContentLoaded", () => {
-    wind.start();
-    setTimeout(() => {
-      console.log(`[windrunner] ${wind.getCacheSize()} classes compiled, ${wind.getInsertedRuleCount()} CSS rules injected`);
-    }, 500);
-  });
-</script>
 
 </body>
 </html>
