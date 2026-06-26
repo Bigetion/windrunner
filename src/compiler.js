@@ -136,8 +136,8 @@ export function resolveRuntimeContext(options = {}) {
   return {
     config,
     theme: config.theme || {},
-    screens: (config.theme && config.theme.screens) || {},
-    containers: (config.theme && config.theme.containers) || {},
+    screens: (config.theme && config.theme.screens) || config.screens || {},
+    containers: (config.theme && config.theme.containers) || config.containers || {},
   };
 }
 
@@ -215,35 +215,18 @@ export function compileRuntimeClassNameWithContext(className, context) {
     : variantSelector;
   const ruleBody = `${scopedSelector} { ${finalDeclaration} }`;
 
+  let result = ruleBody;
   if (parsed.breakpoint) {
-    return `@media (min-width: ${context.screens[parsed.breakpoint]}) { ${ruleBody} }`;
+    result = `@media (min-width: ${context.screens[parsed.breakpoint]}) { ${ruleBody} }`;
+  } else if (parsed.containerBreakpoint) {
+    result = `@container (min-width: ${context.containers[parsed.containerBreakpoint]}) { ${ruleBody} }`;
   }
 
-  if (parsed.containerBreakpoint) {
-    return `@container (min-width: ${context.containers[parsed.containerBreakpoint]}) { ${ruleBody} }`;
-  }
-
-  return ruleBody;
-
-  // starting: wraps the entire rule (including any media query) in @starting-style
   if (parsed.starting) {
-    const wrapped = parsed.breakpoint
-      ? `@media (min-width: ${context.screens[parsed.breakpoint]}) { ${rule} }`
-      : parsed.containerBreakpoint
-        ? `@container (min-width: ${context.containers[parsed.containerBreakpoint]}) { ${rule} }`
-        : rule;
-    return `@starting-style { ${wrapped} }`;
+    return `@starting-style { ${result} }`;
   }
 
-  if (parsed.breakpoint) {
-    return `@media (min-width: ${context.screens[parsed.breakpoint]}) { ${rule} }`;
-  }
-
-  if (parsed.containerBreakpoint) {
-    return `@container (min-width: ${context.containers[parsed.containerBreakpoint]}) { ${rule} }`;
-  }
-
-  return rule;
+  return result;
 }
 
 // ─── Public compileClass API (Node.js + browser) ──────────────────────────────

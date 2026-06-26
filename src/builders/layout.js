@@ -18,6 +18,11 @@ import {
   TABLE_LAYOUT_MAP,
   CAPTION_SIDE_MAP,
   BORDER_COLLAPSE_MAP,
+  BREAK_AFTER_MAP,
+  BREAK_BEFORE_MAP,
+  BREAK_INSIDE_MAP,
+  BOX_DECORATION_BREAK_MAP,
+  HYPHENS_MAP,
   COLOR_SCHEME_MAP,
   SCROLLBAR_COLOR_MAP,
   SCROLLBAR_WIDTH_MAP,
@@ -151,10 +156,14 @@ export function buildLayoutDeclaration(baseToken, theme) {
 
   // content (pseudo-element)
   if (baseToken.startsWith("content-")) {
-    const val = resolveThemeValue(theme.content || {}, baseToken.slice(8));
-    if (val !== undefined) return `content: "${val}";`;
-    const arb = resolveArbitraryValue(baseToken.slice(8));
-    if (arb !== undefined) return `content: ${arb};`;
+    const valueKey = baseToken.slice(8);
+    if (valueKey.startsWith("[") && valueKey.endsWith("]")) {
+      const arb = resolveArbitraryValue(valueKey);
+      if (arb !== undefined) return `content: ${arb};`;
+    } else {
+      const val = resolveThemeValue(theme.content || {}, valueKey);
+      if (val !== undefined) return `content: "${val}";`;
+    }
   }
 
   // size-* (width + height shorthand)

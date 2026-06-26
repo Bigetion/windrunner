@@ -118,7 +118,10 @@ export function buildRingOffsetDeclaration(baseToken, theme) {
   }
 
   // ring-offset-{color}
-  const color = resolveColorWithOpacity(theme.ringOffsetColor || theme.colors || {}, key);
+  let color = resolveColorWithOpacity(theme.ringOffsetColor || {}, key);
+  if (color === undefined) {
+    color = resolveColorWithOpacity(theme.colors || {}, key);
+  }
   if (color !== undefined) return `--tw-ring-offset-color: ${color};`;
 
   return undefined;
