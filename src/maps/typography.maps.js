@@ -56,6 +56,39 @@ export const FONT_STYLE_MAP = {
   "not-italic": "font-style: normal;",
 };
 
+export const FONT_STRETCH_MAP = {
+  "ultra-condensed": "font-stretch: ultra-condensed;",
+  "extra-condensed": "font-stretch: extra-condensed;",
+  condensed: "font-stretch: condensed;",
+  "semi-condensed": "font-stretch: semi-condensed;",
+  normal: "font-stretch: normal;",
+  "semi-expanded": "font-stretch: semi-expanded;",
+  expanded: "font-stretch: expanded;",
+  "extra-expanded": "font-stretch: extra-expanded;",
+  "ultra-expanded": "font-stretch: ultra-expanded;",
+};
+
+export const FONT_VARIANT_NUMERIC_MAP = {
+  ordinal: "font-variant-numeric: ordinal;",
+  "slashed-zero": "font-variant-numeric: slashed-zero;",
+  "lining-nums": "font-variant-numeric: lining-nums;",
+  "oldstyle-nums": "font-variant-numeric: oldstyle-nums;",
+  "proportional-nums": "font-variant-numeric: proportional-nums;",
+  "tabular-nums": "font-variant-numeric: tabular-nums;",
+  "diagonal-fractions": "font-variant-numeric: diagonal-fractions;",
+  "stacked-fractions": "font-variant-numeric: stacked-fractions;",
+};
+
+export const LIST_STYLE_IMAGE_MAP = {
+  none: "list-style-image: none;",
+};
+
+export const HYPHENS_MAP = {
+  none: "hyphens: none;",
+  manual: "hyphens: manual;",
+  auto: "hyphens: auto;",
+};
+
 export const FONT_SMOOTHING_MAP = {
   antialiased: "-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;",
   "subpixel-antialiased": "-webkit-font-smoothing: auto; -moz-osx-font-smoothing: auto;",

@@ -24,6 +24,54 @@ export const PERSPECTIVE_MAP = {
   distant: "perspective: 1200px;",
 };
 
+export const PERSPECTIVE_ORIGIN_MAP = {
+  center: "perspective-origin: center;",
+  top: "perspective-origin: top;",
+  bottom: "perspective-origin: bottom;",
+  left: "perspective-origin: left;",
+  right: "perspective-origin: right;",
+  "top-left": "perspective-origin: top left;",
+  "top-right": "perspective-origin: top right;",
+  "bottom-left": "perspective-origin: bottom left;",
+  "bottom-right": "perspective-origin: bottom right;",
+};
+
+export const MASK_CLIP_MAP = {
+  "mask-clip-border": "mask-clip: border; -webkit-mask-clip: border;",
+  "mask-clip-padding": "mask-clip: padding; -webkit-mask-clip: padding;",
+  "mask-clip-content": "mask-clip: content; -webkit-mask-clip: content;",
+  "mask-clip-text": "mask-clip: text; -webkit-mask-clip: text;",
+};
+
+export const MASK_COMPOSITE_MAP = {
+  "mask-composite-add": "mask-composite: add; -webkit-mask-composite: add;",
+  "mask-composite-subtract": "mask-composite: subtract; -webkit-mask-composite: subtract;",
+  "mask-composite-intersect": "mask-composite: intersect; -webkit-mask-composite: intersect;",
+  "mask-composite-exclude": "mask-composite: exclude; -webkit-mask-composite: exclude;",
+  "mask-composite-replace": "mask-composite: replace; -webkit-mask-composite: replace;",
+  "mask-composite-xor": "mask-composite: xor; -webkit-mask-composite: xor;",
+};
+
+export const MASK_MODE_MAP = {
+  "mask-mode-alpha": "mask-mode: alpha; -webkit-mask-mode: alpha;",
+  "mask-mode-luminance": "mask-mode: luminance; -webkit-mask-mode: luminance;",
+  "mask-mode-match-source": "mask-mode: match-source; -webkit-mask-mode: match-source;",
+};
+
+export const MASK_ORIGIN_MAP = {
+  "mask-origin-border": "mask-origin: border-box; -webkit-mask-origin: border-box;",
+  "mask-origin-padding": "mask-origin: padding-box; -webkit-mask-origin: padding-box;",
+  "mask-origin-content": "mask-origin: content-box; -webkit-mask-origin: content-box;",
+  "mask-origin-fill": "mask-origin: fill-box; -webkit-mask-origin: fill-box;",
+  "mask-origin-stroke": "mask-origin: stroke-box; -webkit-mask-origin: stroke-box;",
+  "mask-origin-view": "mask-origin: view-box; -webkit-mask-origin: view-box;",
+};
+
+export const MASK_TYPE_MAP = {
+  "mask-type-luminance": "mask-type: luminance; -webkit-mask-type: luminance;",
+  "mask-type-alpha": "mask-type: alpha; -webkit-mask-type: alpha;",
+};
+
 export const MASK_LINEAR_MAP = {
   "mask-linear-to-t":  "mask-image: linear-gradient(to top, black, transparent); -webkit-mask-image: linear-gradient(to top, black, transparent);",
   "mask-linear-to-tr": "mask-image: linear-gradient(to top right, black, transparent); -webkit-mask-image: linear-gradient(to top right, black, transparent);",

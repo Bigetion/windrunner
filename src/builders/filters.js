@@ -15,15 +15,29 @@ export function buildFilterDeclaration(baseToken, theme) {
     return theme[key] || {};
   };
 
+  if (rest === "filter") {
+    return `${prefix}: none;`;
+  }
+
   if (rest === "blur" || rest.startsWith("blur-")) {
     const key = rest === "blur" ? "DEFAULT" : rest.slice(5);
     const val = resolveThemeValue(getScale("blur"), key);
     if (val !== undefined) return `${prefix}: blur(${val});`;
   }
 
+  if (rest === "brightness") {
+    const val = resolveThemeValue(getScale("brightness"), "100") || resolveThemeValue(getScale("brightness"), "DEFAULT") || "1";
+    return `${prefix}: brightness(${val});`;
+  }
+
   if (rest.startsWith("brightness-")) {
     const val = resolveThemeValue(getScale("brightness"), rest.slice(11));
     if (val !== undefined) return `${prefix}: brightness(${val});`;
+  }
+
+  if (rest === "contrast") {
+    const val = resolveThemeValue(getScale("contrast"), "100") || resolveThemeValue(getScale("contrast"), "DEFAULT") || "1";
+    return `${prefix}: contrast(${val});`;
   }
 
   if (rest.startsWith("contrast-")) {
@@ -35,6 +49,11 @@ export function buildFilterDeclaration(baseToken, theme) {
     const key = rest === "grayscale" ? "DEFAULT" : rest.slice(10);
     const val = resolveThemeValue(getScale("grayscale"), key);
     if (val !== undefined) return `${prefix}: grayscale(${val});`;
+  }
+
+  if (rest === "hue-rotate") {
+    const val = resolveThemeValue(getScale("hueRotate"), "0") || resolveThemeValue(getScale("hueRotate"), "DEFAULT") || "0deg";
+    return `${prefix}: hue-rotate(${val});`;
   }
 
   if (rest.startsWith("hue-rotate-")) {
@@ -49,6 +68,11 @@ export function buildFilterDeclaration(baseToken, theme) {
     const key = rest === "invert" ? "DEFAULT" : rest.slice(7);
     const val = resolveThemeValue(getScale("invert"), key);
     if (val !== undefined) return `${prefix}: invert(${val});`;
+  }
+
+  if (rest === "saturate") {
+    const val = resolveThemeValue(getScale("saturate"), "100") || resolveThemeValue(getScale("saturate"), "DEFAULT") || "1";
+    return `${prefix}: saturate(${val});`;
   }
 
   if (rest.startsWith("saturate-")) {
@@ -73,6 +97,11 @@ export function buildFilterDeclaration(baseToken, theme) {
   }
 
   // backdrop-opacity
+  if (isBackdrop && rest === "opacity") {
+    const val = resolveThemeValue(theme.backdropOpacity || theme.opacity || {}, "DEFAULT") || "1";
+    return `backdrop-filter: opacity(${val});`;
+  }
+
   if (isBackdrop && rest.startsWith("opacity-")) {
     const val = resolveThemeValue(theme.backdropOpacity || theme.opacity || {}, rest.slice(8));
     if (val !== undefined) return `backdrop-filter: opacity(${val});`;

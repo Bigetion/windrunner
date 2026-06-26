@@ -4,6 +4,11 @@ import {
   MASK_REPEAT_MAP,
   MASK_SIZE_MAP,
   MASK_RADIAL_POSITIONS,
+  MASK_CLIP_MAP,
+  MASK_COMPOSITE_MAP,
+  MASK_MODE_MAP,
+  MASK_ORIGIN_MAP,
+  MASK_TYPE_MAP,
 } from "../maps/effects.maps.js";
 import {
   CURSOR_MAP,
@@ -24,6 +29,11 @@ export function buildAnimationDeclaration(baseToken) {
 }
 
 export function buildMaskDeclaration(baseToken) {
+  if (MASK_CLIP_MAP[baseToken]) return MASK_CLIP_MAP[baseToken];
+  if (MASK_COMPOSITE_MAP[baseToken]) return MASK_COMPOSITE_MAP[baseToken];
+  if (MASK_MODE_MAP[baseToken]) return MASK_MODE_MAP[baseToken];
+  if (MASK_ORIGIN_MAP[baseToken]) return MASK_ORIGIN_MAP[baseToken];
+  if (MASK_TYPE_MAP[baseToken]) return MASK_TYPE_MAP[baseToken];
   if (MASK_LINEAR_MAP[baseToken]) return MASK_LINEAR_MAP[baseToken];
   if (MASK_REPEAT_MAP[baseToken]) return MASK_REPEAT_MAP[baseToken];
   if (MASK_SIZE_MAP[baseToken])   return MASK_SIZE_MAP[baseToken];
@@ -60,6 +70,7 @@ export function buildInteractivityDeclaration(baseToken, theme) {
   if (baseToken.startsWith("cursor-"))         return CURSOR_MAP[baseToken.slice(7)]          ?? undefined;
   if (baseToken.startsWith("pointer-events-")) return POINTER_EVENTS_MAP[baseToken.slice(15)] ?? undefined;
   if (baseToken.startsWith("select-"))         return USER_SELECT_MAP[baseToken.slice(7)]      ?? undefined;
+  if (baseToken.startsWith("user-select-"))    return USER_SELECT_MAP[baseToken.slice(12)]     ?? undefined;
   if (baseToken.startsWith("appearance-")) {
     return APPEARANCE_MAP[baseToken.slice(11)] ? `appearance: ${baseToken.slice(11)};` : undefined;
   }
