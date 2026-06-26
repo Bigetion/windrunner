@@ -42,7 +42,7 @@ npm install windrunner
 
 ```html
 <script type="module">
-  import { windrunner } from "https://cdn.jsdelivr.net/npm/windrunner@1.0.0/dist/index.min.js";
+  import { windrunner } from "https://cdn.jsdelivr.net/npm/windrunner@1.0.1/dist/index.min.js";
   windrunner({ autoStart: true });
 </script>
 ```
