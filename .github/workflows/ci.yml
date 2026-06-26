@@ -2,40 +2,6 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
-jobs:
-  test-build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Debug Node environment
-        run: |
-          echo "Node version:" && node -v
-          echo "npm version:" && npm -v
-          echo "node:util exports:" && node -e "console.log(Object.keys(require('node:util')).join(', '))"
-          echo "has styleText:" && node -e "console.log(Object.prototype.hasOwnProperty.call(require('node:util'), 'styleText'))"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm test --silent
-
-      - name: Build
-        run: npm run build
-name: CI
-
-on:
-  push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
@@ -45,17 +11,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js
+      - name: Use Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '24'
+
+      - name: Debug Node environment
+        run: |
+          echo "Node version:" && node -v
+          echo "npm version:" && npm -v
+          echo "node:util exports:" && node -e "console.log(Object.keys(require('node:util')).join(', '))"
+          echo "has styleText:" && node -e "console.log(Object.prototype.hasOwnProperty.call(require('node:util'), 'styleText'))"
+
       - name: Install
         run: npm ci
+
       - name: Build
         run: npm run build
+
       - name: Test
         run: npm test
+
       - name: Pack dry-run
         run: npm pack --dry-run
+
       - name: Audit (dev)
         run: npm audit --audit-level=moderate || true
