@@ -36,6 +36,12 @@ export function buildGapDeclaration(baseToken, theme) {
 
 export function buildDimensionDeclaration(baseToken, theme) {
   const patterns = [
+    { prefix: "min-inline-size-", prop: "min-inline-size", scale: theme.minWidth || theme.width || theme.spacing || {} },
+    { prefix: "max-inline-size-", prop: "max-inline-size", scale: theme.maxWidth || theme.width || theme.spacing || {} },
+    { prefix: "inline-size-", prop: "inline-size", scale: theme.width || theme.spacing || {} },
+    { prefix: "min-block-size-", prop: "min-block-size", scale: theme.minHeight || theme.height || theme.spacing || {} },
+    { prefix: "max-block-size-", prop: "max-block-size", scale: theme.maxHeight || theme.height || theme.spacing || {} },
+    { prefix: "block-size-", prop: "block-size", scale: theme.height || theme.spacing || {} },
     { prefix: "min-w-", prop: "min-width",  scale: theme.minWidth  || theme.width  || {} },
     { prefix: "max-w-", prop: "max-width",  scale: theme.maxWidth  || theme.width  || {} },
     { prefix: "min-h-", prop: "min-height", scale: theme.minHeight || theme.height || {} },

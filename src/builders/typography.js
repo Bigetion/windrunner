@@ -8,6 +8,10 @@ import {
   WORD_BREAK_MAP,
   FONT_STYLE_MAP,
   FONT_SMOOTHING_MAP,
+  FONT_STRETCH_MAP,
+  FONT_VARIANT_NUMERIC_MAP,
+  LIST_STYLE_IMAGE_MAP,
+  HYPHENS_MAP,
   LIST_STYLE_POSITION_MAP,
   VERTICAL_ALIGN_MAP,
 } from "../maps/typography.maps.js";
@@ -49,6 +53,14 @@ export function buildTypographyDeclaration(baseToken, theme) {
     }
   }
 
+  if (baseToken.startsWith("font-stretch-")) {
+    return FONT_STRETCH_MAP[baseToken.slice(13)] ?? undefined;
+  }
+
+  if (baseToken.startsWith("font-variant-numeric-")) {
+    return FONT_VARIANT_NUMERIC_MAP[baseToken.slice(21)] ?? undefined;
+  }
+
   // leading-* (line-height)
   if (baseToken.startsWith("leading-")) {
     const val = resolveThemeValue(theme.lineHeight || {}, baseToken.slice(8));
@@ -87,8 +99,13 @@ export function buildTypographyDeclaration(baseToken, theme) {
   if (baseToken.startsWith("list-")) {
     const key = baseToken.slice(5);
     if (LIST_STYLE_POSITION_MAP[key]) return LIST_STYLE_POSITION_MAP[key];
+    if (LIST_STYLE_IMAGE_MAP[baseToken]) return LIST_STYLE_IMAGE_MAP[baseToken.slice(17)] ?? undefined;
     const val = resolveThemeValue(theme.listStyleType || {}, key);
     if (val !== undefined) return `list-style-type: ${val};`;
+  }
+
+  if (baseToken.startsWith("list-style-image-")) {
+    return LIST_STYLE_IMAGE_MAP[baseToken.slice(17)] ?? undefined;
   }
 
   // whitespace-*
@@ -96,6 +113,9 @@ export function buildTypographyDeclaration(baseToken, theme) {
     const key = baseToken.slice(11);
     if (WHITESPACE_MAP[key]) return WHITESPACE_MAP[key];
   }
+
+  // hyphens
+  if (baseToken.startsWith("hyphens-")) return HYPHENS_MAP[baseToken.slice(8)] ?? undefined;
 
   // text-wrap-*
   if (baseToken === "text-wrap")    return "text-wrap: wrap;";

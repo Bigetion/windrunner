@@ -129,6 +129,73 @@ export const BOX_SIZING_MAP = {
   content: "box-sizing: content-box;",
 };
 
+export const BREAK_AFTER_MAP = {
+  auto: "break-after: auto;",
+  avoid: "break-after: avoid;",
+  "avoid-page": "break-after: avoid-page;",
+  "avoid-column": "break-after: avoid-column;",
+  page: "break-after: page;",
+  left: "break-after: left;",
+  right: "break-after: right;",
+  recto: "break-after: recto;",
+  verso: "break-after: verso;",
+};
+
+export const BREAK_BEFORE_MAP = {
+  auto: "break-before: auto;",
+  avoid: "break-before: avoid;",
+  "avoid-page": "break-before: avoid-page;",
+  "avoid-column": "break-before: avoid-column;",
+  page: "break-before: page;",
+  left: "break-before: left;",
+  right: "break-before: right;",
+  recto: "break-before: recto;",
+  verso: "break-before: verso;",
+};
+
+export const BREAK_INSIDE_MAP = {
+  auto: "break-inside: auto;",
+  avoid: "break-inside: avoid;",
+  "avoid-page": "break-inside: avoid-page;",
+  "avoid-column": "break-inside: avoid-column;",
+};
+
+export const BOX_DECORATION_BREAK_MAP = {
+  slice: "box-decoration-break: slice;",
+  clone: "box-decoration-break: clone;",
+};
+
+export const HYPHENS_MAP = {
+  none: "hyphens: none;",
+  manual: "hyphens: manual;",
+  auto: "hyphens: auto;",
+};
+
+export const COLOR_SCHEME_MAP = {
+  light: "color-scheme: light;",
+  dark: "color-scheme: dark;",
+  normal: "color-scheme: normal;",
+};
+
+export const SCROLLBAR_COLOR_MAP = {
+  auto: "scrollbar-color: auto;",
+  transparent: "scrollbar-color: transparent;",
+  current: "scrollbar-color: currentColor;",
+};
+
+export const SCROLLBAR_WIDTH_MAP = {
+  auto: "scrollbar-width: auto;",
+  thin: "scrollbar-width: thin;",
+  none: "scrollbar-width: none;",
+};
+
+export const SCROLLBAR_GUTTER_MAP = {
+  auto: "scrollbar-gutter: auto;",
+  stable: "scrollbar-gutter: stable;",
+  "stable-both-edges": "scrollbar-gutter: stable both-edges;",
+  "both-edges": "scrollbar-gutter: both-edges;",
+};
+
 export const TABLE_LAYOUT_MAP = {
   auto: "table-layout: auto;",
   fixed: "table-layout: fixed;",

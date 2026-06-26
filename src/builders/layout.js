@@ -18,6 +18,15 @@ import {
   TABLE_LAYOUT_MAP,
   CAPTION_SIDE_MAP,
   BORDER_COLLAPSE_MAP,
+  BREAK_AFTER_MAP,
+  BREAK_BEFORE_MAP,
+  BREAK_INSIDE_MAP,
+  BOX_DECORATION_BREAK_MAP,
+  HYPHENS_MAP,
+  COLOR_SCHEME_MAP,
+  SCROLLBAR_COLOR_MAP,
+  SCROLLBAR_WIDTH_MAP,
+  SCROLLBAR_GUTTER_MAP,
   SCROLL_BEHAVIOR_MAP,
   SIDE_PROPS,
   INSET_AXIS_PROPS,
@@ -65,6 +74,26 @@ export function buildLayoutDeclaration(baseToken, theme) {
     const val = resolveThemeValue(theme.order || {}, baseToken.slice(6));
     if (val !== undefined) return `order: ${val};`;
   }
+
+  // break / page break
+  if (baseToken.startsWith("break-after-")) return BREAK_AFTER_MAP[baseToken.slice(12)] ?? undefined;
+  if (baseToken.startsWith("break-before-")) return BREAK_BEFORE_MAP[baseToken.slice(13)] ?? undefined;
+  if (baseToken.startsWith("break-inside-")) return BREAK_INSIDE_MAP[baseToken.slice(13)] ?? undefined;
+  if (baseToken.startsWith("box-decoration-break-")) return BOX_DECORATION_BREAK_MAP[baseToken.slice(21)] ?? undefined;
+
+  // hyphens
+  if (baseToken.startsWith("hyphens-")) return HYPHENS_MAP[baseToken.slice(8)] ?? undefined;
+
+  // color-scheme
+  if (baseToken.startsWith("color-scheme-")) return COLOR_SCHEME_MAP[baseToken.slice(13)] ?? undefined;
+
+  // scrollbar utilities
+  if (baseToken.startsWith("scrollbar-color-")) return SCROLLBAR_COLOR_MAP[baseToken.slice(16)] ?? undefined;
+  if (baseToken.startsWith("scrollbar-width-")) return SCROLLBAR_WIDTH_MAP[baseToken.slice(16)] ?? undefined;
+  if (baseToken.startsWith("scrollbar-gutter-")) return SCROLLBAR_GUTTER_MAP[baseToken.slice(17)] ?? undefined;
+
+  // scroll-behavior
+  if (baseToken.startsWith("scroll-behavior-")) return SCROLL_BEHAVIOR_MAP[baseToken.slice(16)] ?? undefined;
 
   // aspect-ratio
   if (baseToken.startsWith("aspect-")) {
@@ -127,10 +156,14 @@ export function buildLayoutDeclaration(baseToken, theme) {
 
   // content (pseudo-element)
   if (baseToken.startsWith("content-")) {
-    const val = resolveThemeValue(theme.content || {}, baseToken.slice(8));
-    if (val !== undefined) return `content: "${val}";`;
-    const arb = resolveArbitraryValue(baseToken.slice(8));
-    if (arb !== undefined) return `content: ${arb};`;
+    const valueKey = baseToken.slice(8);
+    if (valueKey.startsWith("[") && valueKey.endsWith("]")) {
+      const arb = resolveArbitraryValue(valueKey);
+      if (arb !== undefined) return `content: ${arb};`;
+    } else {
+      const val = resolveThemeValue(theme.content || {}, valueKey);
+      if (val !== undefined) return `content: "${val}";`;
+    }
   }
 
   // size-* (width + height shorthand)

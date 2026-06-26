@@ -1,4 +1,4 @@
-import { PERSPECTIVE_MAP } from "../maps/effects.maps.js";
+import { PERSPECTIVE_MAP, PERSPECTIVE_ORIGIN_MAP } from "../maps/effects.maps.js";
 import { resolveThemeValue, resolveArbitraryValue } from "../resolvers.js";
 
 export function buildTransformDeclaration(baseToken, theme) {
@@ -85,6 +85,14 @@ export function buildTransformDeclaration(baseToken, theme) {
   if (normalized.startsWith("origin-")) {
     const val = resolveThemeValue(theme.transformOrigin || {}, normalized.slice(7));
     if (val !== undefined) return `transform-origin: ${val};`;
+  }
+
+  // perspective-origin
+  if (normalized.startsWith("perspective-origin-")) {
+    const key = normalized.slice(19);
+    if (PERSPECTIVE_ORIGIN_MAP[key]) return PERSPECTIVE_ORIGIN_MAP[key];
+    const arb = resolveArbitraryValue(key);
+    if (arb !== undefined) return `perspective-origin: ${arb};`;
   }
 
   // perspective

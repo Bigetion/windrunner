@@ -12,12 +12,9 @@ export function getConfigOptions(options = {}, pluginKeys = []) {
   const themeKeys = Object.keys(defaultConfigOptions.theme);
 
   themeKeys.forEach((key) => {
-    newTheme[key] = theme[key] || defaultConfigOptions.theme[key];
-    if (isFunction(newTheme[key])) {
-      newTheme[key] = newTheme[key]({
-        theme: (keyRef) => defaultConfigOptions.theme[keyRef],
-      });
-    }
+    newTheme[key] = Object.prototype.hasOwnProperty.call(theme, key)
+      ? theme[key]
+      : defaultConfigOptions.theme[key];
   });
 
   themeKeys.forEach((key) => {
