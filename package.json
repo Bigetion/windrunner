@@ -27,6 +27,7 @@
   "scripts": {
     "build": "node build.js",
     "test": "vitest --run",
+    "release": "npm run build && git add -A && git commit -m \"chore(release): prepare release\" || true && git push",
     "dev": "node -e \"import('./src/index.js').then(m => console.log(m.compileRuntimeClassName('flex')))\""
   },
   "keywords": [
