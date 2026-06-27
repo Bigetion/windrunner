@@ -31,7 +31,7 @@ import {
   buildAccessibilityDeclaration,
 } from "./builders/misc.js";
 import { buildBlendingDeclaration } from "./builders/blending.js";
-import { buildSpaceBetweenDeclaration, buildDivideDeclaration } from "./builders/space-divide.js";
+import { buildSpaceBetweenDeclaration, buildDivideDeclaration, isChildScoped } from "./builders/space-divide.js";
 
 // ─── Master compile dispatcher ────────────────────────────────────────────────
 
@@ -205,12 +205,11 @@ export function compileRuntimeClassNameWithContext(className, context) {
   const variantSelector = applyVariants(selector, parsed.variants);
   if (!variantSelector) return "";
 
-  const finalDeclaration = appendImportant(declaration, parsed.important);
-  const needsSpaceChildSelector = (
-    (parsed.baseToken.startsWith("space-x-") && parsed.baseToken !== "space-x-reverse") ||
-    (parsed.baseToken.startsWith("space-y-") && parsed.baseToken !== "space-y-reverse")
+  const finalDeclaration = appendImportant(
+    isChildScoped(declaration) ? declaration.declaration : declaration,
+    parsed.important,
   );
-  const scopedSelector = needsSpaceChildSelector
+  const scopedSelector = isChildScoped(declaration)
     ? `${variantSelector} > :not(:first-child)`
     : variantSelector;
   const ruleBody = `${scopedSelector} { ${finalDeclaration} }`;
