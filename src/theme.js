@@ -660,6 +660,7 @@ const theme = {
   },
   grayscale: {
     0: "0",
+    50: "0.5",
     DEFAULT: "100%",
   },
   gridAutoColumns: {
@@ -850,6 +851,7 @@ const theme = {
   }),
   invert: {
     0: "0",
+    50: "0.5",
     DEFAULT: "100%",
   },
   letterSpacing: {
@@ -1074,6 +1076,7 @@ const theme = {
   scrollPadding: ({ theme }) => theme("spacing"),
   sepia: {
     0: "0",
+    50: "0.5",
     DEFAULT: "100%",
   },
   skew: {

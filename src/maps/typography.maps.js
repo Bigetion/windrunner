@@ -31,6 +31,7 @@ export const TEXT_TRANSFORM_MAP = {
 
 export const TEXT_OVERFLOW_MAP = {
   truncate: "overflow: hidden; text-overflow: ellipsis; white-space: nowrap;",
+  "overflow-ellipsis": "text-overflow: ellipsis;",
   "text-ellipsis": "text-overflow: ellipsis;",
   "text-clip": "text-overflow: clip;",
 };

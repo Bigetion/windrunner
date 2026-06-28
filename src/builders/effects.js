@@ -1,5 +1,5 @@
 import { INSET_SHADOW_SIZES, TEXT_SHADOW_SIZES } from "../maps/effects.maps.js";
-import { resolveThemeValue, resolveColorWithOpacity } from "../resolvers.js";
+import { resolveThemeValue, resolveColorWithOpacity, resolveArbitraryValue } from "../resolvers.js";
 
 export function buildOpacityDeclaration(baseToken, theme) {
   if (!baseToken.startsWith("opacity-")) return undefined;
@@ -17,12 +17,21 @@ export function buildShadowDeclaration(baseToken, theme) {
   if (!baseToken.startsWith("shadow-")) return undefined;
 
   const valueKey = baseToken.slice(7);
-  // shadow-color
-  const color = resolveColorWithOpacity(theme.colors || {}, valueKey);
-  if (color !== undefined) return `--tw-shadow-color: ${color};`;
+
+  // arbitrary value: shadow-[4px_4px_0_0]
+  const arb = resolveArbitraryValue(valueKey);
+  if (arb !== undefined) return `box-shadow: ${arb};`;
+
+  // named shadow from theme
   const value = resolveThemeValue(theme.boxShadow || {}, valueKey);
-  if (value === undefined) return undefined;
-  return `box-shadow: ${value};`;
+  if (value !== undefined) return `box-shadow: ${value};`;
+
+  // shadow-color: check boxShadowColor first, then fall back to colors
+  const colorScale = theme.boxShadowColor || theme.colors || {};
+  const color = resolveColorWithOpacity(colorScale, valueKey);
+  if (color !== undefined) return `--tw-shadow-color: ${color};`;
+
+  return undefined;
 }
 
 export function buildInsetShadowDeclaration(baseToken, theme) {

@@ -96,6 +96,8 @@ describe("compiler", () => {
       expect(compileRuntimeClassNameWithContext("z-10", layoutContext)).toBe(".z-10 { z-index: 10; }");
       expect(compileRuntimeClassNameWithContext("-z-10", layoutContext)).toBe(".-z-10 { z-index: -10; }");
       expect(compileRuntimeClassNameWithContext("break-after-page", layoutContext)).toBe(".break-after-page { break-after: page; }");
+      expect(compileRuntimeClassNameWithContext("break-after-all", layoutContext)).toBe(".break-after-all { break-after: all; }");
+      expect(compileRuntimeClassNameWithContext("justify-items-normal", layoutContext)).toBe(".justify-items-normal { justify-items: normal; }");
       expect(compileRuntimeClassNameWithContext("box-decoration-break-clone", layoutContext)).toBe(".box-decoration-break-clone { box-decoration-break: clone; }");
       expect(compileRuntimeClassNameWithContext("size-4", layoutContext)).toBe(".size-4 { width: 1rem; height: 1rem; }");
       expect(compileRuntimeClassNameWithContext("content-[hello]", layoutContext)).toBe(".content-\\[hello\\] { content: hello; }");
@@ -329,12 +331,12 @@ describe("compiler", () => {
     });
 
     it("supports divide utilities", () => {
-      expect(compileRuntimeClassNameWithContext("divide-x", context)).toBe(".divide-x { --tw-divide-x-reverse: 0; border-inline-end-width: calc(1px * var(--tw-divide-x-reverse)); border-inline-start-width: calc(1px * calc(1 - var(--tw-divide-x-reverse))); }");
-      expect(compileRuntimeClassNameWithContext("divide-x-2", context)).toBe(".divide-x-2 { --tw-divide-x-reverse: 0; border-inline-end-width: calc(2px * var(--tw-divide-x-reverse)); border-inline-start-width: calc(2px * calc(1 - var(--tw-divide-x-reverse))); }");
-      expect(compileRuntimeClassNameWithContext("divide-y-4", context)).toBe(".divide-y-4 { --tw-divide-y-reverse: 0; border-bottom-width: calc(4px * var(--tw-divide-y-reverse)); border-top-width: calc(4px * calc(1 - var(--tw-divide-y-reverse))); }");
+      expect(compileRuntimeClassNameWithContext("divide-x", context)).toBe(".divide-x > :not(:first-child) { --tw-divide-x-reverse: 0; border-inline-end-width: calc(1px * var(--tw-divide-x-reverse)); border-inline-start-width: calc(1px * calc(1 - var(--tw-divide-x-reverse))); }");
+      expect(compileRuntimeClassNameWithContext("divide-x-2", context)).toBe(".divide-x-2 > :not(:first-child) { --tw-divide-x-reverse: 0; border-inline-end-width: calc(2px * var(--tw-divide-x-reverse)); border-inline-start-width: calc(2px * calc(1 - var(--tw-divide-x-reverse))); }");
+      expect(compileRuntimeClassNameWithContext("divide-y-4", context)).toBe(".divide-y-4 > :not(:first-child) { --tw-divide-y-reverse: 0; border-bottom-width: calc(4px * var(--tw-divide-y-reverse)); border-top-width: calc(4px * calc(1 - var(--tw-divide-y-reverse))); }");
       expect(compileRuntimeClassNameWithContext("divide-solid", context)).toBe(".divide-solid { border-style: solid; }");
-      expect(compileRuntimeClassNameWithContext("divide-red-500", context)).toBe(".divide-red-500 { border-color: #ef4444; }");
-      expect(compileRuntimeClassNameWithContext("divide-opacity-50", context)).toBe(".divide-opacity-50 { --tw-divide-opacity: 0.5; }");
+      expect(compileRuntimeClassNameWithContext("divide-red-500", context)).toBe(".divide-red-500 > :not(:first-child) { border-color: #ef4444; }");
+      expect(compileRuntimeClassNameWithContext("divide-opacity-50", context)).toBe(".divide-opacity-50 > :not(:first-child) { --tw-divide-opacity: 0.5; }");
     });
 
     it("supports transition utilities", () => {
