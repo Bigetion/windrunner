@@ -1,0 +1,46 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0f172a;
+  --bg2:      #1e293b;
+  --bg3:      #334155;
+  --border:   #334155;
+  --text:     #f1f5f9;
+  --text-2:   #94a3b8;
+  --text-3:   #64748b;
+  --accent:   #38bdf8;
+  --pass:     #4ade80;
+  --fail:     #f87171;
+  --warn:     #fbbf24;
+  --sidebar-w: 240px;
+  --header-h:  52px;
+}
+[data-theme="light"] {
+  --bg:       #f8fafc;
+  --bg2:      #ffffff;
+  --bg3:      #e2e8f0;
+  --border:   #e2e8f0;
+  --text:     #0f172a;
+  --text-2:   #475569;
+  --text-3:   #94a3b8;
+  --accent:   #0ea5e9;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 4px; }
+
+/* Demo box styles used across pages */
+.demo     { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; overflow: auto; margin-bottom: 1.5rem; }
+.demo-row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-start; }
+.demo-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.label    { font-family: ui-monospace, monospace; font-size: 0.65rem; color: var(--text-3); text-align: center; white-space: nowrap; }
+.ph       { background: var(--accent); border-radius: 5px; opacity: 0.85; }

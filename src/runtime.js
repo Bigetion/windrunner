@@ -139,6 +139,13 @@ export function createWindrunner(options = {}) {
     element.classList.forEach((className) => processClassName(className));
   };
 
+  const processElementTree = (element) => {
+    if (!element || element.nodeType !== 1) return;
+    processElement(element);
+    const children = element.querySelectorAll ? element.querySelectorAll("[class]") : [];
+    children.forEach((child) => processElement(child));
+  };
+
   const processClassList = (classList) => {
     if (!classList) return [];
 
@@ -158,14 +165,14 @@ export function createWindrunner(options = {}) {
 
   const scan = (root = document) => {
     if (typeof document !== "object" || !root) return;
-    if (root.nodeType === 1 && root.classList) processElement(root);
+    if (root.nodeType === 1) processElementTree(root);
     const elements = root.querySelectorAll ? root.querySelectorAll("[class]") : [];
     elements.forEach((element) => processElement(element));
   };
 
   const flushQueue = () => {
     scheduled = false;
-    pendingElements.forEach((element) => processElement(element));
+    pendingElements.forEach((element) => processElementTree(element));
     pendingElements.clear();
   };
 
