@@ -52,6 +52,7 @@ export const JUSTIFY_CONTENT_MAP = {
 };
 
 export const JUSTIFY_ITEMS_MAP = {
+  normal: "justify-items: normal;",
   start: "justify-items: start;",
   end: "justify-items: end;",
   center: "justify-items: center;",

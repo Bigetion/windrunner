@@ -135,6 +135,7 @@ export const BREAK_AFTER_MAP = {
   "avoid-page": "break-after: avoid-page;",
   "avoid-column": "break-after: avoid-column;",
   page: "break-after: page;",
+  all: "break-after: all;",
   left: "break-after: left;",
   right: "break-after: right;",
   recto: "break-after: recto;",

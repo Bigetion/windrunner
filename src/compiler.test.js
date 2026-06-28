@@ -96,6 +96,8 @@ describe("compiler", () => {
       expect(compileRuntimeClassNameWithContext("z-10", layoutContext)).toBe(".z-10 { z-index: 10; }");
       expect(compileRuntimeClassNameWithContext("-z-10", layoutContext)).toBe(".-z-10 { z-index: -10; }");
       expect(compileRuntimeClassNameWithContext("break-after-page", layoutContext)).toBe(".break-after-page { break-after: page; }");
+      expect(compileRuntimeClassNameWithContext("break-after-all", layoutContext)).toBe(".break-after-all { break-after: all; }");
+      expect(compileRuntimeClassNameWithContext("justify-items-normal", layoutContext)).toBe(".justify-items-normal { justify-items: normal; }");
       expect(compileRuntimeClassNameWithContext("box-decoration-break-clone", layoutContext)).toBe(".box-decoration-break-clone { box-decoration-break: clone; }");
       expect(compileRuntimeClassNameWithContext("size-4", layoutContext)).toBe(".size-4 { width: 1rem; height: 1rem; }");
       expect(compileRuntimeClassNameWithContext("content-[hello]", layoutContext)).toBe(".content-\\[hello\\] { content: hello; }");
