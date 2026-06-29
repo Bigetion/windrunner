@@ -32,10 +32,31 @@ import {
 } from "./builders/misc.js";
 import { buildBlendingDeclaration } from "./builders/blending.js";
 import { buildSpaceBetweenDeclaration, buildDivideDeclaration, isChildScoped } from "./builders/space-divide.js";
+import { PluginRegistry, isPlugin } from "./plugins.js";
 
 // ─── Master compile dispatcher ────────────────────────────────────────────────
 
-function compileBaseToken(baseToken, theme) {
+function compileBaseToken(baseToken, theme, pluginRegistry) {
+  // Check custom utilities first (plugins have priority)
+  if (pluginRegistry) {
+    const pluginMatch = pluginRegistry.matchUtility(baseToken);
+    if (pluginMatch) {
+      const { handler, match } = pluginMatch;
+      try {
+        // Handler can be a function or string
+        if (typeof handler === 'function') {
+          const result = handler(match, theme);
+          if (result) return result;
+        } else if (typeof handler === 'string') {
+          return handler;
+        }
+      } catch (error) {
+        console.warn(`[Windrunner] Plugin utility handler error for "${baseToken}":`, error);
+      }
+    }
+  }
+  
+  // Fall through to built-in utilities
   return (
     buildLayoutDeclaration(baseToken, theme) ||
     buildPositionInsetDeclaration(baseToken, theme) ||
@@ -76,10 +97,27 @@ function compileBaseToken(baseToken, theme) {
 
 // ─── Variant & selector logic ─────────────────────────────────────────────────
 
-function applyVariants(selector, variants) {
+function applyVariants(selector, variants, pluginRegistry) {
   let currentSelector = selector;
 
   for (const variant of variants) {
+    // Check custom variants first (plugins have priority)
+    if (pluginRegistry) {
+      const customHandler = pluginRegistry.matchVariant(variant);
+      if (customHandler) {
+        try {
+          const result = customHandler(currentSelector);
+          if (result) {
+            currentSelector = result;
+            continue;
+          }
+        } catch (error) {
+          console.warn(`[Windrunner] Plugin variant handler error for "${variant}":`, error);
+        }
+      }
+    }
+    
+    // Built-in variants
     switch (variant) {
       case "dark":          currentSelector = `.dark ${currentSelector}`; break;
       case "hover":         currentSelector = `${currentSelector}:hover`; break;
@@ -150,11 +188,43 @@ function applyVariants(selector, variants) {
 
 export function resolveRuntimeContext(options = {}) {
   const config = getConfigOptions(options, []);
+  const pluginRegistry = new PluginRegistry();
+  
+  // Load plugins from options
+  if (options.plugins && Array.isArray(options.plugins)) {
+    options.plugins.forEach(pluginDef => {
+      if (isPlugin(pluginDef)) {
+        try {
+          pluginDef.handler({
+            addUtility: (pattern, handler) => pluginRegistry.addUtility(pattern, handler),
+            addUtilities: (utilities) => pluginRegistry.addUtilities(utilities),
+            addVariant: (name, handler) => pluginRegistry.addVariant(name, handler),
+            addVariants: (variants) => pluginRegistry.addVariants(variants),
+            theme: (key) => {
+              if (!key) return config.theme || {};
+              const keys = key.split('.');
+              let value = config.theme || {};
+              for (const k of keys) {
+                value = value[k];
+                if (value === undefined) break;
+              }
+              return value;
+            },
+            config: () => config,
+          });
+        } catch (error) {
+          console.error('[Windrunner] Plugin initialization error:', error);
+        }
+      }
+    });
+  }
+  
   return {
     config,
     theme: config.theme || {},
     screens: (config.theme && config.theme.screens) || config.screens || {},
     containers: (config.theme && config.theme.containers) || config.containers || {},
+    plugins: pluginRegistry,
   };
 }
 
@@ -215,11 +285,11 @@ export function compileRuntimeClassNameWithContext(className, context) {
   const parsed = parseClass(className, context.screens, context.containers);
   if (!parsed) return "";
 
-  const declaration = compileBaseToken(parsed.baseToken, context.theme);
+  const declaration = compileBaseToken(parsed.baseToken, context.theme, context.plugins);
   if (!declaration) return "";
 
   const selector = `.${escapeCssIdentifier(parsed.original)}`;
-  const variantSelector = applyVariants(selector, parsed.variants);
+  const variantSelector = applyVariants(selector, parsed.variants, context.plugins);
   if (!variantSelector) return "";
 
   const finalDeclaration = appendImportant(
