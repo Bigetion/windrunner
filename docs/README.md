@@ -20,6 +20,7 @@ Welcome to the Windrunner documentation! This guide will help you get started wi
 - [FOUC Prevention](./guides/fouc-prevention.md) - Prevent flash of unstyled content
 - [Performance Optimization](./guides/performance.md) - Tips for production-grade performance
 - [Dark Mode](./guides/dark-mode.md) - Implementing dark mode properly
+- [Plugin System](./guides/plugins.md) - **NEW** Create custom utilities and variants
 - [Migration Guide](./guides/migration.md) - Migrate from traditional Tailwind or Play CDN
 - [Troubleshooting](./guides/troubleshooting.md) - Common issues and solutions
 
