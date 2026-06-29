@@ -9,8 +9,12 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Required for provenance
     steps:
       - uses: actions/checkout@v4
+      
       - name: Use Node.js 24
         uses: actions/setup-node@v4
         with:
@@ -20,18 +24,40 @@ jobs:
       - name: Validate NPM token
         run: |
           if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
-            echo "ERROR: NPM_TOKEN secret is not configured in repository settings.";
+            echo "❌ ERROR: NPM_TOKEN secret is not configured in repository settings.";
+            echo "Please add your npm token to GitHub Secrets:";
+            echo "1. Go to https://github.com/${{ github.repository }}/settings/secrets/actions";
+            echo "2. Click 'New repository secret'";
+            echo "3. Name: NPM_TOKEN";
+            echo "4. Value: Your npm token from https://www.npmjs.com/settings/tokens";
             exit 1;
           fi
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Run tests
+        run: npm test
+
       - name: Build
         run: npm run build
 
-      - name: Publish package
+      - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm publish --access public
+          echo "📦 Publishing windrunner@$(node -p "require('./package.json').version") to npm..."
+          npm publish --access public --provenance
+          echo "✅ Published successfully!"
+      
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md) for details.
+          draft: false
+          prerelease: false
