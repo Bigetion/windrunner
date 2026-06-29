@@ -54,6 +54,25 @@ describe("compiler", () => {
     expect(css).toBe("@media (min-width: 768px) { .md\\:flex { display: flex; } }");
   });
 
+  it("supports the backdrop pseudo-element variant", () => {
+    const css = compileRuntimeClassNameWithContext("backdrop:bg-black/50", {
+      theme: { colors: { black: "#000000" } },
+      screens: {},
+      containers: {},
+    });
+
+    expect(css).toContain("::backdrop");
+    expect(css).toContain("background-color: color-mix");
+  });
+
+  it("supports additional Tailwind-style pseudo-class and pseudo-element variants", () => {
+    expect(compileRuntimeClassNameWithContext("target:flex", baseContext)).toContain(":target");
+    expect(compileRuntimeClassNameWithContext("enabled:flex", baseContext)).toContain(":enabled");
+    expect(compileRuntimeClassNameWithContext("placeholder-shown:flex", baseContext)).toContain(":placeholder-shown");
+    expect(compileRuntimeClassNameWithContext("first-letter:flex", baseContext)).toContain("::first-letter");
+    expect(compileRuntimeClassNameWithContext("file:flex", baseContext)).toContain("::file-selector-button");
+  });
+
   describe("layout utilities", () => {
     const context = resolveRuntimeContext();
 
