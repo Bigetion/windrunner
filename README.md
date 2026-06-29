@@ -235,6 +235,47 @@ windrunner({ autoStart: true, preflight: false });
 | Plugins | ✗ | ✓ |
 | Full utility coverage | ✓ | ✓ |
 
+## 📚 Documentation
+
+**New to Windrunner?** Start here:
+
+- **[Quick Start Guide](./docs/getting-started/quick-start.md)** - Get running in 5 minutes
+- **[React Integration](./docs/frameworks/react.md)** - Best practices for React apps
+- **[FOUC Prevention](./docs/guides/fouc-prevention.md)** - 5 strategies to prevent flash of unstyled content
+- **[Full Documentation](./docs/)** - Complete guides, API reference, and recipes
+
+### Example Projects
+
+Learn by example with our sample applications:
+
+1. **[Landing Page](./examples/landing.html)** - Modern marketing page with animations
+2. **[Todo App](./examples/todo-app/)** - React app with dark mode and local storage
+3. **[Coverage Demo](./examples/coverage/)** - Showcase of utility class coverage
+
+## When to Use Windrunner
+
+✅ **Perfect for:**
+- Rapid prototyping and MVPs
+- Landing pages and marketing sites
+- Internal tools and dashboards
+- No-code platforms (Webflow, WordPress, etc.)
+- Projects without build tooling
+- Learning Tailwind v4
+
+⚠️ **Consider traditional Tailwind for:**
+- Large production apps with strict performance budgets
+- SEO-critical pages (requires FOUC prevention)
+- Projects already using PostCSS/build tools
+- Enterprise applications requiring battle-tested solutions
+
+See the [documentation](./docs/) for detailed use case analysis and migration guides.
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
+Found a bug? Have a feature request? [Open an issue](https://github.com/Bigetion/windrunner/issues/new).
+
 ## License
 
 ISC
