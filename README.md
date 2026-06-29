@@ -101,6 +101,7 @@ Auto-start mode. Scans DOM and begins observing immediately.
 windrunner({
   id?: string,            // style tag id, default: "tailwind-runtime-css"
   autoStart?: boolean,    // default: true
+  plugins?: Plugin[],     // custom plugins (see Plugin System)
   theme?: {               // override/extend theme values
     extend: {
       colors: { brand: "#ff6b6b" }
@@ -108,6 +109,52 @@ windrunner({
   }
 })
 ```
+
+### Plugin System (NEW in v1.1.0)
+
+Create custom utilities and variants:
+
+```js
+import { windrunner, plugin } from 'windrunner';
+
+// Define a plugin
+const myPlugin = plugin(({ addUtility, addVariant, theme }) => {
+  // Add custom utility
+  addUtility('glass', 'backdrop-filter: blur(10px); background: rgba(255,255,255,0.1);');
+  
+  // Add pattern-based utility
+  addUtility(/^text-stroke-(\d+)$/, (match) => {
+    return `-webkit-text-stroke-width: ${match[1]}px;`;
+  });
+  
+  // Add custom variant
+  addVariant('parent-hover', (selector) => `.parent:hover ${selector}`);
+  
+  // Access theme
+  const colors = theme('colors');
+  addUtility('brand-bg', `background-color: ${colors.brand};`);
+});
+
+// Use the plugin
+windrunner({
+  autoStart: true,
+  plugins: [myPlugin]
+});
+```
+
+See [Plugin Examples](./examples/plugins/) for ready-to-use plugins:
+- **text-stroke** - Text outline effects
+- **glass-morphism** - Glassmorphism effects  
+- **custom-variants** - parent-hover, loading, and more
+
+**Plugin API:**
+- `addUtility(pattern, handler)` - Add custom utility
+- `addUtilities(utilities)` - Add multiple utilities
+- `addVariant(name, handler)` - Add custom variant
+- `theme(key)` - Access theme values
+- `config()` - Access full configuration
+
+Full plugin documentation: [Plugin System Guide](./docs/guides/plugins.md) (coming soon)
 
 ### `createWindrunner(options?)`
 
