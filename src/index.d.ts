@@ -1,3 +1,31 @@
+// ─── Plugin Types ─────────────────────────────────────────────────────────────
+
+export interface PluginAPI {
+  addUtility(pattern: string | RegExp, handler: string | ((match: RegExpMatchArray, theme: any) => string)): void;
+  addUtilities(utilities: Record<string, string | ((match: RegExpMatchArray, theme: any) => string)>): void;
+  addVariant(name: string, handler: (selector: string) => string): void;
+  addVariants(variants: Record<string, (selector: string) => string>): void;
+  theme(key?: string): any;
+  config(): any;
+}
+
+export interface Plugin {
+  __isWindrunnerPlugin: true;
+  handler: (api: PluginAPI) => void;
+}
+
+export function plugin(handler: (api: PluginAPI) => void): Plugin;
+
+export function defineUtilities(definitions: Record<string, string | Record<string, string>>): Record<string, string>;
+
+export function defineResponsiveUtilities(
+  base: string,
+  values: Record<string, string>,
+  toDeclaration: (key: string, value: string) => string
+): Record<string, string>;
+
+// ─── Runtime Options with Plugins ─────────────────────────────────────────────
+
 export interface WindrunnerOptions {
   id?: string;
   autoStart?: boolean;
@@ -6,6 +34,7 @@ export interface WindrunnerOptions {
   compatStyleId?: string;
   compatGenerateCss?: (options: Record<string, any>) => string;
   theme?: Record<string, any>;
+  plugins?: Plugin[];
   onReady?: () => void;
   [key: string]: any;
 }

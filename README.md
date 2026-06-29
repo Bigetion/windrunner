@@ -101,6 +101,7 @@ Auto-start mode. Scans DOM and begins observing immediately.
 windrunner({
   id?: string,            // style tag id, default: "tailwind-runtime-css"
   autoStart?: boolean,    // default: true
+  plugins?: Plugin[],     // custom plugins (see Plugin System)
   theme?: {               // override/extend theme values
     extend: {
       colors: { brand: "#ff6b6b" }
@@ -108,6 +109,52 @@ windrunner({
   }
 })
 ```
+
+### Plugin System (NEW in v1.1.0)
+
+Create custom utilities and variants:
+
+```js
+import { windrunner, plugin } from 'windrunner';
+
+// Define a plugin
+const myPlugin = plugin(({ addUtility, addVariant, theme }) => {
+  // Add custom utility
+  addUtility('glass', 'backdrop-filter: blur(10px); background: rgba(255,255,255,0.1);');
+  
+  // Add pattern-based utility
+  addUtility(/^text-stroke-(\d+)$/, (match) => {
+    return `-webkit-text-stroke-width: ${match[1]}px;`;
+  });
+  
+  // Add custom variant
+  addVariant('parent-hover', (selector) => `.parent:hover ${selector}`);
+  
+  // Access theme
+  const colors = theme('colors');
+  addUtility('brand-bg', `background-color: ${colors.brand};`);
+});
+
+// Use the plugin
+windrunner({
+  autoStart: true,
+  plugins: [myPlugin]
+});
+```
+
+See [Plugin Examples](./examples/plugins/) for ready-to-use plugins:
+- **text-stroke** - Text outline effects
+- **glass-morphism** - Glassmorphism effects  
+- **custom-variants** - parent-hover, loading, and more
+
+**Plugin API:**
+- `addUtility(pattern, handler)` - Add custom utility
+- `addUtilities(utilities)` - Add multiple utilities
+- `addVariant(name, handler)` - Add custom variant
+- `theme(key)` - Access theme values
+- `config()` - Access full configuration
+
+Full plugin documentation: [Plugin System Guide](./docs/guides/plugins.md) (coming soon)
 
 ### `createWindrunner(options?)`
 
@@ -234,6 +281,47 @@ windrunner({ autoStart: true, preflight: false });
 | FOUC prevention | ✓ (onReady) | ✗ |
 | Plugins | ✗ | ✓ |
 | Full utility coverage | ✓ | ✓ |
+
+## 📚 Documentation
+
+**New to Windrunner?** Start here:
+
+- **[Quick Start Guide](./docs/getting-started/quick-start.md)** - Get running in 5 minutes
+- **[React Integration](./docs/frameworks/react.md)** - Best practices for React apps
+- **[FOUC Prevention](./docs/guides/fouc-prevention.md)** - 5 strategies to prevent flash of unstyled content
+- **[Full Documentation](./docs/)** - Complete guides, API reference, and recipes
+
+### Example Projects
+
+Learn by example with our sample applications:
+
+1. **[Landing Page](./examples/landing.html)** - Modern marketing page with animations
+2. **[Todo App](./examples/todo-app/)** - React app with dark mode and local storage
+3. **[Coverage Demo](./examples/coverage/)** - Showcase of utility class coverage
+
+## When to Use Windrunner
+
+✅ **Perfect for:**
+- Rapid prototyping and MVPs
+- Landing pages and marketing sites
+- Internal tools and dashboards
+- No-code platforms (Webflow, WordPress, etc.)
+- Projects without build tooling
+- Learning Tailwind v4
+
+⚠️ **Consider traditional Tailwind for:**
+- Large production apps with strict performance budgets
+- SEO-critical pages (requires FOUC prevention)
+- Projects already using PostCSS/build tools
+- Enterprise applications requiring battle-tested solutions
+
+See the [documentation](./docs/) for detailed use case analysis and migration guides.
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
+Found a bug? Have a feature request? [Open an issue](https://github.com/Bigetion/windrunner/issues/new).
 
 ## License
 
