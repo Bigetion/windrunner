@@ -9,6 +9,9 @@ const shared = {
   entryPoints: ["src/index.js"],
   bundle: true,
   platform: "neutral",
+  target: "es2020", // More aggressive optimizations for modern browsers
+  treeShaking: true,
+  legalComments: "none", // Remove comments to save bytes
 };
 
 // ESM
@@ -31,6 +34,10 @@ await esbuild.build({
   ...shared,
   format: "esm",
   minify: true,
+  minifyIdentifiers: true,
+  minifySyntax: true,
+  minifyWhitespace: true,
+  mangleProps: /^_internal/, // Mangle private properties for extra size reduction
   outfile: "dist/index.min.js",
 });
 

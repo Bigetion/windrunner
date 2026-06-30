@@ -1,3 +1,11 @@
+import {
+  TIME_VALUE_WITH_UNIT_REGEX,
+  TIME_VALUE_NUMERIC_REGEX,
+  CSS_ESCAPE_BACKSLASH_REGEX,
+  CSS_ESCAPE_SPECIAL_CHARS_REGEX,
+  CSS_ESCAPE_LEADING_DIGIT_REGEX,
+} from "./constants.js";
+
 // ─── Arbitrary value ─────────────────────────────────────────────────────────
 
 export function resolveArbitraryValue(valueKey) {
@@ -24,8 +32,8 @@ export function resolveThemeValue(scale, valueKey) {
 export function resolveTimeValue(valueKey) {
   const arbitrary = resolveArbitraryValue(valueKey);
   if (arbitrary !== undefined) return arbitrary;
-  if (/^\d+(?:\.\d+)?(?:ms|s)$/.test(valueKey)) return valueKey;
-  if (/^\d+(?:\.\d+)?$/.test(valueKey)) return `${valueKey}ms`;
+  if (TIME_VALUE_WITH_UNIT_REGEX.test(valueKey)) return valueKey;
+  if (TIME_VALUE_NUMERIC_REGEX.test(valueKey)) return `${valueKey}ms`;
   return undefined;
 }
 
@@ -75,12 +83,18 @@ export function resolveColorWithOpacity(colors, rawKey) {
 
   // Arbitrary opacity e.g. /[0.35]
   const arbOpacity = resolveArbitraryValue(opacityStr);
-  const opacityVal = arbOpacity !== undefined
-    ? arbOpacity
-    : String(parseFloat(opacityStr) / 100);
+  if (arbOpacity !== undefined) {
+    const opacityVal = parseFloat(arbOpacity);
+    if (isNaN(opacityVal)) return undefined;
+    // If arbitrary opacity is already 0-1, use as-is; if >1, treat as percentage
+    const finalOpacity = opacityVal <= 1 ? opacityVal * 100 : opacityVal;
+    return `color-mix(in oklch, ${color} ${finalOpacity}%, transparent)`;
+  }
 
-  if (!opacityVal || opacityVal === "NaN") return undefined;
-  return `color-mix(in oklch, ${color} ${parseFloat(opacityStr)}%, transparent)`;
+  // Numeric opacity (0-100 scale)
+  const opacityNum = parseFloat(opacityStr);
+  if (isNaN(opacityNum)) return undefined;
+  return `color-mix(in oklch, ${color} ${opacityNum}%, transparent)`;
 }
 
 // ─── CSS identifier escaping ──────────────────────────────────────────────────
@@ -90,9 +104,9 @@ export function escapeCssIdentifier(value) {
     return CSS.escape(value);
   }
   return String(value)
-    .replace(/\\/g, "\\\\")
-    .replace(/([ !"#$%&'()*+,./:;<=>?@[\\\]^`{|}~])/g, "\\$1")
-    .replace(/^(\d)/, "\\3$1 ");
+    .replace(CSS_ESCAPE_BACKSLASH_REGEX, "\\\\")
+    .replace(CSS_ESCAPE_SPECIAL_CHARS_REGEX, "\\$1")
+    .replace(CSS_ESCAPE_LEADING_DIGIT_REGEX, "\\3$1 ");
 }
 
 // ─── !important appender ──────────────────────────────────────────────────────

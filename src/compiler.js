@@ -34,29 +34,210 @@ import { buildBlendingDeclaration } from "./builders/blending.js";
 import { buildSpaceBetweenDeclaration, buildDivideDeclaration, isChildScoped } from "./builders/space-divide.js";
 import { PluginRegistry, isPlugin } from "./plugins.js";
 
-// ─── Master compile dispatcher ────────────────────────────────────────────────
+// ─── Prefix-based Router for Performance ──────────────────────────────────────
 
-function compileBaseToken(baseToken, theme, pluginRegistry) {
-  // Check custom utilities first (plugins have priority)
-  if (pluginRegistry) {
-    const pluginMatch = pluginRegistry.matchUtility(baseToken);
-    if (pluginMatch) {
-      const { handler, match } = pluginMatch;
-      try {
-        // Handler can be a function or string
-        if (typeof handler === 'function') {
-          const result = handler(match, theme);
-          if (result) return result;
-        } else if (typeof handler === 'string') {
-          return handler;
-        }
-      } catch (error) {
-        console.warn(`[Windrunner] Plugin utility handler error for "${baseToken}":`, error);
-      }
-    }
+/**
+ * Router map: prefix → array of relevant builder functions
+ * This allows us to only check relevant builders instead of all 30+ functions
+ */
+const PREFIX_ROUTER = {
+  // Layout & Display
+  "block": [buildLayoutDeclaration],
+  "inline": [buildLayoutDeclaration],
+  "flex": [buildFlexGridDeclaration, buildLayoutDeclaration],
+  "grid": [buildFlexGridDeclaration, buildLayoutDeclaration],
+  "hidden": [buildLayoutDeclaration],
+  "table": [buildLayoutDeclaration],
+  "flow": [buildLayoutDeclaration],
+  
+  // Position
+  "static": [buildLayoutDeclaration],
+  "fixed": [buildLayoutDeclaration],
+  "absolute": [buildLayoutDeclaration],
+  "relative": [buildLayoutDeclaration],
+  "sticky": [buildLayoutDeclaration],
+  "inset": [buildPositionInsetDeclaration, buildInsetShadowDeclaration, buildInsetRingDeclaration],
+  "top": [buildPositionInsetDeclaration],
+  "right": [buildPositionInsetDeclaration],
+  "bottom": [buildPositionInsetDeclaration],
+  "left": [buildPositionInsetDeclaration],
+  "start": [buildPositionInsetDeclaration],
+  "end": [buildPositionInsetDeclaration],
+  "z": [buildLayoutDeclaration],
+  
+  // Spacing
+  "m": [buildSpacingDeclaration],
+  "mx": [buildSpacingDeclaration],
+  "my": [buildSpacingDeclaration],
+  "mt": [buildSpacingDeclaration],
+  "mr": [buildSpacingDeclaration],
+  "mb": [buildSpacingDeclaration],
+  "ml": [buildSpacingDeclaration],
+  "ms": [buildSpacingDeclaration],
+  "me": [buildSpacingDeclaration],
+  "p": [buildSpacingDeclaration],
+  "px": [buildSpacingDeclaration],
+  "py": [buildSpacingDeclaration],
+  "pt": [buildSpacingDeclaration],
+  "pr": [buildSpacingDeclaration],
+  "pb": [buildSpacingDeclaration],
+  "pl": [buildSpacingDeclaration],
+  "ps": [buildSpacingDeclaration],
+  "pe": [buildSpacingDeclaration],
+  "space": [buildSpaceBetweenDeclaration],
+  
+  // Sizing
+  "w": [buildDimensionDeclaration],
+  "h": [buildDimensionDeclaration],
+  "min": [buildDimensionDeclaration],
+  "max": [buildDimensionDeclaration],
+  "size": [buildDimensionDeclaration],
+  
+  // Typography
+  "text": [buildTypographyDeclaration, buildColorDeclaration],
+  "font": [buildTypographyDeclaration],
+  "leading": [buildTypographyDeclaration],
+  "tracking": [buildTypographyDeclaration],
+  "line": [buildTypographyDeclaration],
+  "whitespace": [buildTypographyDeclaration],
+  "break": [buildTypographyDeclaration],
+  "hyphens": [buildTypographyDeclaration],
+  "list": [buildTypographyDeclaration],
+  "italic": [buildTypographyDeclaration],
+  "underline": [buildTypographyDeclaration],
+  "overline": [buildTypographyDeclaration],
+  "uppercase": [buildTypographyDeclaration],
+  "lowercase": [buildTypographyDeclaration],
+  "capitalize": [buildTypographyDeclaration],
+  "normal": [buildTypographyDeclaration, buildLayoutDeclaration],
+  "truncate": [buildTypographyDeclaration],
+  
+  // Colors & Backgrounds
+  "bg": [buildBackgroundDeclaration, buildColorDeclaration, buildGradientDeclaration],
+  "from": [buildGradientDeclaration],
+  "via": [buildGradientDeclaration],
+  "to": [buildGradientDeclaration],
+  "fill": [buildColorDeclaration],
+  "stroke": [buildColorDeclaration],
+  
+  // Borders
+  "border": [buildBorderDeclaration, buildColorDeclaration],
+  "rounded": [buildBorderRadiusDeclaration],
+  "divide": [buildDivideDeclaration],
+  
+  // Effects
+  "shadow": [buildShadowDeclaration, buildTextShadowDeclaration],
+  "opacity": [buildOpacityDeclaration],
+  "ring": [buildRingDeclaration, buildRingOffsetDeclaration],
+  
+  // Transforms
+  "scale": [buildTransformDeclaration],
+  "rotate": [buildTransformDeclaration],
+  "translate": [buildTransformDeclaration],
+  "skew": [buildTransformDeclaration],
+  "origin": [buildTransformDeclaration],
+  "transform": [buildTransformDeclaration],
+  
+  // Filters
+  "blur": [buildFilterDeclaration],
+  "brightness": [buildFilterDeclaration],
+  "contrast": [buildFilterDeclaration],
+  "grayscale": [buildFilterDeclaration],
+  "hue": [buildFilterDeclaration],
+  "invert": [buildFilterDeclaration],
+  "saturate": [buildFilterDeclaration],
+  "sepia": [buildFilterDeclaration],
+  "drop": [buildFilterDeclaration],
+  "backdrop": [buildFilterDeclaration],
+  
+  // Transitions & Animations
+  "transition": [buildTransitionDeclaration],
+  "duration": [buildTransitionDeclaration],
+  "ease": [buildTransitionDeclaration],
+  "delay": [buildTransitionDeclaration],
+  "animate": [buildAnimationDeclaration],
+  
+  // Interactivity
+  "cursor": [buildInteractivityDeclaration],
+  "pointer": [buildInteractivityDeclaration],
+  "resize": [buildInteractivityDeclaration],
+  "select": [buildInteractivityDeclaration],
+  "appearance": [buildInteractivityDeclaration],
+  "outline": [buildColorDeclaration, buildInteractivityDeclaration],
+  "caret": [buildColorDeclaration],
+  "accent": [buildColorDeclaration],
+  
+  // Flexbox & Grid specific
+  "items": [buildFlexGridDeclaration],
+  "justify": [buildFlexGridDeclaration],
+  "place": [buildFlexGridDeclaration],
+  "content": [buildFlexGridDeclaration, buildTypographyDeclaration],
+  "self": [buildFlexGridDeclaration],
+  "order": [buildFlexGridDeclaration],
+  "gap": [buildGapDeclaration],
+  "grow": [buildFlexGridDeclaration],
+  "shrink": [buildFlexGridDeclaration],
+  "basis": [buildFlexGridDeclaration],
+  "cols": [buildFlexGridDeclaration],
+  "rows": [buildFlexGridDeclaration],
+  "col": [buildFlexGridDeclaration],
+  "row": [buildFlexGridDeclaration],
+  "auto": [buildFlexGridDeclaration, buildLayoutDeclaration],
+  
+  // Misc
+  "overflow": [buildLayoutDeclaration],
+  "overscroll": [buildInteractivityDeclaration],
+  "scroll": [buildScrollSnapDeclaration, buildInteractivityDeclaration],
+  "snap": [buildScrollSnapDeclaration],
+  "touch": [buildInteractivityDeclaration],
+  "will": [buildInteractivityDeclaration],
+  "mix": [buildBlendingDeclaration],
+  "blend": [buildBlendingDeclaration],
+  "isolation": [buildLayoutDeclaration],
+  "object": [buildLayoutDeclaration],
+  "container": [buildContainerQueryDeclaration],
+  "columns": [buildLayoutDeclaration],
+  "aspect": [buildLayoutDeclaration],
+  "clear": [buildLayoutDeclaration],
+  "float": [buildLayoutDeclaration],
+  "box": [buildLayoutDeclaration],
+  "visible": [buildLayoutDeclaration],
+  "invisible": [buildLayoutDeclaration],
+  "collapse": [buildLayoutDeclaration],
+  "mask": [buildMaskDeclaration],
+  "forced": [buildForcedColorDeclaration],
+  "field": [buildInteractivityDeclaration],
+  "placeholder": [buildColorDeclaration],
+  "sr": [buildAccessibilityDeclaration],
+  "not": [buildAccessibilityDeclaration],
+};
+
+/**
+ * Extract the prefix from a utility class token.
+ * Examples: "bg-blue-500" → "bg", "text-xl" → "text", "mt-4" → "mt"
+ */
+function extractPrefix(token) {
+  // Handle single-word utilities (flex, block, etc.)
+  const dashIndex = token.indexOf("-");
+  if (dashIndex === -1) return token;
+  
+  // Handle multi-dash prefixes (min-w, max-h, etc.)
+  const prefix = token.slice(0, dashIndex);
+  
+  // Check for two-part prefixes
+  const secondDashIndex = token.indexOf("-", dashIndex + 1);
+  if (secondDashIndex !== -1) {
+    const twoPartPrefix = token.slice(0, secondDashIndex);
+    if (PREFIX_ROUTER[twoPartPrefix]) return twoPartPrefix;
   }
   
-  // Fall through to built-in utilities
+  return prefix;
+}
+
+/**
+ * Fallback: check all builders (for utilities not in router or edge cases)
+ */
+function checkAllBuilders(baseToken, theme) {
   return (
     buildLayoutDeclaration(baseToken, theme) ||
     buildPositionInsetDeclaration(baseToken, theme) ||
@@ -93,6 +274,43 @@ function compileBaseToken(baseToken, theme, pluginRegistry) {
     buildZoomDeclaration(baseToken, theme) ||
     buildForcedColorDeclaration(baseToken)
   );
+}
+
+// ─── Master compile dispatcher ────────────────────────────────────────────────
+
+function compileBaseToken(baseToken, theme, pluginRegistry) {
+  // Check custom utilities first (plugins have priority)
+  if (pluginRegistry) {
+    const pluginMatch = pluginRegistry.matchUtility(baseToken);
+    if (pluginMatch) {
+      const { handler, match } = pluginMatch;
+      try {
+        // Handler can be a function or string
+        if (typeof handler === 'function') {
+          const result = handler(match, theme);
+          if (result) return result;
+        } else if (typeof handler === 'string') {
+          return handler;
+        }
+      } catch (error) {
+        console.warn(`[Windrunner] Plugin utility handler error for "${baseToken}":`, error);
+      }
+    }
+  }
+  
+  // Fast path: use prefix router to only check relevant builders
+  const prefix = extractPrefix(baseToken);
+  const builders = PREFIX_ROUTER[prefix];
+  
+  if (builders) {
+    for (let i = 0; i < builders.length; i += 1) {
+      const result = builders[i](baseToken, theme);
+      if (result) return result;
+    }
+  }
+  
+  // Fallback: check all builders for edge cases or utilities not in router
+  return checkAllBuilders(baseToken, theme);
 }
 
 // ─── Variant & selector logic ─────────────────────────────────────────────────
@@ -233,6 +451,32 @@ export function getBaseTailwindOptions(options = {}) {
   return tailwindOptions;
 }
 
+// ─── Parse Cache for Performance ──────────────────────────────────────────────
+
+/**
+ * Cache for parsed class structures to avoid re-parsing the same class names.
+ * Key: className + screens/containers hash
+ * Value: parsed class object
+ */
+const parseCache = new Map();
+const PARSE_CACHE_MAX_SIZE = 2000; // Limit cache size to prevent memory bloat
+
+/**
+ * Generate a simple cache key from screens and containers config.
+ * Most apps use a single config, so this will be the same for all classes.
+ */
+function getConfigHash(screens, containers) {
+  // For performance, we assume most calls use the same config
+  // Just check if both are empty objects (common case)
+  const screensEmpty = !screens || Object.keys(screens).length === 0;
+  const containersEmpty = !containers || Object.keys(containers).length === 0;
+  
+  if (screensEmpty && containersEmpty) return "default";
+  
+  // For non-empty configs, create a simple hash
+  return `${Object.keys(screens || {}).join(",")}|${Object.keys(containers || {}).join(",")}`;
+}
+
 // ─── Class parser ─────────────────────────────────────────────────────────────
 
 /**
@@ -250,6 +494,15 @@ export function parseClass(className, screens = {}, containers = {}) {
   const token = className.trim();
   if (!token) return null;
 
+  // Check cache first
+  const configHash = getConfigHash(screens, containers);
+  const cacheKey = `${token}:${configHash}`;
+  
+  if (parseCache.has(cacheKey)) {
+    return parseCache.get(cacheKey);
+  }
+
+  // Parse the class
   const important = token.startsWith("!");
   const normalized = important ? token.slice(1) : token;
   const parts = splitByVariantDelimiter(normalized);
@@ -276,7 +529,17 @@ export function parseClass(className, screens = {}, containers = {}) {
     variants.push(part);
   }
 
-  return { original: token, baseToken, variants, breakpoint, containerBreakpoint, important, starting };
+  const result = { original: token, baseToken, variants, breakpoint, containerBreakpoint, important, starting };
+  
+  // Store in cache with size limit
+  if (parseCache.size >= PARSE_CACHE_MAX_SIZE) {
+    // Remove oldest entry (first item in Map)
+    const firstKey = parseCache.keys().next().value;
+    parseCache.delete(firstKey);
+  }
+  parseCache.set(cacheKey, result);
+  
+  return result;
 }
 
 // ─── Core compile function ────────────────────────────────────────────────────
