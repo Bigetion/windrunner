@@ -110,38 +110,40 @@ export function escapeCssIdentifier(value) {
 }
 
 // ─── !important appender ──────────────────────────────────────────────────────
+// Optimized: uses single regex replace instead of multiple array operations
 
 export function appendImportant(declaration, isImportant) {
   if (!isImportant) return declaration;
-  const entries = declaration
-    .split(";")
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .map((item) => (item.includes("!important") ? item : `${item} !important`));
-  return `${entries.join("; ")};`;
+  // Match CSS declarations and append !important if not already present
+  // Regex captures declaration content before semicolon
+  return declaration.replace(/([^;{}]+);/g, (match, decl) => {
+    const trimmed = decl.trim();
+    if (!trimmed || trimmed.includes("!important")) return match;
+    return `${trimmed} !important;`;
+  });
 }
 
 // ─── Variant delimiter splitter ───────────────────────────────────────────────
 // Splits "md:hover:bg-blue-500" into ["md", "hover", "bg-blue-500"]
 // but respects brackets so "bg-[url(a:b)]" stays as one token.
+// Optimized: uses index slicing instead of character concatenation for better performance
 
 export function splitByVariantDelimiter(token) {
   const parts = [];
-  let current = "";
+  let start = 0;
   let bracketDepth = 0;
 
   for (let i = 0; i < token.length; i += 1) {
     const char = token[i];
-    if (char === "[") bracketDepth += 1;
-    if (char === "]") bracketDepth = Math.max(0, bracketDepth - 1);
-
-    if (char === ":" && bracketDepth === 0) {
-      parts.push(current);
-      current = "";
-    } else {
-      current += char;
+    if (char === "[") {
+      bracketDepth += 1;
+    } else if (char === "]") {
+      bracketDepth = Math.max(0, bracketDepth - 1);
+    } else if (char === ":" && bracketDepth === 0) {
+      parts.push(token.slice(start, i));
+      start = i + 1;
     }
   }
-  if (current) parts.push(current);
+  parts.push(token.slice(start));
   return parts;
 }

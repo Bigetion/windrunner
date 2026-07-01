@@ -2,6 +2,7 @@ import {
   resolveRuntimeContext,
   getBaseTailwindOptions,
   compileRuntimeClassNameWithContext,
+  parseClass,
 } from "./compiler.js";
 import preflightCss from "./preflight.js";
 
@@ -136,7 +137,19 @@ export function createWindrunner(options = {}) {
     const cssRule = compileWithCache(className);
     if (!cssRule) {
       ensureCompatStyle();
-      if (onError) onError(className);
+      // Enhanced error callback with context
+      if (onError) {
+        const parsed = parseClass(className, context.screens, context.containers);
+        const errorContext = {
+          reason: parsed ? 'unknown-utility' : 'parse-error',
+          baseToken: parsed ? parsed.baseToken : className,
+          variants: parsed ? parsed.variants : undefined,
+          details: parsed 
+            ? `Could not compile utility "${parsed.baseToken}"${parsed.variants.length ? ` with variants: ${parsed.variants.join(', ')}` : ''}`
+            : `Failed to parse class name "${className}"`,
+        };
+        onError(className, errorContext);
+      }
     } else {
       insertRule(cssRule);
       if (onCompile) onCompile(className, cssRule);
@@ -175,9 +188,49 @@ export function createWindrunner(options = {}) {
 
   const scan = (root = document) => {
     if (typeof document !== "object" || !root) return;
-    if (root.nodeType === 1) processElementTree(root);
+    
+    // Track scan stats
+    const startTime = typeof performance !== "undefined" ? performance.now() : Date.now();
+    const scannedElements = new Set();
+    const foundClasses = new Set();
+    const initialRuleCount = insertedRules.size;
+    
+    // Scan root element
+    if (root.nodeType === 1) {
+      processElementTree(root);
+      if (root.classList) {
+        scannedElements.add(root);
+        root.classList.forEach(cls => foundClasses.add(cls));
+      }
+    }
+    
+    // Scan child elements
     const elements = root.querySelectorAll ? root.querySelectorAll("[class]") : [];
-    elements.forEach((element) => processElement(element));
+    elements.forEach((element) => {
+      processElement(element);
+      scannedElements.add(element);
+      if (element.classList) {
+        element.classList.forEach(cls => foundClasses.add(cls));
+      }
+    });
+    
+    // Calculate stats and fire callback
+    if (typeof options.onScanComplete === "function") {
+      const endTime = typeof performance !== "undefined" ? performance.now() : Date.now();
+      const stats = {
+        elementCount: scannedElements.size,
+        classCount: foundClasses.size,
+        ruleCount: insertedRules.size - initialRuleCount,
+        duration: endTime - startTime,
+      };
+      
+      // Fire callback asynchronously to not block rendering
+      if (typeof requestAnimationFrame === "function") {
+        requestAnimationFrame(() => options.onScanComplete(stats));
+      } else {
+        setTimeout(() => options.onScanComplete(stats), 0);
+      }
+    }
   };
 
   const flushQueue = () => {
@@ -216,12 +269,17 @@ export function createWindrunner(options = {}) {
       scheduleFlush();
     });
 
-    observer.observe(root, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["class"],
-    });
+    // Allow users to customize MutationObserver config
+    // Default is aggressive (observe everything), but users can tune for performance
+    const observerConfig = options.observerOptions || {};
+    const finalConfig = {
+      childList: observerConfig.childList !== false,       // default: true
+      subtree: observerConfig.subtree !== false,           // default: true
+      attributes: observerConfig.attributes !== false,     // default: true
+      attributeFilter: observerConfig.attributeFilter || ["class"], // default: ["class"]
+    };
+
+    observer.observe(root, finalConfig);
   };
 
   const disconnect = () => {

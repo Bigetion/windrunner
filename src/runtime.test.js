@@ -158,7 +158,14 @@ describe("runtime (Node.js / no-DOM)", () => {
       wind.processClassName("totally-invalid-class-xyz");
 
       expect(onError).toHaveBeenCalledTimes(1);
-      expect(onError).toHaveBeenCalledWith("totally-invalid-class-xyz");
+      // New signature: onError(className, errorContext)
+      const [calledClassName, calledCtx] = onError.mock.calls[0];
+      expect(calledClassName).toBe("totally-invalid-class-xyz");
+      expect(calledCtx).toMatchObject({
+        reason: "unknown-utility",
+        baseToken: "totally-invalid-class-xyz",
+      });
+      expect(typeof calledCtx.details).toBe("string");
     });
 
     it("should NOT call onError for valid classes", () => {
@@ -178,8 +185,13 @@ describe("runtime (Node.js / no-DOM)", () => {
 
       // 'zzzz-invalid' and 'aaaa-fake' should trigger onError
       expect(onError).toHaveBeenCalledTimes(2);
-      expect(onError).toHaveBeenCalledWith("zzzz-invalid");
-      expect(onError).toHaveBeenCalledWith("aaaa-fake");
+      // Each call: (className, errorContext)
+      const calledClassNames = onError.mock.calls.map(([name]) => name);
+      expect(calledClassNames).toContain("zzzz-invalid");
+      expect(calledClassNames).toContain("aaaa-fake");
+      // Verify context shape on first call
+      const [, firstCtx] = onError.mock.calls[0];
+      expect(firstCtx).toMatchObject({ reason: "unknown-utility" });
     });
   });
 

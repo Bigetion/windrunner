@@ -234,11 +234,25 @@ function extractPrefix(token) {
   return prefix;
 }
 
+// ─── Unknown Prefix Cache for Early Rejection ─────────────────────────────────
+// Cache prefixes that are definitely not Tailwind utilities to skip checkAllBuilders
+// This prevents wasting cycles on typos, library classes, or non-Tailwind classes
+
+const UNKNOWN_PREFIX_CACHE = new Set();
+const MAX_UNKNOWN_CACHE_SIZE = 500; // Prevent unbounded growth
+
 /**
  * Fallback: check all builders (for utilities not in router or edge cases)
+ * Optimized: Early rejection for known-invalid prefixes
  */
 function checkAllBuilders(baseToken, theme) {
-  return (
+  // Early rejection: if we've seen this prefix fail before, skip immediately
+  const prefix = extractPrefix(baseToken);
+  if (UNKNOWN_PREFIX_CACHE.has(prefix)) {
+    return undefined;
+  }
+  
+  const result = (
     buildLayoutDeclaration(baseToken, theme) ||
     buildPositionInsetDeclaration(baseToken, theme) ||
     buildSpacingDeclaration(baseToken, theme) ||
@@ -274,6 +288,23 @@ function checkAllBuilders(baseToken, theme) {
     buildZoomDeclaration(baseToken, theme) ||
     buildForcedColorDeclaration(baseToken)
   );
+  
+  // If no builder matched, cache this prefix as unknown for future early rejection
+  if (!result && prefix) {
+    // Implement simple LRU-style eviction when cache grows too large
+    if (UNKNOWN_PREFIX_CACHE.size >= MAX_UNKNOWN_CACHE_SIZE) {
+      // Clear half the cache (oldest entries naturally fall off with Set iteration)
+      const toRemove = Math.floor(MAX_UNKNOWN_CACHE_SIZE / 2);
+      const iterator = UNKNOWN_PREFIX_CACHE.values();
+      for (let i = 0; i < toRemove; i += 1) {
+        const value = iterator.next().value;
+        if (value) UNKNOWN_PREFIX_CACHE.delete(value);
+      }
+    }
+    UNKNOWN_PREFIX_CACHE.add(prefix);
+  }
+  
+  return result;
 }
 
 // ─── Master compile dispatcher ────────────────────────────────────────────────
@@ -610,4 +641,94 @@ export function compileRuntimeClassNameWithContext(className, context) {
  */
 export function compileClass(className, options = {}) {
   return compileRuntimeClassNameWithContext(className, resolveRuntimeContext(options));
+}
+
+// ─── SSR / Critical CSS Utility ───────────────────────────────────────────────
+
+/**
+ * Compile multiple class names into a single CSS string for SSR / critical CSS.
+ * This is useful for generating CSS at build time or in server-side rendering.
+ *
+ * @param {string | string[]} classNames - Single class string or array of class names
+ * @param {object} options - Windrunner configuration options
+ * @returns {string} - Combined CSS rules ready for injection into <style> tag
+ *
+ * @example
+ * // Server-side rendering
+ * import { compileCriticalCss } from 'windrunner';
+ * 
+ * const criticalCss = compileCriticalCss([
+ *   'flex items-center justify-between',
+ *   'text-xl font-bold text-slate-900',
+ *   'bg-white shadow-lg rounded-xl p-6'
+ * ]);
+ * 
+ * // Inject into HTML
+ * const html = `
+ *   <style>${criticalCss}</style>
+ *   <div class="flex items-center justify-between">...</div>
+ * `;
+ *
+ * @example
+ * // Static site generation
+ * const allClasses = extractClassesFromTemplates('./src');
+ * const criticalCss = compileCriticalCss(allClasses, {
+ *   theme: { colors: { brand: '#ff0000' } }
+ * });
+ * fs.writeFileSync('dist/critical.css', criticalCss);
+ */
+export function compileCriticalCss(classNames, options = {}) {
+  // Normalize input to array
+  const classList = typeof classNames === 'string'
+    ? classNames.split(/\s+/).filter(Boolean)
+    : Array.isArray(classNames)
+      ? classNames.flatMap(str => 
+          typeof str === 'string' ? str.split(/\s+/).filter(Boolean) : []
+        )
+      : [];
+
+  // Create compilation context once
+  const context = resolveRuntimeContext(options);
+
+  // Compile all classes and deduplicate
+  const cssRules = new Set();
+  
+  classList.forEach((className) => {
+    const css = compileRuntimeClassNameWithContext(className, context);
+    if (css) {
+      cssRules.add(css);
+    }
+  });
+
+  // Combine all rules with newlines for readability
+  return Array.from(cssRules).join('\n');
+}
+
+/**
+ * Extract unique class names from HTML string.
+ * Utility helper for compileCriticalCss.
+ *
+ * @param {string} html - HTML content to extract classes from
+ * @returns {string[]} - Array of unique class names
+ *
+ * @example
+ * import { extractClassNames, compileCriticalCss } from 'windrunner';
+ * 
+ * const html = await fs.readFile('dist/index.html', 'utf-8');
+ * const classes = extractClassNames(html);
+ * const css = compileCriticalCss(classes);
+ */
+export function extractClassNames(html) {
+  const classSet = new Set();
+  
+  // Match class="..." and className="..." attributes
+  const classRegex = /class(?:Name)?=["']([^"']+)["']/g;
+  let match;
+  
+  while ((match = classRegex.exec(html)) !== null) {
+    const classes = match[1].split(/\s+/).filter(Boolean);
+    classes.forEach(cls => classSet.add(cls));
+  }
+  
+  return Array.from(classSet);
 }

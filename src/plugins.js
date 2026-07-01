@@ -4,10 +4,12 @@
  */
 
 // ─── Plugin Registry ──────────────────────────────────────────────────────────
+// Optimized: Split exact string matches (O(1) Map lookup) from regex patterns (O(n) scan)
 
 export class PluginRegistry {
   constructor() {
-    this.utilities = new Map();
+    this.exactUtilities = new Map(); // O(1) lookup for exact string matches
+    this.regexUtilities = [];         // O(n) only for regex patterns (typically small)
     this.variants = new Map();
   }
 
@@ -17,7 +19,12 @@ export class PluginRegistry {
    * @param {Function|string} handler - Function that returns CSS or CSS string
    */
   addUtility(pattern, handler) {
-    this.utilities.set(pattern, handler);
+    if (pattern instanceof RegExp) {
+      this.regexUtilities.push([pattern, handler]);
+    } else {
+      // Exact string match - use Map for O(1) lookup
+      this.exactUtilities.set(pattern, handler);
+    }
   }
 
   /**
@@ -51,20 +58,28 @@ export class PluginRegistry {
 
   /**
    * Check if a token matches any custom utility pattern
+   * Optimized: O(1) fast path for exact matches, O(n) only for regex patterns
    * @param {string} token - The base token to match
    * @returns {Object|null} - { handler, match } or null
    */
   matchUtility(token) {
-    for (const [pattern, handler] of this.utilities) {
-      if (pattern instanceof RegExp) {
-        const match = pattern.exec(token);
-        if (match) {
-          return { handler, match };
-        }
-      } else if (pattern === token) {
-        return { handler, match: [token] };
+    // Fast path: O(1) exact match lookup
+    if (this.exactUtilities.has(token)) {
+      return {
+        handler: this.exactUtilities.get(token),
+        match: [token],
+      };
+    }
+    
+    // Fallback: O(n) regex pattern matching (only when exact match fails)
+    for (let i = 0; i < this.regexUtilities.length; i += 1) {
+      const [pattern, handler] = this.regexUtilities[i];
+      const match = pattern.exec(token);
+      if (match) {
+        return { handler, match };
       }
     }
+    
     return null;
   }
 
@@ -81,7 +96,10 @@ export class PluginRegistry {
    * Get all registered utility patterns (for debugging)
    */
   getUtilities() {
-    return Array.from(this.utilities.keys());
+    return [
+      ...Array.from(this.exactUtilities.keys()),
+      ...this.regexUtilities.map(([pattern]) => pattern),
+    ];
   }
 
   /**
@@ -95,7 +113,8 @@ export class PluginRegistry {
    * Clear all registered plugins
    */
   clear() {
-    this.utilities.clear();
+    this.exactUtilities.clear();
+    this.regexUtilities = [];
     this.variants.clear();
   }
 }

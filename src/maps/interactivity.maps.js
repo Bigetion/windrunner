@@ -1,81 +1,56 @@
-export const CURSOR_MAP = {
-  auto:            "cursor: auto;",
-  default:         "cursor: default;",
-  pointer:         "cursor: pointer;",
-  wait:            "cursor: wait;",
-  text:            "cursor: text;",
-  move:            "cursor: move;",
-  help:            "cursor: help;",
-  "not-allowed":   "cursor: not-allowed;",
-  none:            "cursor: none;",
-  "context-menu":  "cursor: context-menu;",
-  progress:        "cursor: progress;",
-  cell:            "cursor: cell;",
-  crosshair:       "cursor: crosshair;",
-  "vertical-text": "cursor: vertical-text;",
-  alias:           "cursor: alias;",
-  copy:            "cursor: copy;",
-  "no-drop":       "cursor: no-drop;",
-  grab:            "cursor: grab;",
-  grabbing:        "cursor: grabbing;",
-  "all-scroll":    "cursor: all-scroll;",
-  "zoom-in":       "cursor: zoom-in;",
-  "zoom-out":      "cursor: zoom-out;",
-};
+// ─── Factory Helper for Compressed Maps ───────────────────────────────────────
 
-export const POINTER_EVENTS_MAP = {
-  none: "pointer-events: none;",
-  auto: "pointer-events: auto;",
-};
+function createSimpleMap(prop, values) {
+  const map = {};
+  values.forEach((value) => {
+    map[value] = `${prop}: ${value};`;
+  });
+  return map;
+}
+
+// ─── Optimized Cursor Map ─────────────────────────────────────────────────────
+
+export const CURSOR_MAP = createSimpleMap("cursor", [
+  "auto", "default", "pointer", "wait", "text", "move", "help",
+  "not-allowed", "none", "context-menu", "progress", "cell",
+  "crosshair", "vertical-text", "alias", "copy", "no-drop",
+  "grab", "grabbing", "all-scroll", "zoom-in", "zoom-out"
+]);
+
+// ─── Optimized Interaction Maps ───────────────────────────────────────────────
+
+export const POINTER_EVENTS_MAP = createSimpleMap("pointer-events", ["none", "auto"]);
 
 export const RESIZE_MAP = {
-  none:   "resize: none;",
-  y:      "resize: vertical;",
-  x:      "resize: horizontal;",
+  none: "resize: none;",
+  y: "resize: vertical;",
+  x: "resize: horizontal;",
   resize: "resize: both;",
 };
 
-export const USER_SELECT_MAP = {
-  none: "user-select: none;",
-  text: "user-select: text;",
-  all:  "user-select: all;",
-  auto: "user-select: auto;",
-};
+export const USER_SELECT_MAP = createSimpleMap("user-select", [
+  "none", "text", "all", "auto"
+]);
 
-export const APPEARANCE_MAP = {
-  none: "appearance: none;",
-  auto: "appearance: auto;",
-};
+export const APPEARANCE_MAP = createSimpleMap("appearance", ["none", "auto"]);
 
-export const TOUCH_ACTION_MAP = {
-  auto:         "touch-action: auto;",
-  none:         "touch-action: none;",
-  "pan-x":      "touch-action: pan-x;",
-  "pan-left":   "touch-action: pan-left;",
-  "pan-right":  "touch-action: pan-right;",
-  "pan-y":      "touch-action: pan-y;",
-  "pan-up":     "touch-action: pan-up;",
-  "pan-down":   "touch-action: pan-down;",
-  "pinch-zoom": "touch-action: pinch-zoom;",
-  manipulation: "touch-action: manipulation;",
-};
+export const TOUCH_ACTION_MAP = createSimpleMap("touch-action", [
+  "auto", "none", "pan-x", "pan-left", "pan-right", "pan-y",
+  "pan-up", "pan-down", "pinch-zoom", "manipulation"
+]);
+
+// ─── Optimized Style Maps ─────────────────────────────────────────────────────
 
 export const OUTLINE_STYLE_MAP = {
-  none:   "outline: 2px solid transparent; outline-offset: 2px;",
-  solid:  "outline-style: solid;",
-  dashed: "outline-style: dashed;",
-  dotted: "outline-style: dotted;",
-  double: "outline-style: double;",
+  none: "outline: 2px solid transparent; outline-offset: 2px;",
+  ...createSimpleMap("outline-style", ["solid", "dashed", "dotted", "double"]),
 };
 
-export const BORDER_STYLE_MAP = {
-  solid:  "border-style: solid;",
-  dashed: "border-style: dashed;",
-  dotted: "border-style: dotted;",
-  double: "border-style: double;",
-  hidden: "border-style: hidden;",
-  none:   "border-style: none;",
-};
+export const BORDER_STYLE_MAP = createSimpleMap("border-style", [
+  "solid", "dashed", "dotted", "double", "hidden", "none"
+]);
+
+// ─── Transition Maps ──────────────────────────────────────────────────────────
 
 export const TRANSITION_PROPERTY_MAP = {
   none:    "none",

@@ -1,112 +1,79 @@
+// ─── Factory Helpers for Compressed Maps ──────────────────────────────────────
+// Generate maps with repetitive patterns to reduce bundle size after minification
+
+/**
+ * Create a map from array of values with simple property pattern
+ * @param {string} prop - CSS property name
+ * @param {string[]} values - Array of CSS values
+ * @param {Object} keyMap - Optional key remapping { cssValue: className }
+ */
+function createSimpleMap(prop, values, keyMap = {}) {
+  const map = {};
+  values.forEach((value) => {
+    const key = keyMap[value] || value;
+    map[key] = `${prop}: ${value};`;
+  });
+  return map;
+}
+
+// ─── Optimized Display Map ────────────────────────────────────────────────────
+
 export const DISPLAY_MAP = {
-  block: "display: block;",
-  inline: "display: inline;",
-  "inline-block": "display: inline-block;",
-  flex: "display: flex;",
-  "inline-flex": "display: inline-flex;",
-  grid: "display: grid;",
-  "inline-grid": "display: inline-grid;",
-  hidden: "display: none;",
-  contents: "display: contents;",
-  "flow-root": "display: flow-root;",
-  "list-item": "display: list-item;",
-  table: "display: table;",
-  "inline-table": "display: inline-table;",
-  "table-caption": "display: table-caption;",
-  "table-cell": "display: table-cell;",
-  "table-column": "display: table-column;",
-  "table-column-group": "display: table-column-group;",
-  "table-footer-group": "display: table-footer-group;",
-  "table-header-group": "display: table-header-group;",
-  "table-row-group": "display: table-row-group;",
-  "table-row": "display: table-row;",
+  ...createSimpleMap("display", [
+    "block", "inline", "inline-block", "flex", "inline-flex", 
+    "grid", "inline-grid", "contents", "flow-root", "list-item",
+    "table", "inline-table", "table-caption", "table-cell", 
+    "table-column", "table-column-group", "table-footer-group",
+    "table-header-group", "table-row-group", "table-row"
+  ]),
+  hidden: "display: none;", // Special case
 };
 
-export const POSITION_MAP = {
-  static: "position: static;",
-  fixed: "position: fixed;",
-  absolute: "position: absolute;",
-  relative: "position: relative;",
-  sticky: "position: sticky;",
-};
+// ─── Optimized Position & Overflow Maps ───────────────────────────────────────
+
+export const POSITION_MAP = createSimpleMap("position", [
+  "static", "fixed", "absolute", "relative", "sticky"
+]);
 
 export const VISIBILITY_MAP = {
-  visible: "visibility: visible;",
-  invisible: "visibility: hidden;",
-  collapse: "visibility: collapse;",
+  ...createSimpleMap("visibility", ["visible", "collapse"]),
+  invisible: "visibility: hidden;", // Key differs from value
 };
 
-export const OVERFLOW_MAP = {
-  auto: "overflow: auto;",
-  hidden: "overflow: hidden;",
-  clip: "overflow: clip;",
-  visible: "overflow: visible;",
-  scroll: "overflow: scroll;",
-};
+const OVERFLOW_VALUES = ["auto", "hidden", "clip", "visible", "scroll"];
+export const OVERFLOW_MAP = createSimpleMap("overflow", OVERFLOW_VALUES);
+export const OVERFLOW_X_MAP = createSimpleMap("overflow-x", OVERFLOW_VALUES);
+export const OVERFLOW_Y_MAP = createSimpleMap("overflow-y", OVERFLOW_VALUES);
 
-export const OVERFLOW_X_MAP = {
-  auto: "overflow-x: auto;",
-  hidden: "overflow-x: hidden;",
-  clip: "overflow-x: clip;",
-  visible: "overflow-x: visible;",
-  scroll: "overflow-x: scroll;",
-};
+const OVERSCROLL_VALUES = ["auto", "contain", "none"];
+export const OVERSCROLL_MAP = createSimpleMap("overscroll-behavior", OVERSCROLL_VALUES);
+export const OVERSCROLL_X_MAP = createSimpleMap("overscroll-behavior-x", OVERSCROLL_VALUES);
+export const OVERSCROLL_Y_MAP = createSimpleMap("overscroll-behavior-y", OVERSCROLL_VALUES);
 
-export const OVERFLOW_Y_MAP = {
-  auto: "overflow-y: auto;",
-  hidden: "overflow-y: hidden;",
-  clip: "overflow-y: clip;",
-  visible: "overflow-y: visible;",
-  scroll: "overflow-y: scroll;",
-};
-
-export const OVERSCROLL_MAP = {
-  auto: "overscroll-behavior: auto;",
-  contain: "overscroll-behavior: contain;",
-  none: "overscroll-behavior: none;",
-};
-
-export const OVERSCROLL_X_MAP = {
-  auto: "overscroll-behavior-x: auto;",
-  contain: "overscroll-behavior-x: contain;",
-  none: "overscroll-behavior-x: none;",
-};
-
-export const OVERSCROLL_Y_MAP = {
-  auto: "overscroll-behavior-y: auto;",
-  contain: "overscroll-behavior-y: contain;",
-  none: "overscroll-behavior-y: none;",
-};
+// ─── Optimized Float & Clear Maps ─────────────────────────────────────────────
 
 export const FLOAT_MAP = {
-  left: "float: left;",
-  right: "float: right;",
-  none: "float: none;",
+  ...createSimpleMap("float", ["left", "right", "none"]),
   start: "float: inline-start;",
   end: "float: inline-end;",
 };
 
 export const CLEAR_MAP = {
-  left: "clear: left;",
-  right: "clear: right;",
-  both: "clear: both;",
-  none: "clear: none;",
+  ...createSimpleMap("clear", ["left", "right", "both", "none"]),
   start: "clear: inline-start;",
   end: "clear: inline-end;",
 };
+
+// ─── Optimized Object & Transform Maps ────────────────────────────────────────
 
 export const ISOLATION_MAP = {
   isolate: "isolation: isolate;",
   "isolation-auto": "isolation: auto;",
 };
 
-export const OBJECT_FIT_MAP = {
-  contain: "object-fit: contain;",
-  cover: "object-fit: cover;",
-  fill: "object-fit: fill;",
-  none: "object-fit: none;",
-  "scale-down": "object-fit: scale-down;",
-};
+export const OBJECT_FIT_MAP = createSimpleMap("object-fit", [
+  "contain", "cover", "fill", "none", "scale-down"
+]);
 
 export const TRANSFORM_STYLE_MAP = {
   "transform-style-flat": "transform-style: flat;",
@@ -129,66 +96,42 @@ export const BOX_SIZING_MAP = {
   content: "box-sizing: content-box;",
 };
 
+// ─── Optimized Break Maps ─────────────────────────────────────────────────────
+
+const BREAK_AFTER_BEFORE_VALUES = [
+  "auto", "avoid", "avoid-page", "avoid-column", 
+  "page", "left", "right", "recto", "verso"
+];
 export const BREAK_AFTER_MAP = {
-  auto: "break-after: auto;",
-  avoid: "break-after: avoid;",
-  "avoid-page": "break-after: avoid-page;",
-  "avoid-column": "break-after: avoid-column;",
-  page: "break-after: page;",
+  ...createSimpleMap("break-after", BREAK_AFTER_BEFORE_VALUES),
   all: "break-after: all;",
-  left: "break-after: left;",
-  right: "break-after: right;",
-  recto: "break-after: recto;",
-  verso: "break-after: verso;",
 };
 
-export const BREAK_BEFORE_MAP = {
-  auto: "break-before: auto;",
-  avoid: "break-before: avoid;",
-  "avoid-page": "break-before: avoid-page;",
-  "avoid-column": "break-before: avoid-column;",
-  page: "break-before: page;",
-  left: "break-before: left;",
-  right: "break-before: right;",
-  recto: "break-before: recto;",
-  verso: "break-before: verso;",
-};
+export const BREAK_BEFORE_MAP = createSimpleMap("break-before", BREAK_AFTER_BEFORE_VALUES);
 
-export const BREAK_INSIDE_MAP = {
-  auto: "break-inside: auto;",
-  avoid: "break-inside: avoid;",
-  "avoid-page": "break-inside: avoid-page;",
-  "avoid-column": "break-inside: avoid-column;",
-};
+export const BREAK_INSIDE_MAP = createSimpleMap("break-inside", [
+  "auto", "avoid", "avoid-page", "avoid-column"
+]);
 
-export const BOX_DECORATION_BREAK_MAP = {
-  slice: "box-decoration-break: slice;",
-  clone: "box-decoration-break: clone;",
-};
+// ─── Optimized Misc Maps ──────────────────────────────────────────────────────
 
-export const HYPHENS_MAP = {
-  none: "hyphens: none;",
-  manual: "hyphens: manual;",
-  auto: "hyphens: auto;",
-};
+export const BOX_DECORATION_BREAK_MAP = createSimpleMap("box-decoration-break", [
+  "slice", "clone"
+]);
 
-export const COLOR_SCHEME_MAP = {
-  light: "color-scheme: light;",
-  dark: "color-scheme: dark;",
-  normal: "color-scheme: normal;",
-};
+export const HYPHENS_MAP = createSimpleMap("hyphens", ["none", "manual", "auto"]);
 
-export const SCROLLBAR_COLOR_MAP = {
-  auto: "scrollbar-color: auto;",
-  transparent: "scrollbar-color: transparent;",
-  current: "scrollbar-color: currentColor;",
-};
+export const COLOR_SCHEME_MAP = createSimpleMap("color-scheme", [
+  "light", "dark", "normal"
+]);
 
-export const SCROLLBAR_WIDTH_MAP = {
-  auto: "scrollbar-width: auto;",
-  thin: "scrollbar-width: thin;",
-  none: "scrollbar-width: none;",
-};
+export const SCROLLBAR_COLOR_MAP = createSimpleMap("scrollbar-color", [
+  "auto", "transparent", "current"
+]);
+
+export const SCROLLBAR_WIDTH_MAP = createSimpleMap("scrollbar-width", [
+  "auto", "thin", "none"
+]);
 
 export const SCROLLBAR_GUTTER_MAP = {
   auto: "scrollbar-gutter: auto;",
@@ -197,25 +140,17 @@ export const SCROLLBAR_GUTTER_MAP = {
   "both-edges": "scrollbar-gutter: both-edges;",
 };
 
-export const TABLE_LAYOUT_MAP = {
-  auto: "table-layout: auto;",
-  fixed: "table-layout: fixed;",
-};
+export const TABLE_LAYOUT_MAP = createSimpleMap("table-layout", ["auto", "fixed"]);
 
-export const CAPTION_SIDE_MAP = {
-  top: "caption-side: top;",
-  bottom: "caption-side: bottom;",
-};
+export const CAPTION_SIDE_MAP = createSimpleMap("caption-side", ["top", "bottom"]);
 
-export const BORDER_COLLAPSE_MAP = {
-  collapse: "border-collapse: collapse;",
-  separate: "border-collapse: separate;",
-};
+export const BORDER_COLLAPSE_MAP = createSimpleMap("border-collapse", [
+  "collapse", "separate"
+]);
 
-export const SCROLL_BEHAVIOR_MAP = {
-  auto: "scroll-behavior: auto;",
-  smooth: "scroll-behavior: smooth;",
-};
+export const SCROLL_BEHAVIOR_MAP = createSimpleMap("scroll-behavior", [
+  "auto", "smooth"
+]);
 
 // Shared side/axis helpers used by spacing, inset, border, etc.
 export const SIDE_PROPS = {
