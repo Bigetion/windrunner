@@ -35,8 +35,19 @@ export interface WindrunnerOptions {
   compatGenerateCss?: (options: Record<string, any>) => string;
   theme?: Record<string, any>;
   plugins?: Plugin[];
+  maxCacheSize?: number;
   onReady?: () => void;
+  onError?: (className: string) => void;
+  onCompile?: (className: string, cssRule: string) => void;
   [key: string]: any;
+}
+
+export interface RuntimeStats {
+  cacheSize: number;
+  insertedRuleCount: number;
+  pendingElementCount: number;
+  isObserving: boolean;
+  isCompatLoaded: boolean;
 }
 
 export interface Runtime {
@@ -48,6 +59,8 @@ export interface Runtime {
   flush(): void;
   start(): void;
   disconnect(): void;
+  clearCache(): void;
+  getStats(): RuntimeStats;
   isCompatLoaded(): boolean;
   getCacheSize(): number;
   getInsertedRuleCount(): number;

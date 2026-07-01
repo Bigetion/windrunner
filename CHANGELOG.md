@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2026-07-02
+
+### 🔧 Improvements
+
+- **Variant system refactored**: Replaced 60+ case `switch` statement with `Map`-based O(1) lookup for better maintainability
+- **Cache management API**: Added `clearCache()` method and `maxCacheSize` option (default: 10000) with LRU-style eviction
+- **Runtime introspection**: Added `getStats()` method returning cache size, rule count, observer status, and more
+- **Error handling**: Added `onError(className)` callback for classes that fail to compile
+- **Debug support**: Added `onCompile(className, cssRule)` callback for successful compilations
+- **Bundle size reduced**: Removed unused `variants.js` from bundle (-4.2 KB minified)
+
+### 🐛 Bug Fixes
+
+- Fixed CDN URL in README stuck at v1.0.1
+- Fixed comparison table incorrectly showing Plugins as unsupported
+- Fixed duplicated changelog header and section at bottom of CHANGELOG.md
+
+### 🧪 Testing
+
+- Added 27 new runtime tests (total: 95 tests, all passing)
+- Covers: cache behavior, LRU eviction, onError/onCompile callbacks, stats, disconnect, plugin integration
+
+### 📦 Bundle Size
+
+- ESM: 144.1 KB (was 152.0 KB, **-5.2%**)
+- Min: 88.7 KB (was 92.9 KB, **-4.5%**)
+
+---
+
 ## [1.1.0] - 2026-06-30
 
 ### 🎉 Major Features
@@ -77,9 +106,3 @@ windrunner({ plugins: [myPlugin] });
 
 ## [1.0.0] - previous
 - Initial release
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-## [1.0.0] - 2026-06-25
-- Initial public-ready release

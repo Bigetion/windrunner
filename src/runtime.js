@@ -48,6 +48,9 @@ export function createWindrunner(options = {}) {
   const preflight     = options.preflight !== false; // default: true
   const compatMode    = options.compatMode    || "none";
   const compatStyleId = options.compatStyleId || `${styleId}-full`;
+  const maxCacheSize  = options.maxCacheSize  || 10000;
+  const onError       = typeof options.onError === "function" ? options.onError : null;
+  const onCompile     = typeof options.onCompile === "function" ? options.onCompile : null;
   const tailwindOptions = getBaseTailwindOptions(options);
   const context = resolveRuntimeContext(tailwindOptions);
 
@@ -103,6 +106,11 @@ export function createWindrunner(options = {}) {
   const compileWithCache = (className) => {
     if (cache.has(className)) return cache.get(className);
     const cssRule = compileRuntimeClassNameWithContext(className, context);
+    // LRU-style eviction: remove oldest entry when cache exceeds max size
+    if (cache.size >= maxCacheSize) {
+      const firstKey = cache.keys().next().value;
+      cache.delete(firstKey);
+    }
     cache.set(className, cssRule);
     return cssRule;
   };
@@ -128,8 +136,10 @@ export function createWindrunner(options = {}) {
     const cssRule = compileWithCache(className);
     if (!cssRule) {
       ensureCompatStyle();
+      if (onError) onError(className);
     } else {
       insertRule(cssRule);
+      if (onCompile) onCompile(className, cssRule);
     }
     return cssRule;
   };
@@ -253,6 +263,18 @@ export function createWindrunner(options = {}) {
     runStart();
   };
 
+  const clearCache = () => {
+    cache.clear();
+  };
+
+  const getStats = () => ({
+    cacheSize: cache.size,
+    insertedRuleCount: insertedRules.size,
+    pendingElementCount: pendingElements.size,
+    isObserving: observer !== null,
+    isCompatLoaded: compatLoaded,
+  });
+
   return {
     processClassName,
     processClassList,
@@ -262,6 +284,8 @@ export function createWindrunner(options = {}) {
     flush,
     start,
     disconnect,
+    clearCache,
+    getStats,
     isCompatLoaded:       () => compatLoaded,
     getCacheSize:         () => cache.size,
     getInsertedRuleCount: () => insertedRules.size,

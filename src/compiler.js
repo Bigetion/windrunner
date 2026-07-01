@@ -315,6 +315,80 @@ function compileBaseToken(baseToken, theme, pluginRegistry) {
 
 // ─── Variant & selector logic ─────────────────────────────────────────────────
 
+// ─── Variant Map for O(1) lookup ──────────────────────────────────────────────
+
+/**
+ * Built-in variants mapped to selector transform functions.
+ * Using a Map for O(1) lookup instead of a switch statement.
+ * @type {Map<string, (selector: string) => string>}
+ */
+const VARIANT_MAP = new Map([
+  // Dark mode
+  ["dark",            (s) => `.dark ${s}`],
+  // Pseudo-classes – interactive
+  ["hover",           (s) => `${s}:hover`],
+  ["focus",           (s) => `${s}:focus`],
+  ["focus-visible",   (s) => `${s}:focus-visible`],
+  ["focus-within",    (s) => `${s}:focus-within`],
+  ["active",          (s) => `${s}:active`],
+  ["visited",         (s) => `${s}:visited`],
+  ["disabled",        (s) => `${s}:disabled`],
+  ["checked",         (s) => `${s}:checked`],
+  ["indeterminate",   (s) => `${s}:indeterminate`],
+  ["required",        (s) => `${s}:required`],
+  ["valid",           (s) => `${s}:valid`],
+  ["invalid",         (s) => `${s}:invalid`],
+  ["target",          (s) => `${s}:target`],
+  ["enabled",         (s) => `${s}:enabled`],
+  ["default",         (s) => `${s}:default`],
+  ["optional",        (s) => `${s}:optional`],
+  ["user-valid",      (s) => `${s}:user-valid`],
+  ["user-invalid",    (s) => `${s}:user-invalid`],
+  ["in-range",        (s) => `${s}:in-range`],
+  ["out-of-range",    (s) => `${s}:out-of-range`],
+  ["placeholder-shown", (s) => `${s}:placeholder-shown`],
+  ["autofill",        (s) => `${s}:autofill`],
+  ["details-content", (s) => `${s}:details-content`],
+  ["read-only",       (s) => `${s}:read-only`],
+  ["open",            (s) => `${s}[open]`],
+  // Pseudo-elements
+  ["placeholder",     (s) => `${s}::placeholder`],
+  ["backdrop",        (s) => `${s}::backdrop`],
+  ["before",          (s) => `${s}::before`],
+  ["after",           (s) => `${s}::after`],
+  ["first-letter",    (s) => `${s}::first-letter`],
+  ["first-line",      (s) => `${s}::first-line`],
+  ["marker",          (s) => `${s}::marker`],
+  ["selection",       (s) => `${s}::selection`],
+  ["file",            (s) => `${s}::file-selector-button`],
+  // Structural pseudo-classes
+  ["first",           (s) => `${s}:first-child`],
+  ["last",            (s) => `${s}:last-child`],
+  ["odd",             (s) => `${s}:nth-child(odd)`],
+  ["even",            (s) => `${s}:nth-child(even)`],
+  ["first-of-type",   (s) => `${s}:first-of-type`],
+  ["last-of-type",    (s) => `${s}:last-of-type`],
+  ["only",            (s) => `${s}:only-child`],
+  ["only-of-type",    (s) => `${s}:only-of-type`],
+  ["empty",           (s) => `${s}:empty`],
+  // Group & peer variants
+  ["group-hover",     (s) => `.group:hover ${s}`],
+  ["group-focus",     (s) => `.group:focus ${s}`],
+  ["group-active",    (s) => `.group:active ${s}`],
+  ["peer-hover",      (s) => `.peer:hover ~ ${s}`],
+  ["peer-focus",      (s) => `.peer:focus ~ ${s}`],
+  ["peer-checked",    (s) => `.peer:checked ~ ${s}`],
+  ["peer-disabled",   (s) => `.peer:disabled ~ ${s}`],
+  // Negation variants
+  ["not-hover",       (s) => `${s}:not(:hover)`],
+  ["not-focus",       (s) => `${s}:not(:focus)`],
+  ["not-disabled",    (s) => `${s}:not(:disabled)`],
+  ["not-checked",     (s) => `${s}:not(:checked)`],
+  // In-* variants (group-based)
+  ["in-hover",        (s) => `.group:hover ${s}`],
+  ["in-focus",        (s) => `.group:focus ${s}`],
+]);
+
 function applyVariants(selector, variants, pluginRegistry) {
   let currentSelector = selector;
 
@@ -334,73 +408,19 @@ function applyVariants(selector, variants, pluginRegistry) {
         }
       }
     }
-    
-    // Built-in variants
-    switch (variant) {
-      case "dark":          currentSelector = `.dark ${currentSelector}`; break;
-      case "hover":         currentSelector = `${currentSelector}:hover`; break;
-      case "focus":         currentSelector = `${currentSelector}:focus`; break;
-      case "focus-visible": currentSelector = `${currentSelector}:focus-visible`; break;
-      case "focus-within":  currentSelector = `${currentSelector}:focus-within`; break;
-      case "active":        currentSelector = `${currentSelector}:active`; break;
-      case "visited":       currentSelector = `${currentSelector}:visited`; break;
-      case "disabled":      currentSelector = `${currentSelector}:disabled`; break;
-      case "checked":       currentSelector = `${currentSelector}:checked`; break;
-      case "indeterminate": currentSelector = `${currentSelector}:indeterminate`; break;
-      case "required":      currentSelector = `${currentSelector}:required`; break;
-      case "valid":         currentSelector = `${currentSelector}:valid`; break;
-      case "invalid":       currentSelector = `${currentSelector}:invalid`; break;
-      case "target":        currentSelector = `${currentSelector}:target`; break;
-      case "enabled":       currentSelector = `${currentSelector}:enabled`; break;
-      case "default":       currentSelector = `${currentSelector}:default`; break;
-      case "optional":      currentSelector = `${currentSelector}:optional`; break;
-      case "user-valid":    currentSelector = `${currentSelector}:user-valid`; break;
-      case "user-invalid":  currentSelector = `${currentSelector}:user-invalid`; break;
-      case "in-range":      currentSelector = `${currentSelector}:in-range`; break;
-      case "out-of-range":  currentSelector = `${currentSelector}:out-of-range`; break;
-      case "placeholder-shown": currentSelector = `${currentSelector}:placeholder-shown`; break;
-      case "autofill":      currentSelector = `${currentSelector}:autofill`; break;
-      case "details-content": currentSelector = `${currentSelector}:details-content`; break;
-      case "placeholder":   currentSelector = `${currentSelector}::placeholder`; break;
-      case "backdrop":      currentSelector = `${currentSelector}::backdrop`; break;
-      case "before":        currentSelector = `${currentSelector}::before`; break;
-      case "after":         currentSelector = `${currentSelector}::after`; break;
-      case "first-letter":  currentSelector = `${currentSelector}::first-letter`; break;
-      case "first-line":    currentSelector = `${currentSelector}::first-line`; break;
-      case "marker":        currentSelector = `${currentSelector}::marker`; break;
-      case "selection":     currentSelector = `${currentSelector}::selection`; break;
-      case "file":          currentSelector = `${currentSelector}::file-selector-button`; break;
-      case "first":         currentSelector = `${currentSelector}:first-child`; break;
-      case "last":          currentSelector = `${currentSelector}:last-child`; break;
-      case "odd":           currentSelector = `${currentSelector}:nth-child(odd)`; break;
-      case "even":          currentSelector = `${currentSelector}:nth-child(even)`; break;
-      case "first-of-type": currentSelector = `${currentSelector}:first-of-type`; break;
-      case "last-of-type":  currentSelector = `${currentSelector}:last-of-type`; break;
-      case "only":          currentSelector = `${currentSelector}:only-child`; break;
-      case "only-of-type":  currentSelector = `${currentSelector}:only-of-type`; break;
-      case "empty":         currentSelector = `${currentSelector}:empty`; break;
-      case "read-only":     currentSelector = `${currentSelector}:read-only`; break;
-      case "open":          currentSelector = `${currentSelector}[open]`; break;
-      case "group-hover":   currentSelector = `.group:hover ${currentSelector}`; break;
-      case "group-focus":   currentSelector = `.group:focus ${currentSelector}`; break;
-      case "group-active":  currentSelector = `.group:active ${currentSelector}`; break;
-      case "peer-hover":    currentSelector = `.peer:hover ~ ${currentSelector}`; break;
-      case "peer-focus":    currentSelector = `.peer:focus ~ ${currentSelector}`; break;
-      case "peer-checked":  currentSelector = `.peer:checked ~ ${currentSelector}`; break;
-      case "peer-disabled": currentSelector = `.peer:disabled ~ ${currentSelector}`; break;
-      case "not-hover":     currentSelector = `${currentSelector}:not(:hover)`; break;
-      case "not-focus":     currentSelector = `${currentSelector}:not(:focus)`; break;
-      case "not-disabled":  currentSelector = `${currentSelector}:not(:disabled)`; break;
-      case "not-checked":   currentSelector = `${currentSelector}:not(:checked)`; break;
-      case "in-hover":      currentSelector = `.group:hover ${currentSelector}`; break;
-      case "in-focus":      currentSelector = `.group:focus ${currentSelector}`; break;
-      default:
-        return undefined;
+
+    // Built-in variant lookup (O(1) via Map)
+    const builtinHandler = VARIANT_MAP.get(variant);
+    if (builtinHandler) {
+      currentSelector = builtinHandler(currentSelector);
+    } else {
+      return undefined;
     }
   }
 
   return currentSelector;
 }
+
 
 // ─── Runtime context ──────────────────────────────────────────────────────────
 
