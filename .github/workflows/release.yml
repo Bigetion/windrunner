@@ -47,7 +47,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "📦 Publishing windrunner@$(node -p "require('./package.json').version") to npm..."
-          npm publish --access public --provenance
+          npm publish --access public
           echo "✅ Published successfully!"
       
       - name: Create GitHub Release
