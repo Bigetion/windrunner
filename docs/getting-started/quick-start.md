@@ -70,7 +70,7 @@ Open this file in your browser — it works immediately!
   </style>
   
   <script type="module">
-    import { windrunner } from 'https://cdn.jsdelivr.net/npm/windrunner@1.0.3/dist/index.min.js';
+    import { windrunner } from 'https://cdn.jsdelivr.net/npm/windrunner@latest/dist/index.min.js';
     windrunner({ 
       autoStart: true,
       onReady: () => document.documentElement.style.opacity = '1'
