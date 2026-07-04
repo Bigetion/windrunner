@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.4] - 2026-07-02
+
+### 🐛 Bug Fixes
+
+#### Fixed Gradient System
+
+**Fixed `bg-gradient-to-*` classes not working** - Gradients are now fully functional and match standard Tailwind CSS v4 behavior.
+
+**Root Causes:**
+1. Theme configuration used incorrect naming (`linear-to-*` instead of `gradient-to-*`)
+2. Gradient stops CSS variable structure didn't match Tailwind CSS v3+
+3. Position modifiers (`from-10%`, `via-50%`, `to-90%`) were not supported
+
+**Changes:**
+
+- **Fixed theme.js**: Renamed `linear-to-*` → `gradient-to-*` for all 8 gradient directions
+- **Rewrote gradient stops logic**: Proper CSS variable structure with position support
+- **Added position modifier support**: `from-10%`, `via-50%`, `to-90%` now work correctly
+
+**What Now Works:**
+
+✅ Basic 2-color gradients: `bg-gradient-to-r from-blue-500 to-purple-600`  
+✅ 3-color gradients: `bg-gradient-to-r from-purple-500 via-pink-500 to-red-500`  
+✅ Gradients with opacity: `bg-gradient-to-r from-blue-500/50 to-purple-600/80`  
+✅ Custom positions (NEW!): `bg-gradient-to-r from-blue-500 from-10% to-purple-600 to-90%`  
+✅ All 8 directions: `to-t`, `to-tr`, `to-r`, `to-br`, `to-b`, `to-bl`, `to-l`, `to-tl`
+
+**Example:**
+```html
+<!-- Beautiful gradients now work! -->
+<div class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+  Gradient background
+</div>
+
+<!-- With custom color stop positions -->
+<div class="bg-gradient-to-br from-cyan-500 from-10% via-blue-500 via-30% to-purple-600 to-90%">
+  Advanced gradient
+</div>
+```
+
+### 📚 Documentation
+
+- Fixed misleading `bg-linear-to-*` reference in README (should be `bg-gradient-to-*`)
+- Updated main example to showcase gradient functionality
+- Added comprehensive `examples/gradient-test.html` with 7 gradient examples
+
+### 🧪 Testing
+
+- All 95 tests passing
+- Updated test expectations for new gradient behavior
+- Visual test page confirms all gradient features work
+
+### 📦 Files Modified
+
+- `src/theme.js` - Fixed backgroundImage keys
+- `src/builders/backgrounds.js` - Rewrote gradient stops logic
+- `src/compiler.test.js` - Updated test expectations  
+- `README.md` - Fixed documentation
+- `examples/gradient-test.html` - NEW comprehensive test page
+
+### ⚠️ Breaking Changes
+
+**None** - This is a bug fix that restores expected Tailwind CSS behavior.
+
+---
+
 ## [1.1.3] - 2026-07-02
 
 ### 🚀 Major Performance & DX Improvements

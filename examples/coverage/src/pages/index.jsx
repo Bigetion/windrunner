@@ -1203,10 +1203,10 @@ const BgColor = ({ cc }) => {
 const BgImage = ({ cc }) => (
   <>
     <PageHeader title="Background Image" desc="Controls the background image, including gradient shorthands." />
-    <QR cc={cc} classes={['bg-none','bg-linear-to-t','bg-linear-to-tr','bg-linear-to-r','bg-linear-to-br','bg-linear-to-b','bg-linear-to-bl','bg-linear-to-l','bg-linear-to-tl']} />
+    <QR cc={cc} classes={['bg-none','bg-gradient-to-t','bg-gradient-to-tr','bg-gradient-to-r','bg-gradient-to-br','bg-gradient-to-b','bg-gradient-to-bl','bg-gradient-to-l','bg-gradient-to-tl']} />
     <Section title="Gradient directions">
       <div className="flex flex-wrap gap-2">
-        {['bg-linear-to-r','bg-linear-to-br','bg-linear-to-b','bg-linear-to-t','bg-linear-to-tl','bg-linear-to-l'].map(cls => (
+        {['bg-gradient-to-r','bg-gradient-to-br','bg-gradient-to-b','bg-gradient-to-t','bg-gradient-to-tl','bg-gradient-to-l'].map(cls => (
           <div key={cls} className="demo-col">
             <div className={`w-14 h-14 rounded ${cls} from-sky-400 to-violet-500`}></div>
             <div className="label">{cls.replace('bg-linear-','')}</div>
@@ -1273,7 +1273,7 @@ const BgClip = ({ cc }) => (
     <PageHeader title="Background Clip" desc="Controls the bounding box of a background." />
     <QR cc={cc} classes={['bg-clip-border','bg-clip-padding','bg-clip-content','bg-clip-text']} />
     <Section title="bg-clip-text" note="Background clipped to text shape — requires transparent text color.">
-      <p className="bg-clip-text bg-linear-to-r from-sky-400 to-violet-500 text-transparent text-4xl font-black">Windrunner</p>
+      <p className="bg-clip-text bg-gradient-to-r from-sky-400 to-violet-500 text-transparent text-4xl font-black">Windrunner</p>
     </Section>
     <Section title="bg-clip variants">
       <div className="flex gap-3">
@@ -1294,9 +1294,9 @@ const Gradient = ({ cc }) => (
     <QR cc={cc} classes={['from-sky-400','from-violet-500','via-purple-500','via-emerald-400','to-blue-500','to-pink-500','from-sky-400/50','to-blue-500/75']} />
     <Section title="Multi-stop gradients">
       <div>
-        <div className="h-12 rounded mb-2 bg-linear-to-r from-sky-400 to-blue-600"></div>
-        <div className="h-12 rounded mb-2 bg-linear-to-r from-violet-500 via-purple-500 to-pink-500"></div>
-        <div className="h-12 rounded bg-linear-to-r from-emerald-400 via-sky-400 to-violet-500"></div>
+        <div className="h-12 rounded mb-2 bg-gradient-to-r from-sky-400 to-blue-600"></div>
+        <div className="h-12 rounded mb-2 bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500"></div>
+        <div className="h-12 rounded bg-gradient-to-r from-emerald-400 via-sky-400 to-violet-500"></div>
       </div>
     </Section>
   </>

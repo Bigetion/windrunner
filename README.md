@@ -30,9 +30,9 @@ npm install windrunner
   windrunner({ autoStart: true });
 </script>
 
-<div class="flex items-center gap-4 p-6 bg-blue-50 rounded-xl">
-  <h1 class="text-2xl font-bold text-slate-900">Hello</h1>
-  <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200">
+<div class="flex items-center gap-4 p-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
+  <h1 class="text-2xl font-bold text-white">Hello Windrunner</h1>
+  <button class="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors duration-200">
     Click me
   </button>
 </div>
@@ -203,7 +203,7 @@ Full Tailwind v4 coverage including:
 - **Grid** — grid-cols/rows, col/row-span, grid-flow, auto-cols/rows, place-*
 - **Typography** — font-size, font-weight, line-height, letter-spacing, text-align, text-color, text-decoration, text-transform, text-overflow, whitespace, word-break, list-style
 - **Colors** — all OKLCH P3 Tailwind v4 palette + mauve/olive/mist/taupe, opacity modifier (`bg-blue-500/50`)
-- **Backgrounds** — bg-color, bg-linear-to-* (v4), gradient stops (from/via/to), bg-size/position/repeat/attachment/clip/origin
+- **Backgrounds** — bg-color, bg-gradient-to-* with gradient stops (from/via/to), bg-size/position/repeat/attachment/clip/origin
 - **Borders** — border-width/style/color/radius (all sides + logical)
 - **Effects** — shadow, opacity, inset-shadow-* (v4), ring, inset-ring-* (v4)
 - **Transforms** — rotate, scale, translate (2D + 3D), skew, origin, perspective, backface, transform-style

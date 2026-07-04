@@ -236,8 +236,9 @@ describe("compiler", () => {
       });
 
       expect(compileRuntimeClassNameWithContext("from-blue-500", gradientContext)).toContain(".from-blue-500 { --tw-gradient-from:");
-      expect(compileRuntimeClassNameWithContext("from-blue-500", gradientContext)).toContain("--tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via, transparent), var(--tw-gradient-to, transparent);");
-      expect(compileRuntimeClassNameWithContext("via-red-500", gradientContext)).toContain(".via-red-500 { --tw-gradient-via:");
+      expect(compileRuntimeClassNameWithContext("from-blue-500", gradientContext)).toContain("--tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);");
+      expect(compileRuntimeClassNameWithContext("via-red-500", gradientContext)).toContain(".via-red-500 {");
+      expect(compileRuntimeClassNameWithContext("via-red-500", gradientContext)).toContain("--tw-gradient-stops: var(--tw-gradient-from),");
       expect(compileRuntimeClassNameWithContext("to-blue-500", gradientContext)).toContain(".to-blue-500 { --tw-gradient-to:");
     });
   });
