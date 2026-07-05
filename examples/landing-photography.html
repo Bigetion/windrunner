@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LensArt Studio — Capturing Moments, Creating Memories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>html{opacity:0;transition:opacity .2s ease}</style>
+  <script type="module">
+    import { windrunner } from "../dist/index.esm.js";
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
+  </script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    .animate-fade-in { animation: fadeIn 1s ease; }
+    .animate-slide-up { animation: slideUp 0.8s ease both; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .font-display { font-family: 'Playfair Display', serif; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-white antialiased">
+
+<!-- Navbar -->
+<nav class="fixed top-0 inset-x-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-white/10 shadow-sm">
+  <div class="mx-auto max-w-7xl px-6 flex items-center justify-between h-20">
+    <div class="flex items-center gap-3">
+      <div class="text-3xl">📷</div>
+      <span class="text-2xl font-display font-bold text-white">LensArt Studio</span>
+    </div>
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+      <a href="#portfolio" class="hover:text-amber-400 transition-colors">Portfolio</a>
+      <a href="#services" class="hover:text-amber-400 transition-colors">Services</a>
+      <a href="#packages" class="hover:text-amber-400 transition-colors">Packages</a>
+      <a href="#contact" class="hover:text-amber-400 transition-colors">Contact</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="tel:+1234567890" class="hidden md:block text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">
+        📞 (123) 456-7890
+      </a>
+      <a href="#booking" class="px-6 py-2.5 rounded-full bg-amber-500 hover:bg-amber-600 text-slate-950 text-sm font-semibold shadow-lg shadow-amber-500/30 transition-all">
+        Book a Session
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 px-6 bg-gradient-to-br from-slate-900 via-slate-950 to-black">
+  <div class="mx-auto max-w-7xl">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <!-- Text Content -->
+      <div class="animate-slide-up">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-medium mb-6">
+          <span>✨</span>
+          Award-Winning Photography
+        </div>
+        <h1 class="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-white mb-6 leading-tight">
+          Capturing Moments,<br/>
+          <span class="text-amber-500">Creating Memories</span>
+        </h1>
+        <p class="text-lg text-slate-300 mb-8 leading-relaxed max-w-xl">
+          Transform your precious moments into timeless art. Professional photography and videography services 
+          that tell your unique story with elegance and emotion.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#portfolio" class="px-8 py-4 rounded-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold text-center shadow-xl shadow-amber-500/30 transition-all hover:scale-105">
+            View Portfolio
+          </a>
+          <a href="#booking" class="px-8 py-4 rounded-full border-2 border-amber-500 hover:bg-amber-500/10 text-amber-400 font-semibold text-center transition-all">
+            Book a Session
+          </a>
+        </div>
+        <div class="flex items-center gap-8 mt-10 text-sm text-slate-400">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">📸</span>
+            <div>
+              <p class="font-semibold text-white">10+ Years</p>
+              <p>Experience</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">⭐</span>
+            <div>
+              <p class="font-semibold text-white">500+ Projects</p>
+              <p>Completed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hero Image Gallery Preview -->
+      <div class="relative animate-slide-up" style="animation-delay: 0.2s;">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+            <img src="https://picsum.photos/600/800?random=1" alt="Wedding photography" class="w-full h-full object-cover" />
+          </div>
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl mt-8">
+            <img src="https://picsum.photos/600/800?random=2" alt="Portrait photography" class="w-full h-full object-cover" />
+          </div>
+        </div>
+        <!-- Floating badges -->
+        <div class="absolute -top-4 -left-4 bg-slate-900 rounded-2xl shadow-xl p-4 animate-float border border-amber-500/20">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">⭐</span>
+            <div>
+              <p class="text-xs text-slate-400">Client Rating</p>
+              <p class="font-bold text-amber-500">4.9/5.0</p>
+            </div>
+          </div>
+        </div>
+        <div class="absolute -bottom-4 -right-4 bg-slate-900 rounded-2xl shadow-xl p-4 animate-float border border-amber-500/20" style="animation-delay: 1s;">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">📷</span>
+            <div>
+              <p class="text-xs text-slate-400">Professional</p>
+              <p class="font-bold text-amber-500">Equipment</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Features / Why Choose Us -->
+<section class="py-20 px-6 bg-slate-900">
+  <div class="mx-auto max-w-7xl">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-sm font-semibold mb-4">Why Choose Us</span>
+      <h2 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">What Makes Us Different</h2>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto">Excellence in every frame</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Feature 1 -->
+      <div class="group text-center p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-amber-500/30 hover:bg-amber-500/5 transition-all">
+        <div class="text-6xl mb-4">🎨</div>
+        <h3 class="text-xl font-display font-bold text-white mb-3">Artistic Vision</h3>
+        <p class="text-slate-400 leading-relaxed">Unique, creative perspectives that transform ordinary moments into extraordinary art.</p>
+      </div>
+      
+      <!-- Feature 2 -->
+      <div class="group text-center p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-amber-500/30 hover:bg-amber-500/5 transition-all">
+        <div class="text-6xl mb-4">📷</div>
+        <h3 class="text-xl font-display font-bold text-white mb-3">Professional Gear</h3>
+        <p class="text-slate-400 leading-relaxed">State-of-the-art cameras and equipment to capture every detail in stunning clarity.</p>
+      </div>
+      
+      <!-- Feature 3 -->
+      <div class="group text-center p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-amber-500/30 hover:bg-amber-500/5 transition-all">
+        <div class="text-6xl mb-4">⚡</div>
+        <h3 class="text-xl font-display font-bold text-white mb-3">Fast Delivery</h3>
+        <p class="text-slate-400 leading-relaxed">Professional editing and delivery within 2-3 weeks, with previews in 48 hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Portfolio Grid -->
+<section id="portfolio" class="py-20 px-6 bg-gradient-to-br from-slate-950 via-slate-900 to-black">
+  <div class="mx-auto max-w-7xl">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-sm font-semibold mb-4">Our Work</span>
+      <h2 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">Portfolio Highlights</h2>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto">A glimpse into our most recent projects and creative work</p>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Portfolio Image 1 -->
+      <div class="group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+        <img 
+          src="https://picsum.photos/600/400?random=10" 
+          alt="Wedding ceremony photography capturing the couple's special moment"
+          loading="lazy"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
+      
+      <!-- Portfolio Image 2 -->
+      <div class="group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+        <img 
+          src="https://picsum.photos/600/400?random=11" 
+          alt="Professional portrait photography in natural lighting"
+          loading="lazy"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
+      
+      <!-- Portfolio Image 3 -->
+      <div class="group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+        <img 
+          src="https://picsum.photos/600/400?random=12" 
+          alt="Commercial product photography with creative composition"
+          loading="lazy"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
+      
+      <!-- Portfolio Image 4 -->
+      <div class="group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+        <img 
+          src="https://picsum.photos/600/400?random=13" 
+          alt="Outdoor landscape photography with dramatic lighting"
+          loading="lazy"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
+      
+      <!-- Portfolio Image 5 -->
+      <div class="group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+        <img 
+          src="https://picsum.photos/600/400?random=14" 
+          alt="Lifestyle photography capturing authentic moments"
+          loading="lazy"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
+      
+      <!-- Portfolio Image 6 -->
+      <div class="group relative overflow-hidden rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+        <img 
+          src="https://picsum.photos/600/400?random=15" 
+          alt="Event photography with dynamic action shots"
+          loading="lazy"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
+    </div>
+    
+    <div class="text-center mt-12">
+      <a href="#contact" class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold shadow-xl shadow-amber-500/30 transition-all hover:scale-105">
+        View Full Portfolio
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- Services Section -->
+<section id="services" class="py-20 px-6 bg-slate-900">
+  <div class="mx-auto max-w-7xl">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-sm font-semibold mb-4">Our Services</span>
+      <h2 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">Photography Services</h2>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto">Comprehensive photography packages tailored to your needs</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Service 1: Wedding Photography -->
+      <div class="group relative rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-amber-500/30 p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+        <div class="text-6xl mb-6">📷</div>
+        <h3 class="text-2xl font-display font-bold text-white mb-4">Wedding Photography</h3>
+        <p class="text-slate-400 leading-relaxed mb-6">
+          Capture your special day with timeless elegance. Full-day coverage, engagement shoot, and beautifully edited photos delivered in a premium album.
+        </p>
+        <div class="flex items-baseline gap-2 mb-6">
+          <span class="text-3xl font-bold text-amber-500">$2,499</span>
+          <span class="text-sm text-slate-500">starting at</span>
+        </div>
+        <ul class="space-y-3 text-sm text-slate-400 mb-8">
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            8-10 hours coverage
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            500+ edited photos
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Engagement session included
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Premium wedding album
+          </li>
+        </ul>
+        <a href="#booking" class="block w-full text-center px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold transition-all hover:scale-105">
+          Book Wedding Package
+        </a>
+      </div>
+      
+      <!-- Service 2: Portrait Photography -->
+      <div class="group relative rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-amber-500/30 p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+        <div class="text-6xl mb-6">📷</div>
+        <h3 class="text-2xl font-display font-bold text-white mb-4">Portrait Photography</h3>
+        <p class="text-slate-400 leading-relaxed mb-6">
+          Professional headshots, family portraits, or personal branding photos. Studio or outdoor location with expert lighting and posing guidance.
+        </p>
+        <div class="flex items-baseline gap-2 mb-6">
+          <span class="text-3xl font-bold text-amber-500">$499</span>
+          <span class="text-sm text-slate-500">starting at</span>
+        </div>
+        <ul class="space-y-3 text-sm text-slate-400 mb-8">
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            1-2 hours session
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            50+ edited photos
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Studio or outdoor location
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Digital download included
+          </li>
+        </ul>
+        <a href="#booking" class="block w-full text-center px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold transition-all hover:scale-105">
+          Book Portrait Session
+        </a>
+      </div>
+      
+      <!-- Service 3: Commercial Photography -->
+      <div class="group relative rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-amber-500/30 p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+        <div class="text-6xl mb-6">📷</div>
+        <h3 class="text-2xl font-display font-bold text-white mb-4">Commercial Photography</h3>
+        <p class="text-slate-400 leading-relaxed mb-6">
+          Product shots, corporate events, and brand photography. High-quality images optimized for marketing, advertising, and social media.
+        </p>
+        <div class="flex items-baseline gap-2 mb-6">
+          <span class="text-3xl font-bold text-amber-500">$899</span>
+          <span class="text-sm text-slate-500">starting at</span>
+        </div>
+        <ul class="space-y-3 text-sm text-slate-400 mb-8">
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Half-day coverage
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            100+ edited photos
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Commercial usage rights
+          </li>
+          <li class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Web-optimized formats
+          </li>
+        </ul>
+        <a href="#booking" class="block w-full text-center px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold transition-all hover:scale-105">
+          Book Commercial Session
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Packages/Pricing Section -->
+<section id="packages" class="py-20 px-6 bg-gradient-to-br from-slate-950 via-slate-900 to-black">
+  <div class="mx-auto max-w-7xl">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-sm font-semibold mb-4">Pricing Plans</span>
+      <h2 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">Photography Packages</h2>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto">Flexible pricing options to fit your needs and budget</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Starter Package -->
+      <div class="group relative rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-amber-500/20 p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+        <div class="mb-6">
+          <h3 class="text-2xl font-display font-bold text-white mb-2">Starter Package</h3>
+          <div class="flex items-baseline gap-2">
+            <span class="text-4xl font-bold text-amber-500">$299</span>
+            <span class="text-sm text-slate-500">/session</span>
+          </div>
+        </div>
+        
+        <ul class="space-y-4 text-sm text-slate-300 mb-8">
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>1 hour session</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>30 edited photos</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Digital download</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Basic retouching</span>
+          </li>
+        </ul>
+        
+        <a href="#booking" class="block w-full text-center px-6 py-3 rounded-xl bg-white/10 hover:bg-amber-500 hover:text-slate-950 text-white font-semibold transition-all hover:scale-105">
+          Choose Package
+        </a>
+      </div>
+      
+      <!-- Professional Package (Most Popular) -->
+      <div class="group relative rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border-2 border-amber-500 p-8 shadow-2xl hover:shadow-amber-500/20 transition-all duration-300 hover:-translate-y-2">
+        <!-- Most Popular Badge -->
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+          <span class="inline-flex items-center gap-1 px-4 py-1.5 rounded-full bg-amber-500 text-slate-950 text-xs font-bold shadow-lg">
+            ⭐ Most Popular
+          </span>
+        </div>
+        
+        <div class="mb-6 mt-2">
+          <h3 class="text-2xl font-display font-bold text-white mb-2">Professional Package</h3>
+          <div class="flex items-baseline gap-2">
+            <span class="text-4xl font-bold text-amber-500">$799</span>
+            <span class="text-sm text-slate-500">/session</span>
+          </div>
+        </div>
+        
+        <ul class="space-y-4 text-sm text-slate-300 mb-8">
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>3 hour session</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>100 edited photos</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Digital + print delivery</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Advanced retouching</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Location flexibility</span>
+          </li>
+        </ul>
+        
+        <a href="#booking" class="block w-full text-center px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold shadow-lg shadow-amber-500/30 transition-all hover:scale-105">
+          Choose Package
+        </a>
+      </div>
+      
+      <!-- Premium Package -->
+      <div class="group relative rounded-3xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 hover:border-amber-500/20 p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+        <div class="mb-6">
+          <h3 class="text-2xl font-display font-bold text-white mb-2">Premium Package</h3>
+          <div class="flex items-baseline gap-2">
+            <span class="text-4xl font-bold text-amber-500">$1,499</span>
+            <span class="text-sm text-slate-500">/session</span>
+          </div>
+        </div>
+        
+        <ul class="space-y-4 text-sm text-slate-300 mb-8">
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Full day coverage</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>300+ edited photos</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Premium album included</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Advanced retouching</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Multiple locations</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span>Priority booking</span>
+          </li>
+        </ul>
+        
+        <a href="#booking" class="block w-full text-center px-6 py-3 rounded-xl bg-white/10 hover:bg-amber-500 hover:text-slate-950 text-white font-semibold transition-all hover:scale-105">
+          Choose Package
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Testimonials Section -->
+<section class="py-20 px-6 bg-slate-950">
+  <div class="mx-auto max-w-7xl">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-400 text-sm font-semibold mb-4">Testimonials</span>
+      <h2 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">What Our Clients Say</h2>
+      <p class="text-lg text-slate-400 max-w-2xl mx-auto">Real experiences from our satisfied clients</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Testimonial 1 -->
+      <div class="group relative rounded-3xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-amber-500/30 p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+        <!-- Star Rating -->
+        <div class="flex gap-1 mb-4 text-amber-500 text-xl">
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+        </div>
+        
+        <!-- Quote -->
+        <p class="text-slate-300 leading-relaxed mb-6 italic">
+          "LensArt Studio captured our wedding day perfectly. Every photo tells a story and the attention to detail was incredible. We couldn't be happier!"
+        </p>
+        
+        <!-- Client Info -->
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-slate-950 font-bold text-lg">
+            SM
+          </div>
+          <div>
+            <p class="font-semibold text-white">Sarah M.</p>
+            <p class="text-sm text-slate-400">Bride</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Testimonial 2 -->
+      <div class="group relative rounded-3xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-amber-500/30 p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+        <!-- Star Rating -->
+        <div class="flex gap-1 mb-4 text-amber-500 text-xl">
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+        </div>
+        
+        <!-- Quote -->
+        <p class="text-slate-300 leading-relaxed mb-6 italic">
+          "Professional, creative, and efficient. The headshots they created for our team elevated our entire brand image. Highly recommend!"
+        </p>
+        
+        <!-- Client Info -->
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-slate-950 font-bold text-lg">
+            JT
+          </div>
+          <div>
+            <p class="font-semibold text-white">James T.</p>
+            <p class="text-sm text-slate-400">CEO</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Testimonial 3 -->
+      <div class="group relative rounded-3xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-amber-500/30 p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+        <!-- Star Rating -->
+        <div class="flex gap-1 mb-4 text-amber-500 text-xl">
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+        </div>
+        
+        <!-- Quote -->
+        <p class="text-slate-300 leading-relaxed mb-6 italic">
+          "The family portraits exceeded all expectations. They made us feel comfortable and the results are stunning. True artists at work!"
+        </p>
+        
+        <!-- Client Info -->
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-slate-950 font-bold text-lg">
+            ER
+          </div>
+          <div>
+            <p class="font-semibold text-white">Emily R.</p>
+            <p class="text-sm text-slate-400">Family</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Footer -->
+<footer id="contact" class="bg-slate-950 border-t border-white/10 py-12 px-6">
+  <div class="mx-auto max-w-7xl">
+    <!-- Main Footer Content -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      <!-- Brand Column (spans 2 columns) -->
+      <div class="col-span-1 md:col-span-2">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="text-3xl">📷</div>
+          <span class="text-2xl font-bold text-white">LensArt Studio</span>
+        </div>
+        <p class="text-slate-400 leading-relaxed mb-6 max-w-md">
+          Capturing Moments, Creating Memories
+        </p>
+        <!-- Social Media Icons -->
+        <div class="flex items-center gap-4">
+          <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-slate-400 hover:text-amber-400 transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-slate-400 hover:text-amber-400 transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-slate-400 hover:text-amber-400 transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Quick Links -->
+      <div>
+        <h4 class="text-sm font-bold text-white mb-4">Quick Links</h4>
+        <ul class="space-y-2.5 text-sm text-slate-400">
+          <li><a href="#portfolio" class="hover:text-amber-400 transition-colors">Portfolio</a></li>
+          <li><a href="#services" class="hover:text-amber-400 transition-colors">Services</a></li>
+          <li><a href="#packages" class="hover:text-amber-400 transition-colors">Packages</a></li>
+          <li><a href="#contact" class="hover:text-amber-400 transition-colors">About</a></li>
+          <li><a href="#contact" class="hover:text-amber-400 transition-colors">Blog</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact -->
+      <div>
+        <h4 class="text-sm font-bold text-white mb-4">Contact</h4>
+        <ul class="space-y-2.5 text-sm text-slate-400">
+          <li class="flex items-start gap-2">
+            <span>📞</span>
+            <a href="tel:+1234567890" class="hover:text-amber-400 transition-colors">(123) 456-7890</a>
+          </li>
+          <li class="flex items-start gap-2">
+            <span>📧</span>
+            <a href="mailto:hello@lensartstudio.com" class="hover:text-amber-400 transition-colors">hello@lensartstudio.com</a>
+          </li>
+          <li class="flex items-start gap-2">
+            <span>🏢</span>
+            <span>123 Photo Lane<br/>Studio City, CA 90001</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Footer Bottom -->
+    <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-500">
+      <p>© 2025 LensArt Studio. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href="#" class="hover:text-amber-400 transition-colors">Privacy Policy</a>
+        <a href="#" class="hover:text-amber-400 transition-colors">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

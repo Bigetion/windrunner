@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luxe Beauty Studio — Where Beauty Meets Excellence</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- FOUC Prevention -->
+  <style>html{opacity:0;transition:opacity .2s ease}</style>
+  
+  <!-- Windrunner Integration -->
+  <script type="module">
+    import { windrunner } from "../dist/index.esm.js";
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
+  </script>
+  
+  <!-- Custom Animations -->
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes glow { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    
+    .animate-fade-in { animation: fadeIn 1s ease; }
+    .animate-slide-up { animation: slideUp 0.8s ease both; }
+    .animate-glow { animation: glow 3s ease-in-out infinite; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    
+    .font-display { font-family: 'Playfair Display', serif; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-white text-slate-900 antialiased">
+
+  <!-- NAVIGATION -->
+  <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <!-- Logo -->
+        <div class="flex items-center gap-3">
+          <span class="text-3xl animate-float">✨</span>
+          <span class="font-display text-2xl font-bold text-rose-400">Luxe Beauty Studio</span>
+        </div>
+        
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#services" class="text-slate-700 hover:text-rose-400 transition-colors font-medium">Services</a>
+          <a href="#team" class="text-slate-700 hover:text-rose-400 transition-colors font-medium">Team</a>
+          <a href="#gallery" class="text-slate-700 hover:text-rose-400 transition-colors font-medium">Gallery</a>
+          <a href="#contact" class="text-slate-700 hover:text-rose-400 transition-colors font-medium">Contact</a>
+          <a href="#book" class="bg-rose-400 text-white px-6 py-3 rounded-full font-semibold hover:bg-rose-500 transition-all hover:scale-105 shadow-lg shadow-rose-400/30">
+            Book Appointment
+          </a>
+        </div>
+        
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden p-2 text-slate-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="relative pt-32 pb-20 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="text-center max-w-4xl mx-auto">
+        <!-- Decorative Elements -->
+        <div class="absolute top-20 left-10 text-6xl opacity-20 animate-float">✨</div>
+        <div class="absolute bottom-10 right-20 text-5xl opacity-20 animate-float" style="animation-delay: 1s;">💅</div>
+        
+        <!-- Main Headline -->
+        <h1 class="font-display text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 mb-6 tracking-tight animate-slide-up">
+          Where Beauty Meets<br/>
+          <span class="text-rose-400">Excellence</span>
+        </h1>
+        
+        <!-- Subheadline -->
+        <p class="text-lg md:text-xl text-slate-600 mb-10 leading-relaxed max-w-2xl mx-auto animate-slide-up" style="animation-delay: 0.2s;">
+          Experience luxury beauty treatments delivered by expert stylists in a serene, elegant atmosphere. Your transformation begins here.
+        </p>
+        
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up" style="animation-delay: 0.4s;">
+          <a href="#book" class="bg-rose-400 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-rose-500 transition-all hover:scale-105 shadow-xl shadow-rose-400/30">
+            Book Appointment
+          </a>
+          <a href="#services" class="bg-white text-rose-400 px-8 py-4 rounded-full font-semibold text-lg hover:bg-pink-50 transition-all border-2 border-rose-400">
+            View Services
+          </a>
+        </div>
+        
+        <!-- Trust Signals -->
+        <div class="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto animate-slide-up" style="animation-delay: 0.6s;">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-rose-400 mb-2">10+</div>
+            <div class="text-sm text-slate-600">Years Experience</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-rose-400 mb-2">5000+</div>
+            <div class="text-sm text-slate-600">Happy Clients</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-rose-400 mb-2">4.9★</div>
+            <div class="text-sm text-slate-600">Client Rating</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES SECTION -->
+  <section id="services" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="font-display text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+          Our Signature Services
+        </h2>
+        <p class="text-lg text-slate-600 leading-relaxed">
+          Indulge in our carefully curated menu of luxury beauty treatments designed to enhance your natural beauty.
+        </p>
+      </div>
+      
+      <!-- Services Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Service 1: Hair Styling -->
+        <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-3xl p-8 hover:scale-105 transition-all hover:shadow-xl">
+          <div class="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Hair Styling</h3>
+          <p class="text-slate-600 mb-4 leading-relaxed">
+            Cuts, color, and styling by expert hair artists. Transform your look with our signature techniques.
+          </p>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500">60-120 min</span>
+            <span class="font-semibold text-rose-400">From $85</span>
+          </div>
+        </div>
+        
+        <!-- Service 2: Nails -->
+        <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-3xl p-8 hover:scale-105 transition-all hover:shadow-xl">
+          <div class="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Nails</h3>
+          <p class="text-slate-600 mb-4 leading-relaxed">
+            Manicures, pedicures, and nail art. Pamper your hands and feet with luxurious treatments.
+          </p>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500">45-90 min</span>
+            <span class="font-semibold text-rose-400">From $55</span>
+          </div>
+        </div>
+        
+        <!-- Service 3: Facial -->
+        <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-3xl p-8 hover:scale-105 transition-all hover:shadow-xl">
+          <div class="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Facial</h3>
+          <p class="text-slate-600 mb-4 leading-relaxed">
+            Deep cleansing and rejuvenating facials tailored to your skin type for a radiant glow.
+          </p>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500">60-90 min</span>
+            <span class="font-semibold text-rose-400">From $95</span>
+          </div>
+        </div>
+        
+        <!-- Service 4: Massage -->
+        <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-3xl p-8 hover:scale-105 transition-all hover:shadow-xl">
+          <div class="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Massage</h3>
+          <p class="text-slate-600 mb-4 leading-relaxed">
+            Therapeutic massage treatments to melt away stress and tension. Relax and rejuvenate.
+          </p>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500">60-90 min</span>
+            <span class="font-semibold text-rose-400">From $110</span>
+          </div>
+        </div>
+        
+        <!-- Service 5: Makeup -->
+        <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-3xl p-8 hover:scale-105 transition-all hover:shadow-xl">
+          <div class="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Makeup</h3>
+          <p class="text-slate-600 mb-4 leading-relaxed">
+            Professional makeup application for special events, weddings, or a glamorous night out.
+          </p>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500">45-75 min</span>
+            <span class="font-semibold text-rose-400">From $75</span>
+          </div>
+        </div>
+        
+        <!-- Service 6: Skincare -->
+        <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-3xl p-8 hover:scale-105 transition-all hover:shadow-xl">
+          <div class="bg-white w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-slate-900 mb-3">Skincare</h3>
+          <p class="text-slate-600 mb-4 leading-relaxed">
+            Advanced skincare treatments including peels, microdermabrasion, and anti-aging therapies.
+          </p>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500">60-90 min</span>
+            <span class="font-semibold text-rose-400">From $120</span>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM SECTION -->
+  <section id="team" class="py-24 bg-gradient-to-br from-pink-50 to-rose-50">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="font-display text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+          Meet Our Expert Team
+        </h2>
+        <p class="text-lg text-slate-600 leading-relaxed">
+          Our talented stylists and beauty professionals are passionate about bringing out your best self.
+        </p>
+      </div>
+      
+      <!-- Team Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        
+        <!-- Team Member 1 -->
+        <div class="bg-white rounded-3xl overflow-hidden hover:scale-105 transition-all hover:shadow-2xl">
+          <div class="aspect-[3/4] overflow-hidden">
+            <img 
+              src="https://picsum.photos/600/400?random=41" 
+              alt="Sophia Martinez - Lead Hair Stylist"
+              loading="lazy"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div class="p-6">
+            <h3 class="font-display text-xl font-bold text-slate-900 mb-2">Sophia Martinez</h3>
+            <p class="text-rose-400 font-medium mb-3">Lead Hair Stylist</p>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Color specialist with 12+ years experience. Master of balayage and lived-in color techniques.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Team Member 2 -->
+        <div class="bg-white rounded-3xl overflow-hidden hover:scale-105 transition-all hover:shadow-2xl">
+          <div class="aspect-[3/4] overflow-hidden">
+            <img 
+              src="https://picsum.photos/600/400?random=42" 
+              alt="Emma Chen - Senior Esthetician"
+              loading="lazy"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div class="p-6">
+            <h3 class="font-display text-xl font-bold text-slate-900 mb-2">Emma Chen</h3>
+            <p class="text-rose-400 font-medium mb-3">Senior Esthetician</p>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Licensed esthetician specializing in anti-aging treatments and corrective skincare.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Team Member 3 -->
+        <div class="bg-white rounded-3xl overflow-hidden hover:scale-105 transition-all hover:shadow-2xl">
+          <div class="aspect-[3/4] overflow-hidden">
+            <img 
+              src="https://picsum.photos/600/400?random=43" 
+              alt="Isabella Rodriguez - Nail Artist"
+              loading="lazy"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div class="p-6">
+            <h3 class="font-display text-xl font-bold text-slate-900 mb-2">Isabella Rodriguez</h3>
+            <p class="text-rose-400 font-medium mb-3">Nail Artist</p>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Expert in nail art, gel extensions, and luxury manicure experiences that last.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Team Member 4 -->
+        <div class="bg-white rounded-3xl overflow-hidden hover:scale-105 transition-all hover:shadow-2xl">
+          <div class="aspect-[3/4] overflow-hidden">
+            <img 
+              src="https://picsum.photos/600/400?random=44" 
+              alt="Olivia Taylor - Makeup Artist"
+              loading="lazy"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div class="p-6">
+            <h3 class="font-display text-xl font-bold text-slate-900 mb-2">Olivia Taylor</h3>
+            <p class="text-rose-400 font-medium mb-3">Makeup Artist</p>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Celebrity makeup artist specializing in bridal, editorial, and red carpet looks.
+            </p>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- BEFORE/AFTER GALLERY SECTION -->
+  <section id="gallery" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="font-display text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+          Stunning Transformations
+        </h2>
+        <p class="text-lg text-slate-600 leading-relaxed">
+          See the remarkable before and after results from our expert beauty services.
+        </p>
+      </div>
+      
+      <!-- Gallery Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Transformation 1: Hair Color -->
+        <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-3xl p-6 hover:scale-105 transition-all hover:shadow-2xl">
+          <h3 class="font-display text-xl font-bold text-slate-900 mb-4">Hair Color Transformation</h3>
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="relative rounded-2xl overflow-hidden">
+              <img 
+                src="https://picsum.photos/600/400?random=51" 
+                alt="Before hair color"
+                loading="lazy"
+                class="w-full h-full object-cover aspect-[3/4]"
+              />
+              <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">
+                Before
+              </div>
+            </div>
+            <div class="relative rounded-2xl overflow-hidden">
+              <img 
+                src="https://picsum.photos/600/400?random=52" 
+                alt="After hair color"
+                loading="lazy"
+                class="w-full h-full object-cover aspect-[3/4]"
+              />
+              <div class="absolute top-3 left-3 bg-rose-400 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                After
+              </div>
+            </div>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            From dull to dazzling with our signature balayage technique and custom color blend.
+          </p>
+        </div>
+        
+        <!-- Transformation 2: Facial Treatment -->
+        <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-3xl p-6 hover:scale-105 transition-all hover:shadow-2xl">
+          <h3 class="font-display text-xl font-bold text-slate-900 mb-4">Radiant Glow Facial</h3>
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="relative rounded-2xl overflow-hidden">
+              <img 
+                src="https://picsum.photos/600/400?random=53" 
+                alt="Before facial treatment"
+                loading="lazy"
+                class="w-full h-full object-cover aspect-[3/4]"
+              />
+              <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">
+                Before
+              </div>
+            </div>
+            <div class="relative rounded-2xl overflow-hidden">
+              <img 
+                src="https://picsum.photos/600/400?random=54" 
+                alt="After facial treatment"
+                loading="lazy"
+                class="w-full h-full object-cover aspect-[3/4]"
+              />
+              <div class="absolute top-3 left-3 bg-rose-400 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                After
+              </div>
+            </div>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Deep cleansing and rejuvenating facial revealing healthy, glowing skin in just one session.
+          </p>
+        </div>
+        
+        <!-- Transformation 3: Makeup -->
+        <div class="bg-gradient-to-br from-pink-50 to-rose-50 rounded-3xl p-6 hover:scale-105 transition-all hover:shadow-2xl">
+          <h3 class="font-display text-xl font-bold text-slate-900 mb-4">Bridal Makeup Glam</h3>
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="relative rounded-2xl overflow-hidden">
+              <img 
+                src="https://picsum.photos/600/400?random=55" 
+                alt="Before makeup"
+                loading="lazy"
+                class="w-full h-full object-cover aspect-[3/4]"
+              />
+              <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">
+                Before
+              </div>
+            </div>
+            <div class="relative rounded-2xl overflow-hidden">
+              <img 
+                src="https://picsum.photos/600/400?random=56" 
+                alt="After makeup"
+                loading="lazy"
+                class="w-full h-full object-cover aspect-[3/4]"
+              />
+              <div class="absolute top-3 left-3 bg-rose-400 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                After
+              </div>
+            </div>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Professional bridal makeup creating a flawless, camera-ready look that lasts all day.
+          </p>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING CTA SECTION -->
+  <section id="book" class="py-24 bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+          
+          <!-- Left: CTA Content -->
+          <div class="p-12 lg:p-16 flex flex-col justify-center">
+            <div class="text-6xl mb-6 animate-float">✨</div>
+            <h2 class="font-display text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+              Ready for Your Transformation?
+            </h2>
+            <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+              Book your appointment today and experience the luxury beauty treatment you deserve. Limited availability for this month!
+            </p>
+            
+            <!-- Availability Indicators -->
+            <div class="space-y-4 mb-8">
+              <div class="flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                <span class="text-slate-700">This Week: <strong class="text-rose-400">Few slots remaining</strong></span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <span class="text-slate-700">Next Week: <strong class="text-rose-400">Filling up fast</strong></span>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-rose-400"></div>
+                <span class="text-slate-700">This Month: <strong class="text-rose-400">30% booked</strong></span>
+              </div>
+            </div>
+            
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a href="tel:+15551234567" class="bg-rose-400 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-rose-500 transition-all hover:scale-105 shadow-xl shadow-rose-400/30 text-center">
+                Call Now: (555) 123-4567
+              </a>
+              <a href="mailto:book@luxebeauty.com" class="bg-white text-rose-400 px-8 py-4 rounded-full font-semibold text-lg hover:bg-pink-50 transition-all border-2 border-rose-400 text-center">
+                Email to Book
+              </a>
+            </div>
+            
+            <!-- Trust Badge -->
+            <div class="mt-8 flex items-center gap-3 text-sm text-slate-600">
+              <svg class="w-5 h-5 text-rose-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span>100% Satisfaction Guaranteed • Free Consultation</span>
+            </div>
+          </div>
+          
+          <!-- Right: Visual/Calendar Concept -->
+          <div class="bg-gradient-to-br from-rose-400 to-pink-500 p-12 lg:p-16 flex flex-col justify-center text-white">
+            <h3 class="font-display text-3xl font-bold mb-8">Available Time Slots</h3>
+            
+            <!-- Mock Calendar Days -->
+            <div class="grid grid-cols-3 gap-4 mb-8">
+              <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white/30 transition-all cursor-pointer">
+                <div class="text-sm opacity-80 mb-1">MON</div>
+                <div class="text-2xl font-bold">15</div>
+                <div class="text-xs mt-1 opacity-90">3 slots</div>
+              </div>
+              <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white/30 transition-all cursor-pointer">
+                <div class="text-sm opacity-80 mb-1">TUE</div>
+                <div class="text-2xl font-bold">16</div>
+                <div class="text-xs mt-1 opacity-90">5 slots</div>
+              </div>
+              <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white/30 transition-all cursor-pointer">
+                <div class="text-sm opacity-80 mb-1">WED</div>
+                <div class="text-2xl font-bold">17</div>
+                <div class="text-xs mt-1 opacity-90">2 slots</div>
+              </div>
+              <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white/30 transition-all cursor-pointer">
+                <div class="text-sm opacity-80 mb-1">THU</div>
+                <div class="text-2xl font-bold">18</div>
+                <div class="text-xs mt-1 opacity-90">4 slots</div>
+              </div>
+              <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white/30 transition-all cursor-pointer">
+                <div class="text-sm opacity-80 mb-1">FRI</div>
+                <div class="text-2xl font-bold">19</div>
+                <div class="text-xs mt-1 opacity-90">1 slot</div>
+              </div>
+              <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center hover:bg-white/30 transition-all cursor-pointer">
+                <div class="text-sm opacity-80 mb-1">SAT</div>
+                <div class="text-2xl font-bold">20</div>
+                <div class="text-xs mt-1 opacity-90">Full</div>
+              </div>
+            </div>
+            
+            <!-- Popular Times -->
+            <div class="space-y-3">
+              <h4 class="font-semibold mb-3">Most Popular Times:</h4>
+              <div class="flex items-center justify-between bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                <span>Morning (9am - 12pm)</span>
+                <span class="text-sm">⭐ Available</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                <span>Afternoon (12pm - 5pm)</span>
+                <span class="text-sm">🔥 High demand</span>
+              </div>
+              <div class="flex items-center justify-between bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                <span>Evening (5pm - 8pm)</span>
+                <span class="text-sm">✨ Few left</span>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS SECTION -->
+  <section class="py-24 bg-slate-900">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+          What Our Clients Say
+        </h2>
+        <p class="text-lg text-slate-300 leading-relaxed">
+          Hear from our delighted clients about their luxurious beauty experiences.
+        </p>
+      </div>
+      
+      <!-- Testimonials Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Testimonial 1 -->
+        <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/15 transition-all hover:scale-105 border border-white/20">
+          <!-- Star Rating -->
+          <div class="flex gap-1 mb-6">
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+          </div>
+          
+          <!-- Quote -->
+          <p class="text-white text-lg leading-relaxed mb-6">
+            "Absolutely stunning results! The team at Luxe Beauty Studio transformed my look completely. The attention to detail and luxurious experience exceeded all my expectations."
+          </p>
+          
+          <!-- Author -->
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
+              J
+            </div>
+            <div>
+              <div class="font-semibold text-white">Jessica Williams</div>
+              <div class="text-sm text-slate-400">Regular Client</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Testimonial 2 -->
+        <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/15 transition-all hover:scale-105 border border-white/20">
+          <!-- Star Rating -->
+          <div class="flex gap-1 mb-6">
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+          </div>
+          
+          <!-- Quote -->
+          <p class="text-white text-lg leading-relaxed mb-6">
+            "The most relaxing and professional beauty experience I've ever had. Every visit feels like a mini vacation. The staff is incredibly talented and genuinely cares about results."
+          </p>
+          
+          <!-- Author -->
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
+              M
+            </div>
+            <div>
+              <div class="font-semibold text-white">Michelle Anderson</div>
+              <div class="text-sm text-slate-400">VIP Member</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Testimonial 3 -->
+        <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 hover:bg-white/15 transition-all hover:scale-105 border border-white/20">
+          <!-- Star Rating -->
+          <div class="flex gap-1 mb-6">
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+            <svg class="w-5 h-5 text-rose-400 fill-current" viewBox="0 0 20 20">
+              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+            </svg>
+          </div>
+          
+          <!-- Quote -->
+          <p class="text-white text-lg leading-relaxed mb-6">
+            "I wouldn't trust anyone else with my hair and makeup! For my wedding day, they made me feel like royalty. The luxury service and perfect results made it unforgettable."
+          </p>
+          
+          <!-- Author -->
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
+              S
+            </div>
+            <div>
+              <div class="font-semibold text-white">Sarah Thompson</div>
+              <div class="text-sm text-slate-400">Bride</div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- FOOTER -->
+  <footer id="contact" class="bg-slate-950 text-white border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-12">
+        
+        <!-- Brand Column (spans 2 columns on large screens) -->
+        <div class="lg:col-span-5">
+          <div class="flex items-center gap-3 mb-6">
+            <span class="text-4xl animate-float">✨</span>
+            <span class="font-display text-2xl font-bold text-rose-400">Luxe Beauty Studio</span>
+          </div>
+          <p class="text-slate-400 leading-relaxed mb-6">
+            Where Beauty Meets Excellence. Experience luxury beauty treatments delivered by expert stylists in a serene, elegant atmosphere.
+          </p>
+          <!-- Social Media Links (Instagram focus) -->
+          <div class="flex gap-4">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-white/10 hover:bg-rose-400 rounded-full flex items-center justify-center transition-all hover:scale-110" aria-label="Follow us on Instagram">
+              <!-- Instagram Icon -->
+              <svg class="w-5 h-5 text-rose-400 hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-white/10 hover:bg-rose-400 rounded-full flex items-center justify-center transition-all hover:scale-110" aria-label="Follow us on Facebook">
+              <!-- Facebook Icon -->
+              <svg class="w-5 h-5 text-rose-400 hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 bg-white/10 hover:bg-rose-400 rounded-full flex items-center justify-center transition-all hover:scale-110" aria-label="Follow us on Pinterest">
+              <!-- Pinterest Icon -->
+              <svg class="w-5 h-5 text-rose-400 hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.627 0-12 5.372-12 12 0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.554.535 6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Quick Links Column -->
+        <div class="lg:col-span-3">
+          <h3 class="font-display text-lg font-bold mb-6">Quick Links</h3>
+          <ul class="space-y-4">
+            <li><a href="#services" class="text-slate-400 hover:text-rose-400 transition-colors">Services</a></li>
+            <li><a href="#team" class="text-slate-400 hover:text-rose-400 transition-colors">Our Team</a></li>
+            <li><a href="#gallery" class="text-slate-400 hover:text-rose-400 transition-colors">Gallery</a></li>
+            <li><a href="#book" class="text-slate-400 hover:text-rose-400 transition-colors">Book Now</a></li>
+          </ul>
+        </div>
+        
+        <!-- Contact Info Column -->
+        <div class="lg:col-span-4">
+          <h3 class="font-display text-lg font-bold mb-6">Contact Us</h3>
+          <ul class="space-y-4 text-slate-400">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-rose-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span>123 Luxury Lane<br/>Beverly Hills, CA 90210</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-rose-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
+              <a href="tel:+15551234567" class="hover:text-rose-400 transition-colors">(555) 123-4567</a>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-rose-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <a href="mailto:book@luxebeauty.com" class="hover:text-rose-400 transition-colors">book@luxebeauty.com</a>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-rose-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span>Mon-Fri: 9am-8pm<br/>Sat: 9am-6pm<br/>Sun: Closed</span>
+            </li>
+          </ul>
+        </div>
+        
+      </div>
+      
+      <!-- Footer Bottom -->
+      <div class="border-t border-white/10 pt-8 text-center text-slate-400 text-sm">
+        <p>&copy; 2025 Luxe Beauty Studio. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

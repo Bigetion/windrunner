@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bella Cucina — Authentic Italian Dining Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>html{opacity:0;transition:opacity .2s ease}</style>
+  <script type="module">
+    import { windrunner } from "../dist/index.esm.js";
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
+  </script>
+  <style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    .animate-fade-in { animation: fadeIn 1s ease; }
+    .animate-slide-up { animation: slideUp 0.8s ease both; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .font-display { font-family: 'Playfair Display', serif; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-amber-50 text-stone-900 antialiased">
+
+<!-- Navbar -->
+<nav class="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
+  <div class="mx-auto max-w-7xl px-6 flex items-center justify-between h-20">
+    <div class="flex items-center gap-3">
+      <div class="text-3xl">🍝</div>
+      <span class="text-2xl font-display font-bold text-amber-900">Bella Cucina</span>
+    </div>
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700">
+      <a href="#menu" class="hover:text-amber-700 transition-colors">Menu</a>
+      <a href="#about" class="hover:text-amber-700 transition-colors">About</a>
+      <a href="#gallery" class="hover:text-amber-700 transition-colors">Gallery</a>
+      <a href="#contact" class="hover:text-amber-700 transition-colors">Contact</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="tel:+1234567890" class="hidden md:block text-sm font-medium text-stone-700 hover:text-amber-700 transition-colors">
+        📞 (123) 456-7890
+      </a>
+      <a href="#reservation" class="px-6 py-2.5 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold shadow-lg shadow-amber-900/20 transition-all">
+        Reserve Table
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 px-6 bg-gradient-to-br from-amber-100 via-orange-50 to-red-50">
+  <div class="mx-auto max-w-7xl">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <!-- Text Content -->
+      <div class="animate-slide-up">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-200/50 border border-amber-300 text-amber-900 text-sm font-medium mb-6">
+          <span>⭐</span>
+          Since 1985 • Family Recipe
+        </div>
+        <h1 class="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-stone-900 mb-6 leading-tight">
+          Authentic Italian<br/>
+          <span class="text-amber-700">Dining Experience</span>
+        </h1>
+        <p class="text-lg text-stone-600 mb-8 leading-relaxed max-w-xl">
+          Experience the warmth of Italy in every bite. Fresh ingredients, traditional recipes, 
+          and a passion for perfection — straight from our family to yours.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#menu" class="px-8 py-4 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-semibold text-center shadow-xl shadow-amber-900/30 transition-all hover:scale-105">
+            View Menu
+          </a>
+          <a href="#reservation" class="px-8 py-4 rounded-full border-2 border-amber-600 hover:bg-amber-50 text-amber-900 font-semibold text-center transition-all">
+            Book a Table
+          </a>
+        </div>
+        <div class="flex items-center gap-8 mt-10 text-sm text-stone-600">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🕐</span>
+            <div>
+              <p class="font-semibold text-stone-900">Open Daily</p>
+              <p>11:00 AM - 10:00 PM</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">📍</span>
+            <div>
+              <p class="font-semibold text-stone-900">Location</p>
+              <p>123 Main St, NYC</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hero Image -->
+      <div class="relative animate-slide-up" style="animation-delay: 0.2s;">
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl">
+          <div class="aspect-[4/5] bg-gradient-to-br from-amber-200 to-orange-300 flex items-center justify-center">
+            <div class="text-center p-8">
+              <div class="text-9xl mb-4 animate-float">🍝</div>
+              <p class="text-xl font-display font-semibold text-amber-900">Signature Pasta</p>
+            </div>
+          </div>
+        </div>
+        <!-- Floating badges -->
+        <div class="absolute -top-4 -left-4 bg-white rounded-2xl shadow-xl p-4 animate-float">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">⭐</span>
+            <div>
+              <p class="text-xs text-stone-500">Rating</p>
+              <p class="font-bold text-amber-700">4.9/5.0</p>
+            </div>
+          </div>
+        </div>
+        <div class="absolute -bottom-4 -right-4 bg-white rounded-2xl shadow-xl p-4 animate-float" style="animation-delay: 1s;">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">👨‍🍳</span>
+            <div>
+              <p class="text-xs text-stone-500">Chef's Choice</p>
+              <p class="font-bold text-amber-700">Recommended</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features / Why Choose Us -->
+<section class="py-20 px-6 bg-white">
+  <div class="mx-auto max-w-7xl">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold mb-4">Why Choose Us</span>
+      <h2 class="text-4xl md:text-5xl font-display font-bold text-stone-900 mb-4">What Makes Us Special</h2>
+      <p class="text-lg text-stone-600 max-w-2xl mx-auto">Three generations of culinary excellence</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Feature 1 -->
+      <div class="group text-center p-8 rounded-3xl border-2 border-stone-200 hover:border-amber-300 hover:bg-amber-50/50 transition-all">
+        <div class="text-6xl mb-4">🌿</div>
+        <h3 class="text-xl font-display font-bold text-stone-900 mb-3">Fresh Ingredients</h3>
+        <p class="text-stone-600 leading-relaxed">Locally sourced, organic produce delivered daily. We never compromise on quality.</p>
+      </div>
+      
+      <!-- Feature 2 -->
+      <div class="group text-center p-8 rounded-3xl border-2 border-stone-200 hover:border-amber-300 hover:bg-amber-50/50 transition-all">
+        <div class="text-6xl mb-4">👨‍🍳</div>
+        <h3 class="text-xl font-display font-bold text-stone-900 mb-3">Expert Chefs</h3>
+        <p class="text-stone-600 leading-relaxed">Trained in Italy, our chefs bring authentic flavors and techniques to every dish.</p>
+      </div>
+      
+      <!-- Feature 3 -->
+      <div class="group text-center p-8 rounded-3xl border-2 border-stone-200 hover:border-amber-300 hover:bg-amber-50/50 transition-all">
+        <div class="text-6xl mb-4">❤️</div>
+        <h3 class="text-xl font-display font-bold text-stone-900 mb-3">Family Recipe</h3>
+        <p class="text-stone-600 leading-relaxed">Time-tested recipes passed down through generations of our family.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Menu Highlights -->
+<section id="menu" class="py-20 px-6 bg-gradient-to-b from-amber-50 to-orange-50">
+  <div class="mx-auto max-w-7xl">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold mb-4">Our Menu</span>
+      <h2 class="text-4xl md:text-5xl font-display font-bold text-stone-900 mb-4">Signature Dishes</h2>
+      <p class="text-lg text-stone-600 max-w-2xl mx-auto">Crafted with love, served with passion</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Menu Item 1 -->
+      <div class="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2">
+        <div class="aspect-[4/3] bg-gradient-to-br from-red-200 to-orange-300 flex items-center justify-center">
+          <div class="text-8xl">🍝</div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="text-xl font-display font-bold text-stone-900">Spaghetti Carbonara</h3>
+            <span class="text-xl font-bold text-amber-700">$18</span>
+          </div>
+          <p class="text-stone-600 text-sm leading-relaxed mb-4">Creamy pasta with pancetta, egg yolk, and parmesan. A Roman classic.</p>
+          <div class="flex items-center gap-1 text-amber-500 text-sm">
+            <span>⭐⭐⭐⭐⭐</span>
+            <span class="text-stone-500 ml-1">(4.9)</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Menu Item 2 -->
+      <div class="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2">
+        <div class="aspect-[4/3] bg-gradient-to-br from-green-200 to-emerald-300 flex items-center justify-center">
+          <div class="text-8xl">🍕</div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="text-xl font-display font-bold text-stone-900">Margherita Pizza</h3>
+            <span class="text-xl font-bold text-amber-700">$16</span>
+          </div>
+          <p class="text-stone-600 text-sm leading-relaxed mb-4">Wood-fired pizza with San Marzano tomatoes, fresh mozzarella, and basil.</p>
+          <div class="flex items-center gap-1 text-amber-500 text-sm">
+            <span>⭐⭐⭐⭐⭐</span>
+            <span class="text-stone-500 ml-1">(5.0)</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Menu Item 3 -->
+      <div class="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2">
+        <div class="aspect-[4/3] bg-gradient-to-br from-yellow-200 to-amber-300 flex items-center justify-center">
+          <div class="text-8xl">🥘</div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="text-xl font-display font-bold text-stone-900">Osso Buco</h3>
+            <span class="text-xl font-bold text-amber-700">$32</span>
+          </div>
+          <p class="text-stone-600 text-sm leading-relaxed mb-4">Braised veal shanks with saffron risotto. Tender and flavorful.</p>
+          <div class="flex items-center gap-1 text-amber-500 text-sm">
+            <span>⭐⭐⭐⭐⭐</span>
+            <span class="text-stone-500 ml-1">(4.8)</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Menu Item 4 -->
+      <div class="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2">
+        <div class="aspect-[4/3] bg-gradient-to-br from-purple-200 to-pink-300 flex items-center justify-center">
+          <div class="text-8xl">🍰</div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="text-xl font-display font-bold text-stone-900">Tiramisu</h3>
+            <span class="text-xl font-bold text-amber-700">$12</span>
+          </div>
+          <p class="text-stone-600 text-sm leading-relaxed mb-4">Classic Italian dessert with coffee-soaked ladyfingers and mascarpone.</p>
+          <div class="flex items-center gap-1 text-amber-500 text-sm">
+            <span>⭐⭐⭐⭐⭐</span>
+            <span class="text-stone-500 ml-1">(5.0)</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Menu Item 5 -->
+      <div class="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2">
+        <div class="aspect-[4/3] bg-gradient-to-br from-blue-200 to-cyan-300 flex items-center justify-center">
+          <div class="text-8xl">🦞</div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="text-xl font-display font-bold text-stone-900">Seafood Risotto</h3>
+            <span class="text-xl font-bold text-amber-700">$28</span>
+          </div>
+          <p class="text-stone-600 text-sm leading-relaxed mb-4">Creamy risotto with fresh lobster, shrimp, and scallops.</p>
+          <div class="flex items-center gap-1 text-amber-500 text-sm">
+            <span>⭐⭐⭐⭐⭐</span>
+            <span class="text-stone-500 ml-1">(4.9)</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Menu Item 6 -->
+      <div class="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2">
+        <div class="aspect-[4/3] bg-gradient-to-br from-red-300 to-rose-400 flex items-center justify-center">
+          <div class="text-8xl">🥩</div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="text-xl font-display font-bold text-stone-900">Bistecca Fiorentina</h3>
+            <span class="text-xl font-bold text-amber-700">$45</span>
+          </div>
+          <p class="text-stone-600 text-sm leading-relaxed mb-4">Grilled T-bone steak with rosemary and garlic. Perfectly cooked.</p>
+          <div class="flex items-center gap-1 text-amber-500 text-sm">
+            <span>⭐⭐⭐⭐⭐</span>
+            <span class="text-stone-500 ml-1">(4.9)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="text-center mt-12">
+      <a href="#" class="inline-block px-8 py-4 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-semibold shadow-xl shadow-amber-900/30 transition-all hover:scale-105">
+        View Full Menu
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="py-20 px-6 bg-white">
+  <div class="mx-auto max-w-7xl">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <!-- Image -->
+      <div class="relative">
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl">
+          <div class="aspect-[4/3] bg-gradient-to-br from-amber-300 to-orange-400 flex items-center justify-center">
+            <div class="text-center p-8">
+              <div class="text-9xl mb-4">👨‍👩‍👧‍👦</div>
+              <p class="text-2xl font-display font-semibold text-white">Family Business</p>
+            </div>
+          </div>
+        </div>
+        <div class="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl p-6 max-w-xs">
+          <p class="text-4xl font-display font-bold text-amber-700 mb-1">38+</p>
+          <p class="text-stone-600">Years of Excellence</p>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div>
+        <span class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold mb-4">Our Story</span>
+        <h2 class="text-4xl md:text-5xl font-display font-bold text-stone-900 mb-6">A Family Legacy Since 1985</h2>
+        <p class="text-lg text-stone-600 leading-relaxed mb-6">
+          What started as a small family kitchen in Naples has grown into one of the city's most beloved Italian restaurants. 
+          Our passion for authentic cuisine and warm hospitality has been passed down through three generations.
+        </p>
+        <p class="text-lg text-stone-600 leading-relaxed mb-8">
+          Every dish tells a story. From our grandmother's secret pasta sauce to our father's wood-fired pizza technique, 
+          we honor tradition while embracing innovation.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-6">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-2xl">✓</div>
+            <div>
+              <h4 class="font-semibold text-stone-900 mb-1">Authentic Recipes</h4>
+              <p class="text-sm text-stone-600">Traditional Italian cooking</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-2xl">✓</div>
+            <div>
+              <h4 class="font-semibold text-stone-900 mb-1">Fresh Daily</h4>
+              <p class="text-sm text-stone-600">Quality ingredients only</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-20 px-6 bg-stone-900">
+  <div class="mx-auto max-w-7xl">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-300 text-sm font-semibold mb-4">Testimonials</span>
+      <h2 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">What Our Guests Say</h2>
+      <p class="text-lg text-stone-400 max-w-2xl mx-auto">Join thousands of satisfied customers</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Testimonial 1 -->
+      <div class="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+        <div class="flex gap-1 text-amber-400 mb-4">
+          <span>⭐⭐⭐⭐⭐</span>
+        </div>
+        <p class="text-stone-300 leading-relaxed mb-6 italic">
+          "Best Italian food outside of Italy! The carbonara is absolutely divine, and the service is impeccable. 
+          A must-visit for any food lover."
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-white font-bold">MJ</div>
+          <div>
+            <p class="font-semibold text-white">Maria Johnson</p>
+            <p class="text-sm text-stone-400">Food Blogger</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Testimonial 2 -->
+      <div class="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+        <div class="flex gap-1 text-amber-400 mb-4">
+          <span>⭐⭐⭐⭐⭐</span>
+        </div>
+        <p class="text-stone-300 leading-relaxed mb-6 italic">
+          "My family and I come here every month. The atmosphere is cozy, the staff is friendly, 
+          and the food is consistently excellent. Highly recommend!"
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center text-white font-bold">RC</div>
+          <div>
+            <p class="font-semibold text-white">Robert Chen</p>
+            <p class="text-sm text-stone-400">Regular Customer</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Testimonial 3 -->
+      <div class="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+        <div class="flex gap-1 text-amber-400 mb-4">
+          <span>⭐⭐⭐⭐⭐</span>
+        </div>
+        <p class="text-stone-300 leading-relaxed mb-6 italic">
+          "Bella Cucina catered our wedding and it was perfect! Every guest raved about the food. 
+          Thank you for making our day so special!"
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-rose-600 flex items-center justify-center text-white font-bold">SK</div>
+          <div>
+            <p class="font-semibold text-white">Sarah Kim</p>
+            <p class="text-sm text-stone-400">Event Customer</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reservation/CTA Section -->
+<section id="reservation" class="py-28 px-6 bg-gradient-to-br from-amber-100 via-orange-100 to-red-100 relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-10 left-10 text-9xl">🍝</div>
+    <div class="absolute bottom-10 right-10 text-9xl">🍕</div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-9xl opacity-50">🍷</div>
+  </div>
+  <div class="relative mx-auto max-w-4xl text-center">
+    <h2 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-stone-900 mb-6">
+      Ready for an<br/>
+      <span class="text-amber-700">Unforgettable Experience?</span>
+    </h2>
+    <p class="text-xl text-stone-600 mb-10 max-w-2xl mx-auto">
+      Book your table now and taste the difference that passion makes
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+      <a href="tel:+1234567890" class="px-10 py-5 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-lg shadow-2xl shadow-amber-900/40 transition-all hover:scale-105">
+        📞 Call to Reserve
+      </a>
+      <a href="#" class="px-10 py-5 rounded-full border-2 border-amber-700 hover:bg-white text-amber-900 font-bold text-lg transition-all">
+        💻 Book Online
+      </a>
+    </div>
+    <p class="text-sm text-stone-500">Walk-ins welcome • Private dining available • Catering services offered</p>
+  </div>
+</section>
+
+<!-- Gallery Section -->
+<section id="gallery" class="py-20 px-6 bg-white">
+  <div class="mx-auto max-w-7xl">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-amber-100 text-amber-800 text-sm font-semibold mb-4">Gallery</span>
+      <h2 class="text-4xl md:text-5xl font-display font-bold text-stone-900 mb-4">Feast Your Eyes</h2>
+      <p class="text-lg text-stone-600 max-w-2xl mx-auto">A glimpse into our culinary artistry</p>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="aspect-square rounded-2xl bg-gradient-to-br from-red-200 to-orange-300 flex items-center justify-center text-7xl hover:scale-105 transition-transform cursor-pointer">🍝</div>
+      <div class="aspect-square rounded-2xl bg-gradient-to-br from-green-200 to-emerald-300 flex items-center justify-center text-7xl hover:scale-105 transition-transform cursor-pointer">🍕</div>
+      <div class="aspect-square rounded-2xl bg-gradient-to-br from-yellow-200 to-amber-300 flex items-center justify-center text-7xl hover:scale-105 transition-transform cursor-pointer">🥘</div>
+      <div class="aspect-square rounded-2xl bg-gradient-to-br from-purple-200 to-pink-300 flex items-center justify-center text-7xl hover:scale-105 transition-transform cursor-pointer">🍰</div>
+      <div class="aspect-square rounded-2xl bg-gradient-to-br from-blue-200 to-cyan-300 flex items-center justify-center text-7xl hover:scale-105 transition-transform cursor-pointer">🦞</div>
+      <div class="aspect-square rounded-2xl bg-gradient-to-br from-orange-200 to-red-300 flex items-center justify-center text-7xl hover:scale-105 transition-transform cursor-pointer">🥩</div>
+      <div class="aspect-square rounded-2xl bg-gradient-to-br from-amber-200 to-yellow-300 flex items-center justify-center text-7xl hover:scale-105 transition-transform cursor-pointer">🍷</div>
+      <div class="aspect-square rounded-2xl bg-gradient-to-br from-rose-200 to-pink-300 flex items-center justify-center text-7xl hover:scale-105 transition-transform cursor-pointer">🍴</div>
+    </div>
+    
+    <div class="text-center mt-10">
+      <a href="#" class="inline-flex items-center gap-2 text-amber-700 font-semibold hover:text-amber-800 transition-colors">
+        View More Photos
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Contact/Location Section -->
+<section id="contact" class="py-20 px-6 bg-stone-900">
+  <div class="mx-auto max-w-7xl">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-300 text-sm font-semibold mb-4">Visit Us</span>
+      <h2 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">Find Us Here</h2>
+      <p class="text-lg text-stone-400 max-w-2xl mx-auto">We can't wait to serve you</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Location -->
+      <div class="text-center p-8 rounded-3xl bg-white/5 border border-white/10">
+        <div class="text-5xl mb-4">📍</div>
+        <h3 class="text-xl font-bold text-white mb-3">Location</h3>
+        <p class="text-stone-400">123 Main Street</p>
+        <p class="text-stone-400">New York, NY 10001</p>
+        <a href="#" class="inline-block mt-4 text-amber-400 hover:text-amber-300 text-sm font-semibold">Get Directions →</a>
+      </div>
+      
+      <!-- Hours -->
+      <div class="text-center p-8 rounded-3xl bg-white/5 border border-white/10">
+        <div class="text-5xl mb-4">🕐</div>
+        <h3 class="text-xl font-bold text-white mb-3">Hours</h3>
+        <p class="text-stone-400">Monday - Thursday: 11am - 10pm</p>
+        <p class="text-stone-400">Friday - Sunday: 11am - 11pm</p>
+        <p class="text-amber-400 mt-4 text-sm font-semibold">Open Daily</p>
+      </div>
+      
+      <!-- Contact -->
+      <div class="text-center p-8 rounded-3xl bg-white/5 border border-white/10">
+        <div class="text-5xl mb-4">📞</div>
+        <h3 class="text-xl font-bold text-white mb-3">Contact</h3>
+        <p class="text-stone-400">Phone: (123) 456-7890</p>
+        <p class="text-stone-400">Email: info@bellacucina.com</p>
+        <a href="tel:+1234567890" class="inline-block mt-4 text-amber-400 hover:text-amber-300 text-sm font-semibold">Call Now →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-stone-950 border-t border-white/10 py-12 px-6">
+  <div class="mx-auto max-w-7xl">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      <!-- Brand -->
+      <div class="col-span-1 md:col-span-2">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="text-3xl">🍝</div>
+          <span class="text-2xl font-display font-bold text-white">Bella Cucina</span>
+        </div>
+        <p class="text-stone-400 leading-relaxed mb-6 max-w-md">
+          Bringing authentic Italian flavors to your table since 1985. 
+          A family tradition of excellence in every dish.
+        </p>
+        <div class="flex items-center gap-4">
+          <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-amber-500/20 border border-white/10 flex items-center justify-center text-stone-400 hover:text-amber-400 transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-amber-500/20 border border-white/10 flex items-center justify-center text-stone-400 hover:text-amber-400 transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-amber-500/20 border border-white/10 flex items-center justify-center text-stone-400 hover:text-amber-400 transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Quick Links -->
+      <div>
+        <h4 class="text-sm font-bold text-white mb-4">Quick Links</h4>
+        <ul class="space-y-2.5 text-sm text-stone-400">
+          <li><a href="#menu" class="hover:text-amber-400 transition-colors">Menu</a></li>
+          <li><a href="#about" class="hover:text-amber-400 transition-colors">About Us</a></li>
+          <li><a href="#reservation" class="hover:text-amber-400 transition-colors">Reservations</a></li>
+          <li><a href="#contact" class="hover:text-amber-400 transition-colors">Contact</a></li>
+        </ul>
+      </div>
+      
+      <!-- Services -->
+      <div>
+        <h4 class="text-sm font-bold text-white mb-4">Services</h4>
+        <ul class="space-y-2.5 text-sm text-stone-400">
+          <li><a href="#" class="hover:text-amber-400 transition-colors">Dine In</a></li>
+          <li><a href="#" class="hover:text-amber-400 transition-colors">Takeout</a></li>
+          <li><a href="#" class="hover:text-amber-400 transition-colors">Catering</a></li>
+          <li><a href="#" class="hover:text-amber-400 transition-colors">Private Events</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-stone-500">© 2026 Bella Cucina. Built with <a href="https://github.com/adeyahya/windrunner" class="text-amber-400 hover:text-amber-300 transition-colors">Windrunner</a>.</p>
+      <div class="flex items-center gap-6 text-xs text-stone-500">
+        <a href="#" class="hover:text-amber-400 transition-colors">Privacy Policy</a>
+        <a href="#" class="hover:text-amber-400 transition-colors">Terms of Service</a>
+        <a href="#" class="hover:text-amber-400 transition-colors">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
