@@ -1,6 +1,6 @@
 {
   "name": "windrunner",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Zero-config Tailwind v4 runtime — compile utility classes on-demand in the browser, no build step required",
   "type": "module",
   "main": "dist/index.js",
@@ -64,6 +64,7 @@
   },
   "devDependencies": {
     "esbuild": "^0.28.1",
+    "jsdom": "^29.1.1",
     "typescript": "^5.0.0",
     "vitest": "^4.1.9"
   }
