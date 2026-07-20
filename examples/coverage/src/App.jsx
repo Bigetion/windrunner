@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { Sun, Moon } from 'lucide-react'
 import { NAV } from './nav.js'
 import { createWindrunner, compileClass } from 'windrunner'
 import { PAGES } from './pages/index.jsx'
@@ -78,9 +79,19 @@ export default function App() {
         )}
         <button
           onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-          style={{ background: 'var(--bg3)', border: 'none', color: 'var(--text)', padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: '0.78rem' }}
+          style={{ background: 'var(--bg3)', border: 'none', color: 'var(--text)', padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
         >
-          {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+          {theme === 'dark' ? (
+            <>
+              <Sun size={16} />
+              Light
+            </>
+          ) : (
+            <>
+              <Moon size={16} />
+              Dark
+            </>
+          )}
         </button>
       </header>
 
