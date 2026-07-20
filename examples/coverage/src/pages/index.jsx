@@ -1894,7 +1894,7 @@ export const PAGES = {
   'ring':              { component: Ring,            classes: ['ring','ring-0','ring-1','ring-2','ring-4','ring-8','ring-inset','ring-sky-400','ring-red-400','ring-offset-0','ring-offset-2','ring-offset-4','ring-offset-sky-400'] },
   'text-shadow':       { component: TextShadow,      classes: ['text-shadow-sm','text-shadow','text-shadow-md','text-shadow-lg','text-shadow-none','text-shadow-sky-400'] },
   'bg-color':          { component: BgColor,         classes: ['bg-slate-500','bg-red-500','bg-sky-500','bg-blue-500','bg-violet-500','bg-white','bg-black','bg-sky-400/75','bg-sky-400/50'] },
-  'bg-image':          { component: BgImage,         classes: ['bg-none','bg-linear-to-t','bg-linear-to-r','bg-linear-to-b','bg-linear-to-br','bg-linear-to-tl'] },
+  'bg-image':          { component: BgImage,         classes: ['bg-none','bg-gradient-to-t','bg-gradient-to-tr','bg-gradient-to-r','bg-gradient-to-br','bg-gradient-to-b','bg-gradient-to-bl','bg-gradient-to-l','bg-gradient-to-tl'] },
   'bg-size':           { component: BgSize,          classes: ['bg-auto','bg-cover','bg-contain'] },
   'bg-position':       { component: BgPosition,      classes: ['bg-bottom','bg-center','bg-left','bg-right','bg-top','bg-left-bottom','bg-left-top','bg-right-bottom','bg-right-top'] },
   'bg-repeat':         { component: BgRepeat,        classes: ['bg-repeat','bg-no-repeat','bg-repeat-x','bg-repeat-y','bg-repeat-round','bg-repeat-space'] },
