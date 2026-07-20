@@ -7,6 +7,7 @@ export function buildColorDeclaration(baseToken, theme) {
   // background-color (non-image: handled in backgrounds.js)
   if (baseToken.startsWith("bg-")) {
     const key = baseToken.slice(3);
+    if (key === "transparent") return "background-color: transparent;";
     const color = resolveColorWithOpacity(colors, key);
     if (color !== undefined) return `background-color: ${color};`;
   }
@@ -14,6 +15,7 @@ export function buildColorDeclaration(baseToken, theme) {
   // border-color
   if (baseToken.startsWith("border-")) {
     const key = baseToken.slice(7);
+    if (key === "transparent") return "border-color: transparent;";
     const color = resolveColorWithOpacity(colors, key);
     if (color !== undefined) return `border-color: ${color};`;
   }
@@ -53,6 +55,14 @@ export function buildColorDeclaration(baseToken, theme) {
   if (baseToken.startsWith("accent-")) {
     const color = resolveColorWithOpacity({ ...colors, auto: "auto" }, baseToken.slice(7));
     if (color !== undefined) return `accent-color: ${color};`;
+  }
+
+  // text color
+  if (baseToken.startsWith("text-")) {
+    const key = baseToken.slice(5);
+    if (key === "transparent") return "color: transparent;";
+    const color = resolveColorWithOpacity(colors, key);
+    if (color !== undefined) return `color: ${color};`;
   }
 
   // placeholder-color

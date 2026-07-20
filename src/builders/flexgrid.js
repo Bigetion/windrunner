@@ -15,11 +15,11 @@ import {
 import { resolveThemeValue, resolveArbitraryValue } from "../resolvers.js";
 
 export function buildFlexGridDeclaration(baseToken, theme) {
-  // grow / shrink (v4 canonical)
-  if (baseToken === "grow")     return "flex-grow: 1;";
-  if (baseToken === "grow-0")   return "flex-grow: 0;";
-  if (baseToken === "shrink")   return "flex-shrink: 1;";
-  if (baseToken === "shrink-0") return "flex-shrink: 0;";
+  // grow / shrink (v4 canonical and Tailwind-compatible aliases)
+  if (baseToken === "grow" || baseToken === "flex-grow") return "flex-grow: 1;";
+  if (baseToken === "grow-0" || baseToken === "flex-grow-0") return "flex-grow: 0;";
+  if (baseToken === "shrink" || baseToken === "flex-shrink") return "flex-shrink: 1;";
+  if (baseToken === "shrink-0" || baseToken === "flex-shrink-0") return "flex-shrink: 0;";
 
   if (baseToken.startsWith("grow-")) {
     const val = resolveThemeValue(theme.flexGrow || {}, baseToken.slice(5));
@@ -32,7 +32,11 @@ export function buildFlexGridDeclaration(baseToken, theme) {
 
   // flex-basis
   if (baseToken.startsWith("basis-")) {
-    const val = resolveThemeValue(theme.flexBasis || theme.spacing || {}, baseToken.slice(6));
+    const valueKey = baseToken.slice(6);
+    if (valueKey === "auto") return "flex-basis: auto;";
+    if (valueKey === "full") return "flex-basis: 100%;";
+    if (valueKey === "0") return "flex-basis: 0;";
+    const val = resolveThemeValue(theme.flexBasis || theme.spacing || {}, valueKey);
     if (val !== undefined) return `flex-basis: ${val};`;
   }
 
@@ -87,6 +91,7 @@ export function buildFlexGridDeclaration(baseToken, theme) {
   // grid-template-columns
   if (baseToken.startsWith("grid-cols-")) {
     const valueKey = baseToken.slice(10);
+    if (valueKey === "none") return "grid-template-columns: none;";
     const direct = resolveThemeValue(theme.gridTemplateColumns || {}, valueKey);
     if (direct !== undefined) return `grid-template-columns: ${direct};`;
     if (/^\d+$/.test(valueKey)) return `grid-template-columns: repeat(${valueKey}, minmax(0, 1fr));`;
@@ -97,6 +102,7 @@ export function buildFlexGridDeclaration(baseToken, theme) {
   // grid-template-rows
   if (baseToken.startsWith("grid-rows-")) {
     const valueKey = baseToken.slice(10);
+    if (valueKey === "none") return "grid-template-rows: none;";
     const direct = resolveThemeValue(theme.gridTemplateRows || {}, valueKey);
     if (direct !== undefined) return `grid-template-rows: ${direct};`;
     if (/^\d+$/.test(valueKey)) return `grid-template-rows: repeat(${valueKey}, minmax(0, 1fr));`;
@@ -110,6 +116,7 @@ export function buildFlexGridDeclaration(baseToken, theme) {
     if (val !== undefined) return `grid-column: ${val};`;
     const spanMatch = baseToken.match(/^col-span-(\d+)$/);
     if (spanMatch) return `grid-column: span ${spanMatch[1]} / span ${spanMatch[1]};`;
+    if (baseToken === "col-span-full") return "grid-column: 1 / -1;";
     if (baseToken === "col-auto") return "grid-column: auto;";
     if (baseToken.startsWith("col-start-")) {
       const sv = resolveThemeValue(theme.gridColumnStart || {}, baseToken.slice(10));
@@ -127,6 +134,7 @@ export function buildFlexGridDeclaration(baseToken, theme) {
     if (val !== undefined) return `grid-row: ${val};`;
     const spanMatch = baseToken.match(/^row-span-(\d+)$/);
     if (spanMatch) return `grid-row: span ${spanMatch[1]} / span ${spanMatch[1]};`;
+    if (baseToken === "row-span-full") return "grid-row: 1 / -1;";
     if (baseToken === "row-auto") return "grid-row: auto;";
     if (baseToken.startsWith("row-start-")) {
       const sv = resolveThemeValue(theme.gridRowStart || {}, baseToken.slice(10));

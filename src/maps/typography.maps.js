@@ -84,6 +84,13 @@ export const LIST_STYLE_IMAGE_MAP = {
   none: "list-style-image: none;",
 };
 
+export const TEXT_WRAP_MAP = {
+  wrap: "text-wrap: wrap;",
+  nowrap: "text-wrap: nowrap;",
+  balance: "text-wrap: balance;",
+  pretty: "text-wrap: pretty;",
+};
+
 export const HYPHENS_MAP = {
   none: "hyphens: none;",
   manual: "hyphens: manual;",

@@ -86,6 +86,11 @@ export function buildTransformDeclaration(baseToken, theme) {
     const val = resolveThemeValue(theme.transformOrigin || {}, normalized.slice(7));
     if (val !== undefined) return `transform-origin: ${val};`;
   }
+  if (normalized === "origin-center") return "transform-origin: center;";
+  if (normalized === "origin-top") return "transform-origin: top;";
+  if (normalized === "origin-bottom") return "transform-origin: bottom;";
+  if (normalized === "origin-left") return "transform-origin: left;";
+  if (normalized === "origin-right") return "transform-origin: right;";
 
   // perspective-origin
   if (normalized.startsWith("perspective-origin-")) {

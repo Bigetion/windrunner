@@ -31,5 +31,9 @@ export function buildTransitionDeclaration(baseToken) {
     if (value !== undefined) return `transition-timing-function: ${value};`;
   }
 
+  if (baseToken === "transition-none") return "transition-property: none; transition-duration: 0s;";
+  if (baseToken === "duration-0") return "transition-duration: 0s;";
+  if (baseToken === "delay-0") return "transition-delay: 0s;";
+
   return undefined;
 }

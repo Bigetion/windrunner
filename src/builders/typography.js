@@ -98,8 +98,11 @@ export function buildTypographyDeclaration(baseToken, theme) {
   // list-*
   if (baseToken.startsWith("list-")) {
     const key = baseToken.slice(5);
+    if (baseToken === "list-none") return "list-style-type: none;";
+    if (baseToken === "list-disc") return "list-style-type: disc;";
+    if (baseToken === "list-decimal") return "list-style-type: decimal;";
     if (LIST_STYLE_POSITION_MAP[key]) return LIST_STYLE_POSITION_MAP[key];
-    if (LIST_STYLE_IMAGE_MAP[baseToken]) return LIST_STYLE_IMAGE_MAP[baseToken.slice(17)] ?? undefined;
+    if (LIST_STYLE_IMAGE_MAP[key]) return LIST_STYLE_IMAGE_MAP[key];
     const val = resolveThemeValue(theme.listStyleType || {}, key);
     if (val !== undefined) return `list-style-type: ${val};`;
   }
@@ -122,6 +125,8 @@ export function buildTypographyDeclaration(baseToken, theme) {
   if (baseToken === "text-nowrap")  return "text-wrap: nowrap;";
   if (baseToken === "text-balance") return "text-wrap: balance;";
   if (baseToken === "text-pretty")  return "text-wrap: pretty;";
+  if (baseToken === "text-wrap-break") return "overflow-wrap: break-word;";
+  if (baseToken === "text-wrap-normal") return "text-wrap: wrap;";
 
   // align-* (vertical-align)
   if (baseToken.startsWith("align-")) {

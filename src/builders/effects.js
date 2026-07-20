@@ -2,6 +2,7 @@ import { INSET_SHADOW_SIZES, TEXT_SHADOW_SIZES } from "../maps/effects.maps.js";
 import { resolveThemeValue, resolveColorWithOpacity, resolveArbitraryValue } from "../resolvers.js";
 
 export function buildOpacityDeclaration(baseToken, theme) {
+  if (baseToken === "opacity") return "opacity: 1;";
   if (!baseToken.startsWith("opacity-")) return undefined;
   const opacity = resolveThemeValue(theme.opacity || {}, baseToken.slice(8));
   if (opacity === undefined) return undefined;
@@ -14,6 +15,7 @@ export function buildShadowDeclaration(baseToken, theme) {
     if (value === undefined) return undefined;
     return `box-shadow: ${value};`;
   }
+  if (baseToken === "shadow-none") return "box-shadow: none;";
   if (!baseToken.startsWith("shadow-")) return undefined;
 
   const valueKey = baseToken.slice(7);
@@ -54,6 +56,7 @@ export function buildInsetRingDeclaration(baseToken, theme) {
   if (baseToken === "inset-ring") {
     return `box-shadow: inset 0 0 0 1px var(--tw-inset-ring-color, currentColor);`;
   }
+  if (baseToken === "inset-ring-0") return "box-shadow: inset 0 0 0 0px var(--tw-inset-ring-color, currentColor);";
 
   if (baseToken.startsWith("inset-ring-")) {
     const key = baseToken.slice(11);
@@ -79,6 +82,7 @@ export function buildRingDeclaration(baseToken, theme) {
     const widthValue = resolveThemeValue(ringWidthScale, "DEFAULT") || "3px";
     return buildRingWidth(widthValue);
   }
+  if (baseToken === "ring-0") return "--tw-ring-inset: ; --tw-ring-offset-width: 0px; --tw-ring-offset-color: #fff; --tw-ring-color: #3b82f6; box-shadow: var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width, 0px)) var(--tw-ring-color);";
 
   if (!baseToken.startsWith("ring-")) return undefined;
   const valueKey = baseToken.slice(5);
@@ -101,6 +105,7 @@ export function buildTextShadowDeclaration(baseToken, theme) {
     const val = (theme.textShadow || TEXT_SHADOW_SIZES).DEFAULT || TEXT_SHADOW_SIZES.DEFAULT;
     return `text-shadow: ${val};`;
   }
+  if (baseToken === "text-shadow-none") return "text-shadow: none;";
 
   if (baseToken.startsWith("text-shadow-")) {
     const key = baseToken.slice(12);

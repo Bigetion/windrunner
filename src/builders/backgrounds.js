@@ -26,6 +26,7 @@ export function buildBackgroundDeclaration(baseToken, theme) {
   // bg-image (linear gradients etc.)
   const bgImage = resolveThemeValue(theme.backgroundImage || {}, key);
   if (bgImage !== undefined) return `background-image: ${bgImage};`;
+  if (key === "none") return "background-image: none;";
 
   return undefined;
 }
@@ -64,6 +65,11 @@ export function buildGradientDeclaration(baseToken, theme) {
       return `--tw-gradient-to: transparent var(--tw-gradient-to-position, 100%); --tw-gradient-stops: var(--tw-gradient-from), ${color} var(--tw-gradient-via-position, 50%), var(--tw-gradient-to);`;
     }
   }
+
+  if (baseToken === "bg-gradient-to-r") return "background-image: linear-gradient(to right, var(--tw-gradient-stops));";
+  if (baseToken === "bg-gradient-to-l") return "background-image: linear-gradient(to left, var(--tw-gradient-stops));";
+  if (baseToken === "bg-gradient-to-t") return "background-image: linear-gradient(to top, var(--tw-gradient-stops));";
+  if (baseToken === "bg-gradient-to-b") return "background-image: linear-gradient(to bottom, var(--tw-gradient-stops));";
 
   // to-{color|position}
   if (baseToken.startsWith("to-")) {

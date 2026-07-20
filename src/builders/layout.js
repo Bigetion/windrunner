@@ -49,6 +49,10 @@ export function buildLayoutDeclaration(baseToken, theme) {
   // float / clear
   if (baseToken.startsWith("float-")) return FLOAT_MAP[baseToken.slice(6)] ?? undefined;
   if (baseToken.startsWith("clear-")) return CLEAR_MAP[baseToken.slice(6)] ?? undefined;
+  if (baseToken === "float-start") return "float: inline-start;";
+  if (baseToken === "float-end") return "float: inline-end;";
+  if (baseToken === "clear-start") return "clear: inline-start;";
+  if (baseToken === "clear-end") return "clear: inline-end;";
 
   // object-fit / object-position
   if (baseToken.startsWith("object-fit-")) return OBJECT_FIT_MAP[baseToken.slice(11)] ?? undefined;
@@ -79,6 +83,7 @@ export function buildLayoutDeclaration(baseToken, theme) {
   if (baseToken.startsWith("break-after-")) return BREAK_AFTER_MAP[baseToken.slice(12)] ?? undefined;
   if (baseToken.startsWith("break-before-")) return BREAK_BEFORE_MAP[baseToken.slice(13)] ?? undefined;
   if (baseToken.startsWith("break-inside-")) return BREAK_INSIDE_MAP[baseToken.slice(13)] ?? undefined;
+  if (baseToken === "break-normal") return "break-after: auto; break-before: auto;";
   if (baseToken.startsWith("box-decoration-break-")) return BOX_DECORATION_BREAK_MAP[baseToken.slice(21)] ?? undefined;
 
   // hyphens
@@ -91,6 +96,9 @@ export function buildLayoutDeclaration(baseToken, theme) {
   if (baseToken.startsWith("scrollbar-color-")) return SCROLLBAR_COLOR_MAP[baseToken.slice(16)] ?? undefined;
   if (baseToken.startsWith("scrollbar-width-")) return SCROLLBAR_WIDTH_MAP[baseToken.slice(16)] ?? undefined;
   if (baseToken.startsWith("scrollbar-gutter-")) return SCROLLBAR_GUTTER_MAP[baseToken.slice(17)] ?? undefined;
+  if (baseToken === "scrollbar-auto") return "scrollbar-color: auto;";
+  if (baseToken === "scrollbar-thin") return "scrollbar-width: thin;";
+  if (baseToken === "scrollbar-none") return "scrollbar-width: none;";
 
   // scroll-behavior
   if (baseToken.startsWith("scroll-behavior-")) return SCROLL_BEHAVIOR_MAP[baseToken.slice(16)] ?? undefined;

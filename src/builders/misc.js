@@ -84,6 +84,12 @@ export function buildInteractivityDeclaration(baseToken, theme) {
   // outline
   if (baseToken === "outline")      return "outline-style: solid;";
   if (baseToken === "outline-none") return "outline: 2px solid transparent; outline-offset: 2px;";
+  if (baseToken === "outline-hidden") return "outline-style: none;";
+  if (baseToken === "outline-0") return "outline-width: 0;";
+  if (baseToken === "outline-dashed") return "outline-style: dashed;";
+  if (baseToken === "outline-dotted") return "outline-style: dotted;";
+  if (baseToken === "outline-double") return "outline-style: double;";
+  if (baseToken === "outline-solid") return "outline-style: solid;";
   if (baseToken.startsWith("outline-")) {
     const key = baseToken.slice(8);
     if (OUTLINE_STYLE_MAP[key]) return OUTLINE_STYLE_MAP[key];

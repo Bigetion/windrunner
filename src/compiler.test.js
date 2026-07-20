@@ -167,10 +167,24 @@ describe("compiler", () => {
       expect(compileRuntimeClassNameWithContext("box-border", layoutContext)).toBe(".box-border { box-sizing: border-box; }");
     });
 
+    it("supports common flex and grid aliases", () => {
+      const layoutContext = resolveRuntimeContext();
+      expect(compileRuntimeClassNameWithContext("basis-auto", layoutContext)).toBe(".basis-auto { flex-basis: auto; }");
+      expect(compileRuntimeClassNameWithContext("basis-full", layoutContext)).toBe(".basis-full { flex-basis: 100%; }");
+      expect(compileRuntimeClassNameWithContext("basis-0", layoutContext)).toBe(".basis-0 { flex-basis: 0; }");
+      expect(compileRuntimeClassNameWithContext("grid-cols-none", layoutContext)).toBe(".grid-cols-none { grid-template-columns: none; }");
+      expect(compileRuntimeClassNameWithContext("grid-rows-none", layoutContext)).toBe(".grid-rows-none { grid-template-rows: none; }");
+      expect(compileRuntimeClassNameWithContext("col-span-full", layoutContext)).toBe(".col-span-full { grid-column: 1 / -1; }");
+      expect(compileRuntimeClassNameWithContext("row-span-full", layoutContext)).toBe(".row-span-full { grid-row: 1 / -1; }");
+    });
+
     it("supports scrollbar utilities", () => {
       expect(compileRuntimeClassNameWithContext("scrollbar-color-auto", context)).toBe(".scrollbar-color-auto { scrollbar-color: auto; }");
       expect(compileRuntimeClassNameWithContext("scrollbar-width-thin", context)).toBe(".scrollbar-width-thin { scrollbar-width: thin; }");
       expect(compileRuntimeClassNameWithContext("scrollbar-gutter-stable", context)).toBe(".scrollbar-gutter-stable { scrollbar-gutter: stable; }");
+      expect(compileRuntimeClassNameWithContext("scrollbar-auto", context)).toBe(".scrollbar-auto { scrollbar-color: auto; }");
+      expect(compileRuntimeClassNameWithContext("scrollbar-thin", context)).toBe(".scrollbar-thin { scrollbar-width: thin; }");
+      expect(compileRuntimeClassNameWithContext("scrollbar-none", context)).toBe(".scrollbar-none { scrollbar-width: none; }");
     });
 
     it("supports color scheme utility", () => {
@@ -259,6 +273,8 @@ describe("compiler", () => {
       expect(compileRuntimeClassNameWithContext("bg-clip-text", context)).toBe(".bg-clip-text { background-clip: text; -webkit-background-clip: text; }");
       expect(compileRuntimeClassNameWithContext("bg-origin-padding", context)).toBe(".bg-origin-padding { background-origin: padding-box; }");
       expect(compileRuntimeClassNameWithContext("bg-no-repeat", context)).toBe(".bg-no-repeat { background-repeat: no-repeat; }");
+      expect(compileRuntimeClassNameWithContext("bg-none", context)).toBe(".bg-none { background-image: none; }");
+      expect(compileRuntimeClassNameWithContext("bg-gradient-to-r", context)).toBe(".bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }");
     });
 
     it("supports theme-based background size, position, and image", () => {
@@ -301,17 +317,21 @@ describe("compiler", () => {
 
     it("supports color utilities", () => {
       expect(compileRuntimeClassNameWithContext("bg-red-500", context)).toBe(".bg-red-500 { background-color: #ef4444; }");
+      expect(compileRuntimeClassNameWithContext("bg-transparent", context)).toBe(".bg-transparent { background-color: transparent; }");
       expect(compileRuntimeClassNameWithContext("border-red-500", context)).toBe(".border-red-500 { border-color: #ef4444; }");
+      expect(compileRuntimeClassNameWithContext("border-transparent", context)).toBe(".border-transparent { border-color: transparent; }");
       expect(compileRuntimeClassNameWithContext("fill-green-500", context)).toBe(".fill-green-500 { fill: #22c55e; }");
       expect(compileRuntimeClassNameWithContext("stroke-blue-500", context)).toBe(".stroke-blue-500 { stroke: #3b82f6; }");
       expect(compileRuntimeClassNameWithContext("stroke-2", context)).toBe(".stroke-2 { stroke-width: 2px; }");
       expect(compileRuntimeClassNameWithContext("placeholder-red-500", context)).toBe(".placeholder-red-500 { --tw-placeholder-color: #ef4444; }");
       expect(compileRuntimeClassNameWithContext("accent-blue-500", context)).toContain("accent-color: #3b82f6");
       expect(compileRuntimeClassNameWithContext("caret-red-500", context)).toContain("caret-color: #ef4444");
+      expect(compileRuntimeClassNameWithContext("text-transparent", context)).toBe(".text-transparent { color: transparent; }");
     });
 
     it("supports outline utilities", () => {
       expect(compileRuntimeClassNameWithContext("outline-none", context)).toBe(".outline-none { outline: 2px solid transparent; outline-offset: 2px; }");
+      expect(compileRuntimeClassNameWithContext("outline-0", context)).toBe(".outline-0 { outline-width: 0; }");
       expect(compileRuntimeClassNameWithContext("outline-solid", context)).toBe(".outline-solid { outline-style: solid; }");
       expect(compileRuntimeClassNameWithContext("outline-2", context)).toBe(".outline-2 { outline-width: 2px; }");
       expect(compileRuntimeClassNameWithContext("outline-offset-4", context)).toBe(".outline-offset-4 { outline-offset: 4px; }");
@@ -355,20 +375,24 @@ describe("compiler", () => {
     });
 
     it("supports effect utilities", () => {
+      expect(compileRuntimeClassNameWithContext("opacity", context)).toBe(".opacity { opacity: 1; }");
       expect(compileRuntimeClassNameWithContext("opacity-50", context)).toBe(".opacity-50 { opacity: 0.5; }");
       expect(compileRuntimeClassNameWithContext("shadow", context)).toBe(".shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.1); }");
+      expect(compileRuntimeClassNameWithContext("shadow-none", context)).toBe(".shadow-none { box-shadow: none; }");
       expect(compileRuntimeClassNameWithContext("shadow-sm", context)).toBe(".shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }");
       expect(compileRuntimeClassNameWithContext("shadow-red-500", context)).toBe(".shadow-red-500 { --tw-shadow-color: #ef4444; }");
       expect(compileRuntimeClassNameWithContext("inset-shadow", context)).toBe(".inset-shadow { box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.1); }");
       expect(compileRuntimeClassNameWithContext("inset-shadow-sm", context)).toBe(".inset-shadow-sm { box-shadow: inset 0 1px 2px 0 rgb(0 0 0 / 0.1); }");
       expect(compileRuntimeClassNameWithContext("inset-shadow-red-500", context)).toBe(".inset-shadow-red-500 { --tw-inset-shadow-color: #ef4444; }");
       expect(compileRuntimeClassNameWithContext("ring", context)).toBe(".ring { --tw-ring-inset: ; --tw-ring-offset-width: 0px; --tw-ring-offset-color: #fff; --tw-ring-color: rgb(59 130 246 / 0.5); box-shadow: var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width, 0px)) var(--tw-ring-color); }");
+      expect(compileRuntimeClassNameWithContext("ring-0", context)).toBe(".ring-0 { --tw-ring-inset: ; --tw-ring-offset-width: 0px; --tw-ring-offset-color: #fff; --tw-ring-color: #3b82f6; box-shadow: var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width, 0px)) var(--tw-ring-color); }");
       expect(compileRuntimeClassNameWithContext("ring-4", context)).toBe(".ring-4 { --tw-ring-inset: ; --tw-ring-offset-width: 0px; --tw-ring-offset-color: #fff; --tw-ring-color: rgb(59 130 246 / 0.5); box-shadow: var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width, 0px)) var(--tw-ring-color); }");
       expect(compileRuntimeClassNameWithContext("ring-inset", context)).toBe(".ring-inset { --tw-ring-inset: inset; }");
       expect(compileRuntimeClassNameWithContext("ring-red-500", context)).toBe(".ring-red-500 { --tw-ring-color: #ef4444; }");
       expect(compileRuntimeClassNameWithContext("ring-offset-4", context)).toBe(".ring-offset-4 { --tw-ring-offset-width: 4px; box-shadow: 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color, #fff), var(--tw-ring-shadow, 0 0 #0000); }");
       expect(compileRuntimeClassNameWithContext("ring-offset-red-500", context)).toBe(".ring-offset-red-500 { --tw-ring-offset-color: #ef4444; }");
       expect(compileRuntimeClassNameWithContext("text-shadow", context)).toBe(".text-shadow { text-shadow: 0 1px 2px rgba(0,0,0,0.1); }");
+      expect(compileRuntimeClassNameWithContext("text-shadow-none", context)).toBe(".text-shadow-none { text-shadow: none; }");
       expect(compileRuntimeClassNameWithContext("text-shadow-sm", context)).toBe(".text-shadow-sm { text-shadow: 0 1px 3px rgba(0,0,0,0.2); }");
       expect(compileRuntimeClassNameWithContext("text-shadow-red-500", context)).toBe(".text-shadow-red-500 { --tw-text-shadow-color: #ef4444; }");
     });
@@ -376,8 +400,12 @@ describe("compiler", () => {
     it("supports flex and grid utilities", () => {
       expect(compileRuntimeClassNameWithContext("grow", context)).toBe(".grow { flex-grow: 1; }");
       expect(compileRuntimeClassNameWithContext("grow-0", context)).toBe(".grow-0 { flex-grow: 0; }");
+      expect(compileRuntimeClassNameWithContext("flex-grow", context)).toBe(".flex-grow { flex-grow: 1; }");
+      expect(compileRuntimeClassNameWithContext("flex-grow-0", context)).toBe(".flex-grow-0 { flex-grow: 0; }");
       expect(compileRuntimeClassNameWithContext("shrink", context)).toBe(".shrink { flex-shrink: 1; }");
       expect(compileRuntimeClassNameWithContext("shrink-0", context)).toBe(".shrink-0 { flex-shrink: 0; }");
+      expect(compileRuntimeClassNameWithContext("flex-shrink", context)).toBe(".flex-shrink { flex-shrink: 1; }");
+      expect(compileRuntimeClassNameWithContext("flex-shrink-0", context)).toBe(".flex-shrink-0 { flex-shrink: 0; }");
       expect(compileRuntimeClassNameWithContext("basis-4", context)).toBe(".basis-4 { flex-basis: 1rem; }");
       expect(compileRuntimeClassNameWithContext("flex-1", context)).toBe(".flex-1 { flex: 1 1 0%; }");
       expect(compileRuntimeClassNameWithContext("flex-row", context)).toBe(".flex-row { flex-direction: row; }");
@@ -399,6 +427,19 @@ describe("compiler", () => {
       expect(compileRuntimeClassNameWithContext("divide-solid", context)).toBe(".divide-solid { border-style: solid; }");
       expect(compileRuntimeClassNameWithContext("divide-red-500", context)).toBe(".divide-red-500 > :not(:first-child) { border-color: #ef4444; }");
       expect(compileRuntimeClassNameWithContext("divide-opacity-50", context)).toBe(".divide-opacity-50 > :not(:first-child) { --tw-divide-opacity: 0.5; }");
+    });
+
+    it("supports typography and interactivity aliases", () => {
+      expect(compileRuntimeClassNameWithContext("text-wrap", context)).toBe(".text-wrap { text-wrap: wrap; }");
+      expect(compileRuntimeClassNameWithContext("text-nowrap", context)).toBe(".text-nowrap { text-wrap: nowrap; }");
+      expect(compileRuntimeClassNameWithContext("list-none", context)).toBe(".list-none { list-style-type: none; }");
+      expect(compileRuntimeClassNameWithContext("list-disc", context)).toBe(".list-disc { list-style-type: disc; }");
+      expect(compileRuntimeClassNameWithContext("list-decimal", context)).toBe(".list-decimal { list-style-type: decimal; }");
+      expect(compileRuntimeClassNameWithContext("outline-hidden", context)).toBe(".outline-hidden { outline-style: none; }");
+      expect(compileRuntimeClassNameWithContext("outline-dashed", context)).toBe(".outline-dashed { outline-style: dashed; }");
+      expect(compileRuntimeClassNameWithContext("outline-dotted", context)).toBe(".outline-dotted { outline-style: dotted; }");
+      expect(compileRuntimeClassNameWithContext("outline-double", context)).toBe(".outline-double { outline-style: double; }");
+      expect(compileRuntimeClassNameWithContext("outline-solid", context)).toBe(".outline-solid { outline-style: solid; }");
     });
 
     it("supports transition utilities", () => {
