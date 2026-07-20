@@ -1,3 +1,4 @@
+/** @vitest-environment jsdom */
 import { describe, it, expect, vi } from "vitest";
 import { createWindrunner } from "./runtime.js";
 
@@ -259,6 +260,44 @@ describe("runtime (Node.js / no-DOM)", () => {
     it("should not throw when called without DOM", () => {
       const wind = createWindrunner();
       expect(() => wind.start()).not.toThrow();
+    });
+  });
+
+  describe("DOM runtime behavior", () => {
+    it("should scan the document and inject compiled rules", () => {
+      document.body.innerHTML = '<div class="flex items-center"></div>';
+      const wind = createWindrunner({ autoStart: false });
+
+      wind.scan();
+      expect(wind.getInsertedRuleCount()).toBeGreaterThan(0);
+      const runtimeStyle = document.querySelector('style[data-tailwind-runtime]');
+      expect(runtimeStyle).not.toBeNull();
+      expect(runtimeStyle?.sheet?.cssRules.length).toBeGreaterThan(0);
+      wind.disconnect();
+    });
+
+    it("should observe class changes and compile new rules", async () => {
+      document.body.innerHTML = '<div id="target"></div>';
+      const wind = createWindrunner({ autoStart: false });
+      wind.observe(document.body);
+
+      const target = document.getElementById('target');
+      expect(target).not.toBeNull();
+      if (target) {
+        target.className = 'grid gap-4';
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(wind.getInsertedRuleCount()).toBeGreaterThan(0);
+      wind.disconnect();
+    });
+
+    it("should use observerOptions to tune MutationObserver behavior", () => {
+      document.body.innerHTML = '<div class="flex"></div>';
+      const wind = createWindrunner({ autoStart: false, observerOptions: { attributes: true, childList: false, subtree: true } });
+
+      expect(() => wind.observe(document.body)).not.toThrow();
+      wind.disconnect();
     });
   });
 

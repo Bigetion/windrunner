@@ -101,7 +101,14 @@ Auto-start mode. Scans DOM and begins observing immediately.
 windrunner({
   id?: string,            // style tag id, default: "tailwind-runtime-css"
   autoStart?: boolean,    // default: true
+  preflight?: boolean,    // include CSS reset/preflight, default: true
   plugins?: Plugin[],     // custom plugins (see Plugin System)
+  observerOptions?: {     // MutationObserver tuning
+    childList?: boolean,
+    subtree?: boolean,
+    attributes?: boolean,
+    attributeFilter?: string[],
+  },
   theme?: {               // override/extend theme values
     extend: {
       colors: { brand: "#ff6b6b" }
@@ -190,6 +197,27 @@ Parse a class name into its parts:
 parseClass("md:hover:mt-4", { md: "768px" })
 // → { original: "md:hover:mt-4", baseToken: "mt-4", variants: ["hover"],
 //     breakpoint: "md", containerBreakpoint: null, important: false, starting: false }
+```
+
+### `compileCriticalCssFromHtml(html, options?)`
+
+Compile critical CSS from a raw HTML string by extracting class names first.
+
+```js
+import { compileCriticalCssFromHtml } from "windrunner";
+
+const html = `<div class="flex items-center bg-blue-500">Hello</div>`;
+const css = compileCriticalCssFromHtml(html);
+```
+
+### `compileCriticalCssFromFiles(filePaths, options?)`
+
+Compile critical CSS from one or more file paths in Node.js.
+
+```js
+import { compileCriticalCssFromFiles } from "windrunner";
+
+const css = await compileCriticalCssFromFiles(["./dist/index.html", "./dist/app.html"]);
 ```
 
 ## Supported utilities

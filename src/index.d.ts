@@ -299,7 +299,9 @@ export function compileCriticalCss(
  * ```
  */
 export function extractClassNames(html: string): string[];
+export function compileCriticalCssFromHtml(html: string, options?: WindrunnerOptions): string;
 
+export function compileCriticalCssFromFiles(filePaths: string | string[], options?: WindrunnerOptions): Promise<string>;
 // ─── Default Export ───────────────────────────────────────────────────────────
 
 declare function windrunner(options?: WindrunnerOptions): Runtime;

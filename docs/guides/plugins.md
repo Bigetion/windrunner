@@ -118,7 +118,7 @@ const myPlugin = plugin(({ addUtilities }) => {
 ### Using Helper Functions
 
 ```javascript
-import { plugin, defineUtilities } from 'windrunner';
+import { plugin, defineUtilities, defineResponsiveUtilities } from 'windrunner';
 
 const myPlugin = plugin(({ addUtilities }) => {
   addUtilities(defineUtilities({
@@ -134,6 +134,22 @@ const myPlugin = plugin(({ addUtilities }) => {
   }));
 });
 ```
+
+### Responsive Utilities
+
+```javascript
+import { plugin, defineResponsiveUtilities } from 'windrunner';
+
+const responsivePlugin = plugin(({ addUtilities, theme }) => {
+  const spacing = theme('spacing');
+
+  addUtilities(defineResponsiveUtilities('gap', spacing, (key, value) => {
+    return `gap: ${value};`;
+  }));
+});
+```
+
+This creates utilities like `gap-1`, `gap-2`, and so on based on your theme values.
 
 ## Creating Variants
 

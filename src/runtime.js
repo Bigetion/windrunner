@@ -169,6 +169,18 @@ export function createWindrunner(options = {}) {
     children.forEach((child) => processElement(child));
   };
 
+  const queueElementForProcessing = (element) => {
+    if (!element || element.nodeType !== 1) return;
+    if (element.classList && element.classList.length > 0) {
+      pendingElements.add(element);
+      return;
+    }
+
+    if (element.querySelectorAll && element.querySelectorAll("[class]").length > 0) {
+      pendingElements.add(element);
+    }
+  };
+
   const processClassList = (classList) => {
     if (!classList) return [];
 
@@ -188,32 +200,35 @@ export function createWindrunner(options = {}) {
 
   const scan = (root = document) => {
     if (typeof document !== "object" || !root) return;
-    
+
     // Track scan stats
     const startTime = typeof performance !== "undefined" ? performance.now() : Date.now();
     const scannedElements = new Set();
     const foundClasses = new Set();
     const initialRuleCount = insertedRules.size;
-    
-    // Scan root element
-    if (root.nodeType === 1) {
-      processElementTree(root);
-      if (root.classList) {
-        scannedElements.add(root);
-        root.classList.forEach(cls => foundClasses.add(cls));
+
+    const elements = [];
+    if (root.nodeType === 1 && root.hasAttribute && root.hasAttribute("class")) {
+      elements.push(root);
+    }
+
+    if (root.querySelectorAll) {
+      const matched = root.querySelectorAll("[class]");
+      for (let i = 0; i < matched.length; i += 1) {
+        if (matched[i] !== root) {
+          elements.push(matched[i]);
+        }
       }
     }
-    
-    // Scan child elements
-    const elements = root.querySelectorAll ? root.querySelectorAll("[class]") : [];
+
     elements.forEach((element) => {
       processElement(element);
       scannedElements.add(element);
       if (element.classList) {
-        element.classList.forEach(cls => foundClasses.add(cls));
+        element.classList.forEach((cls) => foundClasses.add(cls));
       }
     });
-    
+
     // Calculate stats and fire callback
     if (typeof options.onScanComplete === "function") {
       const endTime = typeof performance !== "undefined" ? performance.now() : Date.now();
@@ -260,10 +275,13 @@ export function createWindrunner(options = {}) {
     observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === "attributes" && mutation.target) {
-          pendingElements.add(mutation.target);
+          queueElementForProcessing(mutation.target);
         }
+
         mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === 1) pendingElements.add(node);
+          if (node.nodeType === 1) {
+            queueElementForProcessing(node);
+          }
         });
       });
       scheduleFlush();

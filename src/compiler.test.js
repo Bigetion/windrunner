@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { compileRuntimeClassNameWithContext, compileClass, parseClass, resolveRuntimeContext } from "./compiler.js";
+import { compileRuntimeClassNameWithContext, compileClass, parseClass, resolveRuntimeContext, extractClassNames, compileCriticalCssFromHtml, compileCriticalCssFromFiles } from "./compiler.js";
 
 const baseContext = {
   theme: {
@@ -63,6 +63,48 @@ describe("compiler", () => {
 
     expect(css).toContain("::backdrop");
     expect(css).toContain("background-color: color-mix");
+  });
+
+  it("extracts class names from HTML and JS snippets", () => {
+    const html = `
+      <div class="flex items-center"></div>
+      <script>element.classList.add('text-sm', 'hover:text-blue-600');</script>
+      <button setAttribute("class", "px-4 py-2 bg-red-500")></button>
+    `;
+
+    const classes = extractClassNames(html);
+    expect(classes).toEqual(expect.arrayContaining([
+      'flex',
+      'items-center',
+      'text-sm',
+      'hover:text-blue-600',
+      'px-4',
+      'py-2',
+      'bg-red-500',
+    ]));
+  });
+
+  it("compiles critical CSS from HTML content", () => {
+    const html = `<div class="flex items-center"><span class="text-xl font-bold">Hi</span></div>`;
+    const css = compileCriticalCssFromHtml(html);
+
+    expect(css).toContain('.flex { display: flex; }');
+    expect(css).toContain('.text-xl {');
+    expect(css).toContain('.font-bold {');
+  });
+
+  it("compiles critical CSS from file paths", async () => {
+    const { writeFile, unlink } = await import('fs/promises');
+    const filePath = './test-temp-critical.html';
+    const html = '<div class="grid gap-4 p-6"></div>';
+
+    await writeFile(filePath, html, 'utf8');
+    const css = await compileCriticalCssFromFiles(filePath);
+    await unlink(filePath);
+
+    expect(css).toContain('.grid { display: grid; }');
+    expect(css).toContain('.gap-4 { gap: 1rem; }');
+    expect(css).toContain('.p-6 { padding: 1.5rem; }');
   });
 
   it("supports additional Tailwind-style pseudo-class and pseudo-element variants", () => {

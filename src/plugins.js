@@ -185,9 +185,13 @@ export function defineResponsiveUtilities(base, values, toDeclaration) {
 
 // ─── Internal Helpers ─────────────────────────────────────────────────────────
 
+function toKebabCase(prop) {
+  return String(prop).replace(/([A-Z])/g, '-$1').toLowerCase();
+}
+
 function objectToCss(obj) {
   return Object.entries(obj)
-    .map(([prop, value]) => `${prop}: ${value};`)
+    .map(([prop, value]) => `${toKebabCase(prop)}: ${value};`)
     .join(' ');
 }
 

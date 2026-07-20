@@ -91,7 +91,7 @@ describe("Plugin System", () => {
       
       expect(utilities.glass).toBe("backdrop-filter: blur(10px);");
       expect(utilities.bordered).toContain("border: 1px solid black;");
-      expect(utilities.bordered).toContain("borderRadius: 0.5rem;");
+      expect(utilities.bordered).toContain("border-radius: 0.5rem;");
     });
   });
 

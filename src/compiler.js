@@ -720,15 +720,52 @@ export function compileCriticalCss(classNames, options = {}) {
  */
 export function extractClassNames(html) {
   const classSet = new Set();
-  
-  // Match class="..." and className="..." attributes
-  const classRegex = /class(?:Name)?=["']([^"']+)["']/g;
-  let match;
-  
-  while ((match = classRegex.exec(html)) !== null) {
-    const classes = match[1].split(/\s+/).filter(Boolean);
-    classes.forEach(cls => classSet.add(cls));
+  const patterns = [
+    /class(?:Name)?=["']([^"']+)["']/g,
+    /classList\.(?:add|remove|toggle)\(\s*(["'][^"']+["'](?:\s*,\s*["'][^"']+["'])*)\s*\)/g,
+    /setAttribute\(\s*["']class["']\s*,\s*(["'][^"']+["'](?:\s*,\s*["'][^"']+["'])*)\)/g,
+  ];
+
+  for (const pattern of patterns) {
+    let match;
+    while ((match = pattern.exec(html)) !== null) {
+      const value = match[1];
+      const quotedClasses = [];
+      const quotedRegex = /(["'])(.*?)\1/g;
+      let quotedMatch;
+
+      while ((quotedMatch = quotedRegex.exec(value)) !== null) {
+        quotedClasses.push(quotedMatch[2]);
+      }
+
+      const classes = quotedClasses.length > 0
+        ? quotedClasses.flatMap((item) => item.split(/\s+/).filter(Boolean))
+        : value.split(/\s+/).filter(Boolean);
+
+      classes.forEach((cls) => classSet.add(cls));
+    }
   }
-  
+
   return Array.from(classSet);
+}
+
+export function compileCriticalCssFromHtml(html, options = {}) {
+  return compileCriticalCss(extractClassNames(html), options);
+}
+
+export async function compileCriticalCssFromFiles(filePaths, options = {}) {
+  const sources = Array.isArray(filePaths) ? filePaths : [filePaths];
+  let fs;
+
+  try {
+    fs = await import("fs/promises");
+  } catch (error) {
+    throw new Error("compileCriticalCssFromFiles() is only supported in Node.js environments.");
+  }
+
+  const contents = await Promise.all(
+    sources.map(async (filePath) => fs.readFile(filePath, "utf8"))
+  );
+
+  return compileCriticalCss(extractClassNames(contents.join("\n")), options);
 }
