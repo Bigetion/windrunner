@@ -15,7 +15,7 @@ import {
   LIST_STYLE_POSITION_MAP,
   VERTICAL_ALIGN_MAP,
 } from "../maps/typography.maps.js";
-import { resolveThemeValue, resolveColorWithOpacity } from "../resolvers.js";
+import { resolveThemeValue, resolveColorWithOpacity, resolveArbitraryValue } from "../resolvers.js";
 
 export function buildTypographyDeclaration(baseToken, theme) {
   // static keyword maps
@@ -44,12 +44,32 @@ export function buildTypographyDeclaration(baseToken, theme) {
   // font-*
   if (baseToken.startsWith("font-")) {
     const valueKey = baseToken.slice(5);
-    const fontWeight = resolveThemeValue(theme.fontWeight || {}, valueKey);
-    if (fontWeight !== undefined) return `font-weight: ${fontWeight};`;
-    const fontFamily = resolveThemeValue(theme.fontFamily || {}, valueKey);
-    if (fontFamily !== undefined) {
-      if (Array.isArray(fontFamily)) return `font-family: ${fontFamily.join(", ")};`;
-      return `font-family: ${fontFamily};`;
+
+    // Check named theme values first (non-arbitrary)
+    if (!valueKey.startsWith("[")) {
+      const fontWeight = resolveThemeValue(theme.fontWeight || {}, valueKey);
+      if (fontWeight !== undefined) return `font-weight: ${fontWeight};`;
+      const fontFamily = resolveThemeValue(theme.fontFamily || {}, valueKey);
+      if (fontFamily !== undefined) {
+        if (Array.isArray(fontFamily)) return `font-family: ${fontFamily.join(", ")};`;
+        return `font-family: ${fontFamily};`;
+      }
+    } else {
+      // Arbitrary value: disambiguate between font-weight and font-family
+      const resolved = resolveArbitraryValue(valueKey);
+      if (resolved !== undefined) {
+        // font-weight if numeric or a CSS font-weight keyword
+        const FONT_WEIGHT_KEYWORDS = new Set([
+          "normal", "bold", "lighter", "bolder",
+          "inherit", "initial", "revert", "unset",
+        ]);
+        const trimmed = resolved.trim();
+        if (/^\d+$/.test(trimmed) || FONT_WEIGHT_KEYWORDS.has(trimmed)) {
+          return `font-weight: ${trimmed};`;
+        }
+        // Otherwise treat as font-family
+        return `font-family: ${trimmed};`;
+      }
     }
   }
 

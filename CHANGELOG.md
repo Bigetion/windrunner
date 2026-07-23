@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.7] - 2026-07-23
+
+### 🐛 Bug Fixes
+
+#### Fixed Arbitrary Font-Family in `font-[...]` Classes
+
+**Fixed `font-[...]` arbitrary values always resolving as `font-weight` instead of `font-family`.**
+
+**Root Cause:**
+The `buildTypographyDeclaration` function checked `fontWeight` theme scale first via `resolveThemeValue`, which also resolves arbitrary bracket values. This meant any `font-[value]` class (e.g., `font-['National_Park']`) was incorrectly output as `font-weight` regardless of the value content.
+
+**Fix:**
+Arbitrary values in `font-[...]` are now disambiguated:
+- **Numeric values** (`font-[600]`) and **CSS font-weight keywords** (`font-[bold]`, `font-[lighter]`) → `font-weight`
+- **Everything else** (`font-['National_Park']`, `font-[sans-serif]`) → `font-family`
+
+**What Now Works:**
+
+✅ `font-['National_Park']` → `font-family: 'National Park';`
+✅ `font-[sans-serif]` → `font-family: sans-serif;`
+✅ `font-[600]` → `font-weight: 600;`
+✅ `font-[bold]` → `font-weight: bold;`
+✅ Named values unchanged: `font-bold`, `font-sans` still work as expected
+
+**Example:**
+```html
+<!-- Import Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=National+Park&display=swap" rel="stylesheet">
+
+<!-- Use arbitrary font-family (underscore = space) -->
+<body class="font-['National_Park'] bg-slate-950 text-slate-100">
+  Now renders with National Park font!
+</body>
+```
+
+### 📦 Files Modified
+
+- `src/builders/typography.js` - Fixed arbitrary value disambiguation for font-weight vs font-family
+
 ## [1.1.4] - 2026-07-02
 
 ### 🐛 Bug Fixes
