@@ -15,7 +15,7 @@ import {
   LIST_STYLE_POSITION_MAP,
   VERTICAL_ALIGN_MAP,
 } from "../maps/typography.maps.js";
-import { resolveThemeValue, resolveColorWithOpacity, resolveArbitraryValue } from "../resolvers.js";
+import { resolveThemeValue, resolveColorWithOpacity, resolveArbitraryValue, isArbitraryColor } from "../resolvers.js";
 
 export function buildTypographyDeclaration(baseToken, theme) {
   // static keyword maps
@@ -31,7 +31,11 @@ export function buildTypographyDeclaration(baseToken, theme) {
     const valueKey = baseToken.slice(5);
     if (TEXT_ALIGN_MAP[valueKey]) return TEXT_ALIGN_MAP[valueKey];
 
-    const fontSize = resolveThemeValue(theme.fontSize || {}, valueKey);
+    // Guard: skip fontSize lookup for arbitrary values that are clearly colors.
+    // e.g. text-[#fff] or text-[red] must route to color, not font-size.
+    const fontSize = isArbitraryColor(resolveArbitraryValue(valueKey) ?? valueKey)
+      ? undefined
+      : resolveThemeValue(theme.fontSize || {}, valueKey);
     if (fontSize !== undefined) {
       if (Array.isArray(fontSize)) return `font-size: ${fontSize[0]};`;
       return `font-size: ${fontSize};`;
@@ -97,7 +101,11 @@ export function buildTypographyDeclaration(baseToken, theme) {
   if (baseToken.startsWith("decoration-")) {
     const key = baseToken.slice(11);
     if (TEXT_DECORATION_STYLE_MAP[key]) return TEXT_DECORATION_STYLE_MAP[key];
-    const thicknessVal = resolveThemeValue(theme.textDecorationThickness || {}, key);
+    // Guard: skip thickness lookup for arbitrary values that are clearly colors.
+    const arbResolved = resolveArbitraryValue(key);
+    const thicknessVal = (arbResolved !== undefined && isArbitraryColor(arbResolved))
+      ? undefined
+      : resolveThemeValue(theme.textDecorationThickness || {}, key);
     if (thicknessVal !== undefined) return `text-decoration-thickness: ${thicknessVal};`;
     const color = resolveColorWithOpacity(theme.colors || {}, key);
     if (color !== undefined) return `text-decoration-color: ${color};`;

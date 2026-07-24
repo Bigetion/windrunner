@@ -4,7 +4,7 @@ import {
   BG_ORIGIN_MAP,
   BG_REPEAT_MAP,
 } from "../maps/effects.maps.js";
-import { resolveThemeValue, resolveColorWithOpacity } from "../resolvers.js";
+import { resolveThemeValue, resolveColorWithOpacity, isArbitraryColor, isArbitraryImage } from "../resolvers.js";
 
 export function buildBackgroundDeclaration(baseToken, theme) {
   if (!baseToken.startsWith("bg-")) return undefined;
@@ -16,16 +16,18 @@ export function buildBackgroundDeclaration(baseToken, theme) {
   if (BG_REPEAT_MAP[key]) return BG_REPEAT_MAP[key];
 
   // bg-size (any value from theme, not just 3 keywords)
+  // Guard: skip arbitrary values that look like CSS colors or images — those belong to
+  // buildColorDeclaration and the backgroundImage block below, respectively.
   const bgSize = resolveThemeValue(theme.backgroundSize || {}, key);
-  if (bgSize !== undefined) return `background-size: ${bgSize};`;
+  if (bgSize !== undefined && !isArbitraryColor(bgSize) && !isArbitraryImage(bgSize)) return `background-size: ${bgSize};`;
 
   // bg-position
   const bgPos = resolveThemeValue(theme.backgroundPosition || {}, key);
-  if (bgPos !== undefined) return `background-position: ${bgPos};`;
+  if (bgPos !== undefined && !isArbitraryColor(bgPos) && !isArbitraryImage(bgPos)) return `background-position: ${bgPos};`;
 
   // bg-image (linear gradients etc.)
   const bgImage = resolveThemeValue(theme.backgroundImage || {}, key);
-  if (bgImage !== undefined) return `background-image: ${bgImage};`;
+  if (bgImage !== undefined && !isArbitraryColor(bgImage)) return `background-image: ${bgImage};`;
   if (key === "none") return "background-image: none;";
 
   return undefined;

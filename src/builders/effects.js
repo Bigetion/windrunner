@@ -1,5 +1,5 @@
 import { INSET_SHADOW_SIZES, TEXT_SHADOW_SIZES } from "../maps/effects.maps.js";
-import { resolveThemeValue, resolveColorWithOpacity, resolveArbitraryValue } from "../resolvers.js";
+import { resolveThemeValue, resolveColorWithOpacity, resolveArbitraryValue, isArbitraryColor } from "../resolvers.js";
 
 export function buildOpacityDeclaration(baseToken, theme) {
   if (baseToken === "opacity") return "opacity: 1;";
@@ -87,7 +87,11 @@ export function buildRingDeclaration(baseToken, theme) {
   if (!baseToken.startsWith("ring-")) return undefined;
   const valueKey = baseToken.slice(5);
 
-  const widthValue = resolveThemeValue(ringWidthScale, valueKey);
+  // Guard: skip ring-width lookup for arbitrary values that are clearly colors.
+  const arbResolved = resolveArbitraryValue(valueKey);
+  const widthValue = (arbResolved !== undefined && isArbitraryColor(arbResolved))
+    ? undefined
+    : resolveThemeValue(ringWidthScale, valueKey);
   if (widthValue !== undefined) return buildRingWidth(widthValue);
 
   if (valueKey === "inset") return `--tw-ring-inset: inset;`;
@@ -125,8 +129,11 @@ export function buildRingOffsetDeclaration(baseToken, theme) {
   if (!baseToken.startsWith("ring-offset-")) return undefined;
   const key = baseToken.slice(12);
 
-  // ring-offset-{width}
-  const widthVal = resolveThemeValue(theme.ringOffsetWidth || {}, key);
+  // Guard: skip ring-offset-width lookup for arbitrary values that are clearly colors.
+  const arbResolved = resolveArbitraryValue(key);
+  const widthVal = (arbResolved !== undefined && isArbitraryColor(arbResolved))
+    ? undefined
+    : resolveThemeValue(theme.ringOffsetWidth || {}, key);
   if (widthVal !== undefined) {
     return `--tw-ring-offset-width: ${widthVal}; box-shadow: 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color, #fff), var(--tw-ring-shadow, 0 0 #0000);`;
   }

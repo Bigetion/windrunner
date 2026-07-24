@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.8] - 2026-07-24
+
+### 🐛 Bug Fixes
+
+#### Fixed Arbitrary Value Misrouting in `bg-[...]`, `text-[...]`, `ring-[...]`, `ring-offset-[...]`, and `decoration-[...]`
+
+**Root Cause:**
+`resolveThemeValue` falls back to `resolveArbitraryValue` when a key is not found in the theme scale. This meant builders that check a non-color scale first (e.g. `backgroundSize`, `fontSize`, `ringWidth`) would incorrectly claim any arbitrary value — including CSS colors — before the color builder had a chance to run.
+
+**Fix:**
+Added two shared type-guard helpers to `resolvers.js`:
+- `isArbitraryColor(value)` — detects hex values, all CSS functional color notations (`rgb`, `hsl`, `oklch`, `oklab`, `color()`, `color-mix()`), 140+ CSS named colors, and keywords (`transparent`, `currentColor`, `inherit`, etc.)
+- `isArbitraryImage(value)` — detects `url()`, `linear-gradient()`, `radial-gradient()`, `conic-gradient()`
+
+Guards applied in four builders:
+
+| Builder | Affected utilities | Was misrouted to | Now correctly outputs |
+|---|---|---|---|
+| `backgrounds.js` | `bg-[color]` | `background-size` | `background-color` |
+| `backgrounds.js` | `bg-[url(...)]` | `background-size` | `background-image` |
+| `typography.js` | `text-[color]` | `font-size` | `color` |
+| `typography.js` | `decoration-[color]` | `text-decoration-thickness` | `text-decoration-color` |
+| `effects.js` | `ring-[color]` | `ring-width` CSS vars | `--tw-ring-color` |
+| `effects.js` | `ring-offset-[color]` | `--tw-ring-offset-width` | `--tw-ring-offset-color` |
+
+**What Now Works:**
+
+✅ `bg-[#020c1b]` → `background-color: #020c1b;`
+✅ `bg-[red]` → `background-color: red;`
+✅ `bg-[transparent]` → `background-color: transparent;`
+✅ `bg-[oklch(0.5_0.2_240)]` → `background-color: oklch(0.5 0.2 240);`
+✅ `bg-[url(img.png)]` → `background-image: url(img.png);`
+✅ `bg-[cover]` → `background-size: cover;` (unchanged)
+✅ `text-[#ff0000]` → `color: #ff0000;`
+✅ `text-[red]` → `color: red;`
+✅ `text-[1.5rem]` → `font-size: 1.5rem;` (unchanged)
+✅ `decoration-[red]` → `text-decoration-color: red;`
+✅ `ring-[#ff0000]` → `--tw-ring-color: #ff0000;`
+✅ `ring-offset-[red]` → `--tw-ring-offset-color: red;`
+
+### 📦 Files Modified
+
+- `src/resolvers.js` — Added shared `isArbitraryColor()` and `isArbitraryImage()` exports
+- `src/builders/backgrounds.js` — Guard on `backgroundSize`, `backgroundPosition`, `backgroundImage`
+- `src/builders/typography.js` — Guard on `fontSize` and `textDecorationThickness`
+- `src/builders/effects.js` — Guard on `ringWidth` and `ringOffsetWidth`
+
 ## [1.1.7] - 2026-07-23
 
 ### 🐛 Bug Fixes

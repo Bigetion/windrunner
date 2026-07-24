@@ -15,6 +15,76 @@ export function resolveArbitraryValue(valueKey) {
   return undefined;
 }
 
+// ─── CSS color / image type guards ───────────────────────────────────────────
+// Used to prevent arbitrary values that are colors or images from being
+// mismatched by builders that check non-color theme scales first
+// (e.g. backgroundSize, ringWidth, fontSize) before deferring to color builders.
+
+/**
+ * CSS named colors that are valid arbitrary value tokens.
+ * Covers all Level 4 named colors and the special keywords.
+ */
+const CSS_NAMED_COLORS = new Set([
+  "aliceblue","antiquewhite","aqua","aquamarine","azure","beige","bisque","black",
+  "blanchedalmond","blue","blueviolet","brown","burlywood","cadetblue","chartreuse",
+  "chocolate","coral","cornflowerblue","cornsilk","crimson","cyan","darkblue",
+  "darkcyan","darkgoldenrod","darkgray","darkgreen","darkgrey","darkkhaki",
+  "darkmagenta","darkolivegreen","darkorange","darkorchid","darkred","darksalmon",
+  "darkseagreen","darkslateblue","darkslategray","darkslategrey","darkturquoise",
+  "darkviolet","deeppink","deepskyblue","dimgray","dimgrey","dodgerblue","firebrick",
+  "floralwhite","forestgreen","fuchsia","gainsboro","ghostwhite","gold","goldenrod",
+  "gray","green","greenyellow","grey","honeydew","hotpink","indianred","indigo",
+  "ivory","khaki","lavender","lavenderblush","lawngreen","lemonchiffon","lightblue",
+  "lightcoral","lightcyan","lightgoldenrodyellow","lightgray","lightgreen","lightgrey",
+  "lightpink","lightsalmon","lightseagreen","lightskyblue","lightslategray",
+  "lightslategrey","lightsteelblue","lightyellow","lime","limegreen","linen",
+  "magenta","maroon","mediumaquamarine","mediumblue","mediumorchid","mediumpurple",
+  "mediumseagreen","mediumslateblue","mediumspringgreen","mediumturquoise",
+  "mediumvioletred","midnightblue","mintcream","mistyrose","moccasin","navajowhite",
+  "navy","oldlace","olive","olivedrab","orange","orangered","orchid","palegoldenrod",
+  "palegreen","paleturquoise","palevioletred","papayawhip","peachpuff","peru","pink",
+  "plum","powderblue","purple","rebeccapurple","red","rosybrown","royalblue",
+  "saddlebrown","salmon","sandybrown","seagreen","seashell","sienna","silver",
+  "skyblue","slateblue","slategray","slategrey","snow","springgreen","steelblue",
+  "tan","teal","thistle","tomato","turquoise","violet","wheat","white","whitesmoke",
+  "yellow","yellowgreen",
+  // CSS special color keywords
+  "transparent","currentcolor","currentColor","inherit","initial","unset","revert",
+]);
+
+/**
+ * Returns true if a resolved arbitrary value looks like a CSS color.
+ * Covers: hex, functional notations (rgb/hsl/oklch/etc.), named colors, and keywords.
+ */
+export function isArbitraryColor(value) {
+  if (typeof value !== "string") return false;
+  const v = value.trim();
+  if (v.startsWith("#")) return true;
+  if (/^rgba?\s*\(/i.test(v)) return true;
+  if (/^hsla?\s*\(/i.test(v)) return true;
+  if (/^oklch\s*\(/i.test(v)) return true;
+  if (/^oklab\s*\(/i.test(v)) return true;
+  if (/^color\s*\(/i.test(v)) return true;
+  if (/^color-mix\s*\(/i.test(v)) return true;
+  if (CSS_NAMED_COLORS.has(v.toLowerCase())) return true;
+  return false;
+}
+
+/**
+ * Returns true if a resolved arbitrary value looks like a CSS image value.
+ * Used to prevent bg-[url(...)] from being mismatched as background-size.
+ */
+export function isArbitraryImage(value) {
+  if (typeof value !== "string") return false;
+  const v = value.trim();
+  return (
+    /^url\s*\(/i.test(v) ||
+    /^linear-gradient\s*\(/i.test(v) ||
+    /^radial-gradient\s*\(/i.test(v) ||
+    /^conic-gradient\s*\(/i.test(v)
+  );
+}
+
 // ─── Theme scale lookup ───────────────────────────────────────────────────────
 
 export function resolveThemeValue(scale, valueKey) {
