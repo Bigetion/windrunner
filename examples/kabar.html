@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kabar — Portal Berita Indonesia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>html { opacity: 0; transition: opacity .3s ease; }</style>
+  <script type="module">
+    import { windrunner } from "../dist/index.esm.js";
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
+  </script>
+  <style>
+    :root {
+      --bg:     #f7f5f0;
+      --paper:  #ffffff;
+      --border: #e5e1d8;
+      --border2:#d0cbc0;
+      --red:    #cc2200;
+      --red2:   #e86a50;
+      --red-bg: #fff5f3;
+      --ink:    #1a1208;
+      --ink2:   #3d3628;
+      --muted:  #7a7264;
+      --sub:    #5a5244;
+      --gold:   #b8860b;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+    .serif { font-family: 'Playfair Display', Georgia, serif; }
+
+    @keyframes fadeUp  { from { opacity:0; transform:translateY(24px) } to { opacity:1; transform:none } }
+    @keyframes tickerX { from { transform:translateX(0) } to { transform:translateX(-50%) } }
+    @keyframes blink   { 0%,100%{opacity:1} 50%{opacity:.25} }
+    @keyframes shimmer { 0%{background-position:200% center} 100%{background-position:-200% center} }
+
+    .fu1{animation:fadeUp .6s .05s ease both}
+    .fu2{animation:fadeUp .6s .15s ease both}
+    .fu3{animation:fadeUp .6s .25s ease both}
+    .fu4{animation:fadeUp .6s .35s ease both}
+
+    .reveal{opacity:0;transform:translateY(20px);transition:opacity .65s ease,transform .65s ease}
+    .reveal.visible{opacity:1;transform:none}
+
+    .card-hover{transition:transform .25s,box-shadow .25s,border-color .25s}
+    .card-hover:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.1);border-color:var(--red)!important}
+
+    .cat{display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .6rem;border-radius:9999px}
+
+    .nav-link{position:relative}
+    .nav-link::after{content:'';position:absolute;left:0;bottom:-3px;width:0;height:2px;background:var(--red);transition:width .25s}
+    .nav-link:hover::after,.nav-link.active::after{width:100%}
+
+    .ticker-wrap{overflow:hidden;white-space:nowrap}
+    .ticker-inner{display:inline-block;animation:tickerX 30s linear infinite}
+    .ticker-inner:hover{animation-play-state:paused}
+
+    .live-dot{animation:blink 1.4s ease-in-out infinite}
+
+    .section-label{display:flex;align-items:center;gap:.75rem;margin-bottom:1.75rem}
+    .section-label span{font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);flex-shrink:0}
+    .section-label::before{content:'';width:32px;height:2px;background:var(--red);flex-shrink:0}
+    .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+    .shimmer-red{
+      background:linear-gradient(90deg,#cc2200 0%,#e86a50 30%,#cc2200 60%,#e86a50 90%);
+      background-size:200% auto;
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      animation:shimmer 3s linear infinite
+    }
+
+    .pull-quote::before{content:'\201C';font-family:'Playfair Display',serif;font-size:5rem;line-height:.7;color:rgba(204,34,0,.18);display:block;margin-bottom:.4rem}
+
+    /* img thumbnails */
+    .thumb{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* lucide icon sizing helpers */
+    i[data-lucide]{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:#f0ece4}
+    ::-webkit-scrollbar-thumb{background:rgba(204,34,0,.3);border-radius:2px}
+
+    input[type=email]{font-family:'Inter',system-ui,sans-serif;outline:none}
+    input[type=email]:focus{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(204,34,0,.1)}
+  </style>
+</head>
+<body>
+
+<!-- ═══ TOP BAR ═══ -->
+<div class="hidden md:block border-b" style="background:#fff;border-color:var(--border)">
+  <div class="mx-auto px-6 flex items-center justify-between h-9" style="max-width:1400px">
+    <p class="text-xs" style="color:#9a9080">Sabtu, 25 Juli 2026 · WIB</p>
+    <div class="flex items-center gap-6 text-xs" style="color:#9a9080">
+      <a href="#" class="hover:text-red-700 transition-colors">Epaper</a>
+      <a href="#" class="hover:text-red-700 transition-colors">Newsletter</a>
+      <a href="#" class="hover:text-red-700 transition-colors">Podcast</a>
+      <a href="#" class="hover:text-red-700 transition-colors">Video</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NAVBAR ═══ -->
+<header id="navbar" class="sticky top-0 z-50 border-b" style="background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-color:var(--border)">
+  <nav class="mx-auto px-6" style="max-width:1400px">
+    <div class="flex items-center justify-between h-16 gap-8">
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2 flex-shrink-0">
+        <div class="w-8 h-8 rounded flex items-center justify-center font-black text-white text-lg" style="background:var(--red)">K</div>
+        <span class="serif font-black text-xl tracking-tight" style="color:var(--ink)">KABAR</span>
+        <span class="hidden sm:inline text-xs font-medium" style="color:#9a9080">INDONESIA</span>
+      </a>
+      <!-- Nav links -->
+      <ul class="hidden lg:flex items-center gap-7">
+        <li><a href="#headline" class="nav-link active text-xs font-semibold uppercase tracking-widest" style="color:var(--ink)">Utama</a></li>
+        <li><a href="#politik"  class="nav-link text-xs font-semibold uppercase tracking-widest" style="color:var(--muted)">Politik</a></li>
+        <li><a href="#ekonomi" class="nav-link text-xs font-semibold uppercase tracking-widest" style="color:var(--muted)">Ekonomi</a></li>
+        <li><a href="#teknologi" class="nav-link text-xs font-semibold uppercase tracking-widest" style="color:var(--muted)">Teknologi</a></li>
+        <li><a href="#olahraga" class="nav-link text-xs font-semibold uppercase tracking-widest" style="color:var(--muted)">Olahraga</a></li>
+        <li><a href="#gaya"    class="nav-link text-xs font-semibold uppercase tracking-widest" style="color:var(--muted)">Gaya Hidup</a></li>
+        <li><a href="#dunia"   class="nav-link text-xs font-semibold uppercase tracking-widest" style="color:var(--muted)">Dunia</a></li>
+      </ul>
+      <!-- Actions -->
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <button class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors" style="color:var(--muted)">
+          <i data-lucide="search" style="width:16px;height:16px"></i>
+        </button>
+        <a href="#cta" class="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider text-white transition-all hover:opacity-90" style="background:var(--red)">
+          Berlangganan
+        </a>
+        <button class="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center hover:bg-gray-100" style="color:var(--muted)">
+          <i data-lucide="menu" style="width:16px;height:16px"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ═══ BREAKING TICKER ═══ -->
+<div class="border-b overflow-hidden" style="background:var(--red)">
+  <div class="mx-auto px-6 flex items-center h-9 gap-4" style="max-width:1400px">
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <span class="live-dot w-2 h-2 rounded-full bg-white block"></span>
+      <span class="text-xs font-black uppercase tracking-widest text-white">Breaking</span>
+    </div>
+    <div class="w-px h-4 bg-white/30 flex-shrink-0"></div>
+    <div class="ticker-wrap flex-1">
+      <div class="ticker-inner text-xs font-medium text-white/90 flex">
+        <span class="pr-16">Pemerintah umumkan paket stimulus ekonomi Rp 500 triliun untuk kuartal III 2026 &nbsp;·&nbsp;</span>
+        <span class="pr-16">Timnas Indonesia lolos ke semifinal Piala Asia 2026 setelah kalahkan Vietnam 3-1 &nbsp;·&nbsp;</span>
+        <span class="pr-16">Rupiah menguat ke level Rp 15.200 per dolar AS, tertinggi dalam 18 bulan terakhir &nbsp;·&nbsp;</span>
+        <span class="pr-16">KTT ASEAN di Jakarta hasilkan deklarasi bersama soal ketahanan pangan kawasan &nbsp;·&nbsp;</span>
+        <span class="pr-16">Startup unicorn Indonesia terbaru capai valuasi USD 1 miliar di putaran Series D &nbsp;·&nbsp;</span>
+        <span class="pr-16">Pemerintah umumkan paket stimulus ekonomi Rp 500 triliun untuk kuartal III 2026 &nbsp;·&nbsp;</span>
+        <span class="pr-16">Timnas Indonesia lolos ke semifinal Piala Asia 2026 setelah kalahkan Vietnam 3-1 &nbsp;·&nbsp;</span>
+        <span class="pr-16">Rupiah menguat ke level Rp 15.200 per dolar AS, tertinggi dalam 18 bulan terakhir &nbsp;·&nbsp;</span>
+        <span class="pr-16">KTT ASEAN di Jakarta hasilkan deklarasi bersama soal ketahanan pangan kawasan &nbsp;·&nbsp;</span>
+        <span class="pr-16">Startup unicorn Indonesia terbaru capai valuasi USD 1 miliar di putaran Series D &nbsp;·&nbsp;</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section id="headline" class="px-6 py-10" style="background:var(--bg)">
+  <div class="mx-auto" style="max-width:1400px">
+    <div class="section-label fu1"><span>Berita Utama</span></div>
+
+    <div class="grid lg:grid-cols-[2fr_1fr] gap-6">
+
+      <!-- BIG HERO CARD -->
+      <a href="#" class="group card-hover rounded-2xl overflow-hidden border cursor-pointer block fu2" style="border-color:var(--border);background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <div class="relative overflow-hidden" style="height:400px">
+          <img src="https://picsum.photos/seed/jakarta-politik/900/400" alt="Berita utama" class="thumb" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(255,255,255,.97) 0%,rgba(255,255,255,.35) 45%,transparent 70%)"></div>
+          <div class="absolute top-5 left-5 flex items-center gap-2">
+            <span class="cat text-white" style="background:var(--red)">Politik</span>
+          </div>
+          <!-- Live badge -->
+          <div class="absolute top-5 right-5 flex items-center gap-1.5 px-3 py-1 rounded-full border" style="background:#fff5f3;border-color:#fca89a">
+            <span class="live-dot w-1.5 h-1.5 rounded-full block" style="background:var(--red)"></span>
+            <span class="text-xs font-bold uppercase tracking-wider" style="color:var(--red)">Live</span>
+          </div>
+        </div>
+        <div class="p-7">
+          <p class="text-xs font-medium mb-3">
+            <span style="color:var(--red)">Jakarta</span>
+            <span style="color:#9a9080"> · 2 jam lalu</span>
+          </p>
+          <h2 class="serif font-bold leading-tight mb-4 group-hover:text-red-700 transition-colors" style="font-size:clamp(1.4rem,2.5vw,1.9rem);color:var(--ink)">
+            Presiden Tandatangani Undang-Undang Transformasi Digital Nasional, Investasi Asing Diprediksi Naik 40%
+          </h2>
+          <p class="text-sm leading-relaxed mb-5" style="color:var(--sub)">
+            Pemerintah resmi memberlakukan kerangka regulasi baru yang mencakup perlindungan data, infrastruktur cloud, serta insentif pajak bagi perusahaan teknologi yang mendirikan data center di Indonesia.
+          </p>
+          <div class="flex items-center justify-between pt-5 border-t" style="border-color:var(--border)">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style="background:var(--red)">AW</div>
+              <div>
+                <p class="text-xs font-semibold" style="color:var(--ink)">Ahmad Wijaya</p>
+                <p class="text-xs" style="color:#9a9080">Koresponden Politik</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4" style="color:#9a9080">
+              <span class="flex items-center gap-1.5 text-xs">
+                <i data-lucide="message-circle" style="width:14px;height:14px"></i> 1.240
+              </span>
+              <span class="flex items-center gap-1.5 text-xs">
+                <i data-lucide="heart" style="width:14px;height:14px"></i> 8.7K
+              </span>
+              <span class="flex items-center gap-1.5 text-xs">
+                <i data-lucide="share-2" style="width:14px;height:14px"></i> Bagikan
+              </span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- RIGHT STACKED CARDS -->
+      <div class="flex flex-col gap-4">
+
+        <!-- Side card 1 -->
+        <a href="#" class="group card-hover rounded-xl overflow-hidden border flex cursor-pointer fu3" style="border-color:var(--border);background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.05)">
+          <div class="w-28 flex-shrink-0 overflow-hidden" style="min-height:120px">
+            <img src="https://picsum.photos/seed/bank-ekonomi/112/120" alt="" class="thumb" />
+          </div>
+          <div class="flex-1 p-4 flex flex-col justify-between">
+            <div>
+              <span class="cat mb-2 inline-block" style="background:#e0f2fe;color:#0369a1">Ekonomi</span>
+              <h3 class="serif font-bold leading-snug text-sm group-hover:text-red-700 transition-colors" style="color:var(--ink)">
+                Bank Indonesia Pertahankan Suku Bunga di 5,75%, Rupiah Stabil di Tengah Tekanan Global
+              </h3>
+            </div>
+            <p class="text-xs mt-2 flex items-center gap-1" style="color:#9a9080">
+              <i data-lucide="clock" style="width:11px;height:11px"></i> 3 jam lalu
+            </p>
+          </div>
+        </a>
+
+        <!-- Side card 2 -->
+        <a href="#" class="group card-hover rounded-xl overflow-hidden border flex cursor-pointer fu3" style="border-color:var(--border);background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.05);animation-delay:.1s">
+          <div class="w-28 flex-shrink-0 overflow-hidden" style="min-height:120px">
+            <img src="https://picsum.photos/seed/tech-startup/112/120" alt="" class="thumb" />
+          </div>
+          <div class="flex-1 p-4 flex flex-col justify-between">
+            <div>
+              <span class="cat mb-2 inline-block" style="background:#f3f0ff;color:#6d28d9">Teknologi</span>
+              <h3 class="serif font-bold leading-snug text-sm group-hover:text-red-700 transition-colors" style="color:var(--ink)">
+                Gojek & Tokopedia Merger Umumkan Platform Super App Terbaru Bernama GoTo 3.0
+              </h3>
+            </div>
+            <p class="text-xs mt-2 flex items-center gap-1" style="color:#9a9080">
+              <i data-lucide="clock" style="width:11px;height:11px"></i> 5 jam lalu
+            </p>
+          </div>
+        </a>
+
+        <!-- Side card 3 -->
+        <a href="#" class="group card-hover rounded-xl overflow-hidden border flex cursor-pointer fu3" style="border-color:var(--border);background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.05);animation-delay:.2s">
+          <div class="w-28 flex-shrink-0 overflow-hidden" style="min-height:120px">
+            <img src="https://picsum.photos/seed/badminton-sport/112/120" alt="" class="thumb" />
+          </div>
+          <div class="flex-1 p-4 flex flex-col justify-between">
+            <div>
+              <span class="cat mb-2 inline-block" style="background:#d1fae5;color:#065f46">Olahraga</span>
+              <h3 class="serif font-bold leading-snug text-sm group-hover:text-red-700 transition-colors" style="color:var(--ink)">
+                Pebulu Tangkis Putri Indonesia Raih Emas Pertama di Kejuaraan Dunia Junior 2026
+              </h3>
+            </div>
+            <p class="text-xs mt-2 flex items-center gap-1" style="color:#9a9080">
+              <i data-lucide="clock" style="width:11px;height:11px"></i> 6 jam lalu
+            </p>
+          </div>
+        </a>
+
+        <!-- Side card 4 -->
+        <a href="#" class="group card-hover rounded-xl overflow-hidden border flex cursor-pointer fu4" style="border-color:var(--border);background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.05)">
+          <div class="w-28 flex-shrink-0 overflow-hidden" style="min-height:120px">
+            <img src="https://picsum.photos/seed/united-nations/112/120" alt="" class="thumb" />
+          </div>
+          <div class="flex-1 p-4 flex flex-col justify-between">
+            <div>
+              <span class="cat mb-2 inline-block" style="background:#fef3c7;color:#92400e">Dunia</span>
+              <h3 class="serif font-bold leading-snug text-sm group-hover:text-red-700 transition-colors" style="color:var(--ink)">
+                PBB Sahkan Resolusi Gencatan Senjata di Timur Tengah, Indonesia Jadi Mediator Kunci
+              </h3>
+            </div>
+            <p class="text-xs mt-2 flex items-center gap-1" style="color:#9a9080">
+              <i data-lucide="clock" style="width:11px;height:11px"></i> 8 jam lalu
+            </p>
+          </div>
+        </a>
+
+      </div><!-- end right stack -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CATEGORY TABS + 6-CARD GRID ═══ -->
+<section id="politik" class="py-14 px-6" style="background:var(--bg)">
+  <div class="mx-auto" style="max-width:1400px">
+
+    <!-- Tabs -->
+    <div class="flex items-center gap-2 mb-10 flex-wrap reveal">
+      <button class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-white" style="background:var(--red)">Semua</button>
+      <button class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-colors hover:bg-gray-100" style="background:#fff;color:var(--sub);border-color:var(--border)">Politik</button>
+      <button class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-colors hover:bg-gray-100" style="background:#fff;color:var(--sub);border-color:var(--border)">Ekonomi</button>
+      <button class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-colors hover:bg-gray-100" style="background:#fff;color:var(--sub);border-color:var(--border)">Teknologi</button>
+      <button class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-colors hover:bg-gray-100" style="background:#fff;color:var(--sub);border-color:var(--border)">Olahraga</button>
+      <button class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-colors hover:bg-gray-100" style="background:#fff;color:var(--sub);border-color:var(--border)">Gaya Hidup</button>
+      <button class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-colors hover:bg-gray-100" style="background:#fff;color:var(--sub);border-color:var(--border)">Dunia</button>
+      <button class="px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest border transition-colors hover:bg-gray-100" style="background:#fff;color:var(--sub);border-color:var(--border)">Hiburan</button>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Card 1 — Ekonomi -->
+      <a href="#" class="group card-hover rounded-2xl overflow-hidden border cursor-pointer block reveal" style="border-color:var(--border);background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <div class="relative overflow-hidden" style="height:210px">
+          <img src="https://picsum.photos/seed/inflasi-ekonomi/600/210" alt="Inflasi" class="thumb transition-transform duration-500 group-hover:scale-105" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(255,255,255,.96) 0%,rgba(255,255,255,.15) 55%,transparent 80%)"></div>
+          <div class="absolute top-4 left-4"><span class="cat" style="background:#e0f2fe;color:#0369a1">Ekonomi</span></div>
+        </div>
+        <div class="p-5">
+          <h3 class="serif font-bold leading-snug mb-2 group-hover:text-red-700 transition-colors" style="font-size:1.05rem;color:var(--ink)">
+            Inflasi Juni 2026 Terkendali di 2,4%, Badan Pusat Statistik Catat Tren Positif
+          </h3>
+          <p class="text-xs leading-relaxed mb-4" style="color:var(--sub)">Harga bahan pokok relatif stabil meskipun kenaikan BBM non-subsidi sempat menekan daya beli masyarakat kalangan menengah ke bawah.</p>
+          <div class="flex items-center justify-between pt-4 border-t" style="border-color:var(--border)">
+            <span class="text-xs" style="color:#9a9080">oleh <b style="color:var(--ink2);font-weight:600">Dewi Rahayu</b> · 4 jam lalu</span>
+            <span class="text-xs flex items-center gap-1" style="color:#9a9080">
+              <i data-lucide="clock" style="width:12px;height:12px"></i> 4 mnt
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 2 — Teknologi -->
+      <a href="#" class="group card-hover rounded-2xl overflow-hidden border cursor-pointer block reveal" style="border-color:var(--border);background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <div class="relative overflow-hidden" style="height:210px">
+          <img src="https://picsum.photos/seed/ai-openai-tech/600/210" alt="AI" class="thumb transition-transform duration-500 group-hover:scale-105" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(255,255,255,.96) 0%,rgba(255,255,255,.15) 55%,transparent 80%)"></div>
+          <div class="absolute top-4 left-4"><span class="cat" style="background:#f3f0ff;color:#6d28d9">Teknologi</span></div>
+        </div>
+        <div class="p-5">
+          <h3 class="serif font-bold leading-snug mb-2 group-hover:text-red-700 transition-colors" style="font-size:1.05rem;color:var(--ink)">
+            ChatGPT 6 Resmi Diluncurkan, Kemampuan Penalaran Matematika Setara Doktor
+          </h3>
+          <p class="text-xs leading-relaxed mb-4" style="color:var(--sub)">OpenAI mengumumkan generasi terbaru model bahasa mereka dengan kemampuan multimodal penuh, termasuk interaksi real-time dalam 50 bahasa termasuk Bahasa Indonesia.</p>
+          <div class="flex items-center justify-between pt-4 border-t" style="border-color:var(--border)">
+            <span class="text-xs" style="color:#9a9080">oleh <b style="color:var(--ink2);font-weight:600">Bima Pratama</b> · 6 jam lalu</span>
+            <span class="text-xs flex items-center gap-1" style="color:#9a9080">
+              <i data-lucide="clock" style="width:12px;height:12px"></i> 6 mnt
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 3 — Olahraga -->
+      <a href="#" class="group card-hover rounded-2xl overflow-hidden border cursor-pointer block reveal" style="border-color:var(--border);background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <div class="relative overflow-hidden" style="height:210px">
+          <img src="https://picsum.photos/seed/football-stadium/600/210" alt="Olahraga" class="thumb transition-transform duration-500 group-hover:scale-105" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(255,255,255,.96) 0%,rgba(255,255,255,.15) 55%,transparent 80%)"></div>
+          <div class="absolute top-4 left-4"><span class="cat" style="background:#d1fae5;color:#065f46">Olahraga</span></div>
+        </div>
+        <div class="p-5">
+          <h3 class="serif font-bold leading-snug mb-2 group-hover:text-red-700 transition-colors" style="font-size:1.05rem;color:var(--ink)">
+            Timnas U-23 Lolos ke Semifinal Piala Asia, Shin Tae-yong Puji Mental Pemain Muda
+          </h3>
+          <p class="text-xs leading-relaxed mb-4" style="color:var(--sub)">Kemenangan dramatis 2-1 atas Jepang mengangkat harapan Indonesia untuk meraih medali emas pertama sepanjang sejarah kompetisi ini.</p>
+          <div class="flex items-center justify-between pt-4 border-t" style="border-color:var(--border)">
+            <span class="text-xs" style="color:#9a9080">oleh <b style="color:var(--ink2);font-weight:600">Rizal Santoso</b> · 7 jam lalu</span>
+            <span class="text-xs flex items-center gap-1" style="color:#9a9080">
+              <i data-lucide="clock" style="width:12px;height:12px"></i> 3 mnt
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 4 — Dunia -->
+      <a href="#" class="group card-hover rounded-2xl overflow-hidden border cursor-pointer block reveal" style="border-color:var(--border);background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <div class="relative overflow-hidden" style="height:210px">
+          <img src="https://picsum.photos/seed/world-diplomacy/600/210" alt="Dunia" class="thumb transition-transform duration-500 group-hover:scale-105" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(255,255,255,.96) 0%,rgba(255,255,255,.15) 55%,transparent 80%)"></div>
+          <div class="absolute top-4 left-4"><span class="cat" style="background:#fef3c7;color:#92400e">Dunia</span></div>
+        </div>
+        <div class="p-5">
+          <h3 class="serif font-bold leading-snug mb-2 group-hover:text-red-700 transition-colors" style="font-size:1.05rem;color:var(--ink)">
+            Presiden AS Umumkan Kemitraan Strategis Indo-Pasifik Baru, Libatkan 14 Negara
+          </h3>
+          <p class="text-xs leading-relaxed mb-4" style="color:var(--sub)">Pakta mencakup transfer teknologi, rantai pasokan semikonduktor, dan infrastruktur digital bawah laut senilai USD 120 miliar.</p>
+          <div class="flex items-center justify-between pt-4 border-t" style="border-color:var(--border)">
+            <span class="text-xs" style="color:#9a9080">oleh <b style="color:var(--ink2);font-weight:600">Nadia Kusuma</b> · 9 jam lalu</span>
+            <span class="text-xs flex items-center gap-1" style="color:#9a9080">
+              <i data-lucide="clock" style="width:12px;height:12px"></i> 5 mnt
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 5 — Gaya Hidup -->
+      <a href="#" class="group card-hover rounded-2xl overflow-hidden border cursor-pointer block reveal" style="border-color:var(--border);background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <div class="relative overflow-hidden" style="height:210px">
+          <img src="https://picsum.photos/seed/wellness-yoga/600/210" alt="Gaya Hidup" class="thumb transition-transform duration-500 group-hover:scale-105" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(255,255,255,.96) 0%,rgba(255,255,255,.15) 55%,transparent 80%)"></div>
+          <div class="absolute top-4 left-4"><span class="cat" style="background:#fce7f3;color:#9d174d">Gaya Hidup</span></div>
+        </div>
+        <div class="p-5">
+          <h3 class="serif font-bold leading-snug mb-2 group-hover:text-red-700 transition-colors" style="font-size:1.05rem;color:var(--ink)">
+            Tren Wellness 2026: Meditasi Digital dan Detox Media Sosial Jadi Gaya Hidup Baru Gen Z
+          </h3>
+          <p class="text-xs leading-relaxed mb-4" style="color:var(--sub)">Survei global: 67% anak muda usia 18–25 kini memprioritaskan kesehatan mental di atas karier dan pencapaian finansial jangka pendek.</p>
+          <div class="flex items-center justify-between pt-4 border-t" style="border-color:var(--border)">
+            <span class="text-xs" style="color:#9a9080">oleh <b style="color:var(--ink2);font-weight:600">Sari Utami</b> · 11 jam lalu</span>
+            <span class="text-xs flex items-center gap-1" style="color:#9a9080">
+              <i data-lucide="clock" style="width:12px;height:12px"></i> 7 mnt
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 6 — Politik -->
+      <a href="#" class="group card-hover rounded-2xl overflow-hidden border cursor-pointer block reveal" style="border-color:var(--border);background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <div class="relative overflow-hidden" style="height:210px">
+          <img src="https://picsum.photos/seed/kpk-korupsi/600/210" alt="Politik" class="thumb transition-transform duration-500 group-hover:scale-105" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(255,255,255,.96) 0%,rgba(255,255,255,.15) 55%,transparent 80%)"></div>
+          <div class="absolute top-4 left-4"><span class="cat text-white" style="background:var(--red)">Politik</span></div>
+        </div>
+        <div class="p-5">
+          <h3 class="serif font-bold leading-snug mb-2 group-hover:text-red-700 transition-colors" style="font-size:1.05rem;color:var(--ink)">
+            KPK Tetapkan Tersangka Baru Kasus Korupsi Pengadaan Sistem Pertahanan Senilai Rp 2,8 T
+          </h3>
+          <p class="text-xs leading-relaxed mb-4" style="color:var(--sub)">KPK umumkan penetapan tersangka pejabat eselon satu Kementerian Pertahanan terkait pengadaan alutsista fiktif yang rugikan negara.</p>
+          <div class="flex items-center justify-between pt-4 border-t" style="border-color:var(--border)">
+            <span class="text-xs" style="color:#9a9080">oleh <b style="color:var(--ink2);font-weight:600">Hendra Gunawan</b> · 1 hari lalu</span>
+            <span class="text-xs flex items-center gap-1" style="color:#9a9080">
+              <i data-lucide="clock" style="width:12px;height:12px"></i> 8 mnt
+            </span>
+          </div>
+        </div>
+      </a>
+
+    </div><!-- end grid -->
+
+    <!-- Load more -->
+    <div class="text-center mt-10 reveal">
+      <button class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold border transition-all hover:scale-[1.02]" style="border-color:var(--red);color:var(--red);background:var(--red-bg)">
+        Muat Lebih Banyak
+        <i data-lucide="chevron-down" style="width:16px;height:16px"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ OPINI & ANALISIS + SIDEBAR ═══ -->
+<section id="opini" class="py-14 px-6 border-y" style="background:#fff;border-color:var(--border)">
+  <div class="mx-auto" style="max-width:1400px">
+    <div class="grid lg:grid-cols-[1fr_340px] gap-12">
+
+      <!-- OPINI -->
+      <div>
+        <div class="section-label reveal"><span>Opini & Analisis</span></div>
+
+        <!-- Featured opinion -->
+        <div class="rounded-2xl p-8 mb-8 border reveal" style="background:#fff8f6;border-color:#fca89a">
+          <div class="flex items-start gap-6">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black text-lg flex-shrink-0" style="background:var(--red)">PR</div>
+            <div class="flex-1">
+              <p class="text-xs uppercase tracking-widest mb-2 font-bold" style="color:var(--red)">Kolom Tamu</p>
+              <h2 class="serif font-bold leading-snug mb-3" style="font-size:1.3rem;color:var(--ink)">
+                Demokrasi di Era Kecerdasan Buatan: Tantangan dan Harapan untuk Indonesia 2030
+              </h2>
+              <div class="pull-quote">
+                <p class="serif italic text-base leading-relaxed" style="color:var(--ink2)">
+                  Ketika algoritma mampu memprediksi pilihan pemilih dengan akurasi 92%, pertanyaan mendasar muncul: apakah demokrasi kita masih tentang kebebasan memilih, atau tentang siapa yang mengendalikan datanya?
+                </p>
+              </div>
+              <div class="flex items-center justify-between mt-6 pt-5 border-t" style="border-color:var(--border)">
+                <div>
+                  <p class="text-sm font-semibold" style="color:var(--ink)">Prof. Rangga Kusuma, Ph.D</p>
+                  <p class="text-xs" style="color:#9a9080">Guru Besar Ilmu Politik, UI · 25 Jul 2026</p>
+                </div>
+                <a href="#" class="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-lg border transition-all hover:scale-[1.02]" style="background:var(--red-bg);color:var(--red);border-color:#fca89a">
+                  Baca selengkapnya <i data-lucide="arrow-right" style="width:13px;height:13px"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opinion list -->
+        <div class="space-y-3 reveal">
+          <a href="#" class="group flex items-start gap-5 p-5 rounded-xl border transition-all hover:border-red-300 hover:bg-red-50 cursor-pointer block" style="border-color:var(--border);background:#fff">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background:#0284c7">SN</div>
+            <div>
+              <p class="text-xs mb-1" style="color:#9a9080">Sri Nuraini · Ekonom Senior BEI</p>
+              <h4 class="serif font-bold text-sm leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">Mengapa Pasar Modal Indonesia Siap Menjadi Hub Investasi Asia Tenggara di 2027</h4>
+            </div>
+          </a>
+          <a href="#" class="group flex items-start gap-5 p-5 rounded-xl border transition-all hover:border-red-300 hover:bg-red-50 cursor-pointer block" style="border-color:var(--border);background:#fff">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background:#059669">DB</div>
+            <div>
+              <p class="text-xs mb-1" style="color:#9a9080">Dr. Dian Berliana · Pakar Lingkungan Hidup</p>
+              <h4 class="serif font-bold text-sm leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">Transisi Energi Terbarukan Indonesia: Terlalu Lambat untuk Krisis yang Terlalu Nyata</h4>
+            </div>
+          </a>
+          <a href="#" class="group flex items-start gap-5 p-5 rounded-xl border transition-all hover:border-red-300 hover:bg-red-50 cursor-pointer block" style="border-color:var(--border);background:#fff">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style="background:#7c3aed">AH</div>
+            <div>
+              <p class="text-xs mb-1" style="color:#9a9080">Andi Halim · Peneliti Digital CSIS</p>
+              <h4 class="serif font-bold text-sm leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">Regulasi AI Indonesia: Jangan Sampai Terlambat Seperti GDPR Eropa yang Lahir Pasca Skandal</h4>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside class="space-y-8">
+
+        <!-- Trending -->
+        <div class="reveal">
+          <div class="section-label"><span>Trending</span></div>
+          <div class="space-y-4">
+            <a href="#" class="group flex items-start gap-4 cursor-pointer block">
+              <span class="serif font-black text-3xl leading-none flex-shrink-0" style="color:#e5c8c0">01</span>
+              <div>
+                <h4 class="text-sm font-semibold leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">Jokowi Kenang 10 Tahun Pemerintahannya dalam Pidato Kebangsaan di HUT RI ke-81</h4>
+                <p class="text-xs mt-1 flex items-center gap-1" style="color:#9a9080">
+                  <i data-lucide="eye" style="width:11px;height:11px"></i> 48.2K dibaca
+                </p>
+              </div>
+            </a>
+            <hr style="border-color:var(--border)" />
+            <a href="#" class="group flex items-start gap-4 cursor-pointer block">
+              <span class="serif font-black text-3xl leading-none flex-shrink-0" style="color:#e8d0c8">02</span>
+              <div>
+                <h4 class="text-sm font-semibold leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">Harga Minyak Goreng Turun Drastis Setelah Pemerintah Buka Keran Impor Darurat</h4>
+                <p class="text-xs mt-1 flex items-center gap-1" style="color:#9a9080">
+                  <i data-lucide="eye" style="width:11px;height:11px"></i> 31.7K dibaca
+                </p>
+              </div>
+            </a>
+            <hr style="border-color:var(--border)" />
+            <a href="#" class="group flex items-start gap-4 cursor-pointer block">
+              <span class="serif font-black text-3xl leading-none flex-shrink-0" style="color:#ecddd8">03</span>
+              <div>
+                <h4 class="text-sm font-semibold leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">Aplikasi Kartu Prakerja Versi 5.0 Diluncurkan, Kini Bisa Bayar Langsung ke Instruktur</h4>
+                <p class="text-xs mt-1 flex items-center gap-1" style="color:#9a9080">
+                  <i data-lucide="eye" style="width:11px;height:11px"></i> 24.1K dibaca
+                </p>
+              </div>
+            </a>
+            <hr style="border-color:var(--border)" />
+            <a href="#" class="group flex items-start gap-4 cursor-pointer block">
+              <span class="serif font-black text-3xl leading-none flex-shrink-0" style="color:#f0e4e0">04</span>
+              <div>
+                <h4 class="text-sm font-semibold leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">BMKG Catat Gempa 6.1 SR di Selatan Jawa, Tidak Berpotensi Tsunami</h4>
+                <p class="text-xs mt-1 flex items-center gap-1" style="color:#9a9080">
+                  <i data-lucide="eye" style="width:11px;height:11px"></i> 19.8K dibaca
+                </p>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="reveal rounded-2xl p-6 border" style="background:#fff8f6;border-color:#fca89a">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background:#fee2d5">
+            <i data-lucide="mail" style="width:20px;height:20px;color:var(--red)"></i>
+          </div>
+          <h3 class="serif font-bold mb-2" style="color:var(--ink)">Newsletter Pagi</h3>
+          <p class="text-xs leading-relaxed mb-4" style="color:var(--sub)">Ringkasan 5 berita terpenting langsung ke inbox kamu setiap pukul 06.00 WIB. Gratis.</p>
+          <div class="flex flex-col gap-2">
+            <input type="email" placeholder="email@kamu.com" class="w-full px-4 py-2.5 rounded-lg text-sm border" style="background:#fff;border-color:var(--border2);color:var(--ink)" />
+            <button class="w-full py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider text-white transition-all hover:opacity-90" style="background:var(--red)">
+              Daftar Sekarang
+            </button>
+          </div>
+        </div>
+
+        <!-- Tag cloud -->
+        <div class="reveal">
+          <div class="section-label"><span>Topik Populer</span></div>
+          <div class="flex flex-wrap gap-2">
+            <a href="#" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-red-400 hover:text-red-700 hover:bg-red-50" style="border-color:var(--border2);color:var(--sub);background:#fff">#Pemilu2027</a>
+            <a href="#" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-red-400 hover:text-red-700 hover:bg-red-50" style="border-color:var(--border2);color:var(--sub);background:#fff">#IKN</a>
+            <a href="#" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-red-400 hover:text-red-700 hover:bg-red-50" style="border-color:var(--border2);color:var(--sub);background:#fff">#KecerdasanBuatan</a>
+            <a href="#" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-red-400 hover:text-red-700 hover:bg-red-50" style="border-color:var(--border2);color:var(--sub);background:#fff">#EnergiTerbarukan</a>
+            <a href="#" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-red-400 hover:text-red-700 hover:bg-red-50" style="border-color:var(--border2);color:var(--sub);background:#fff">#Timnas</a>
+            <a href="#" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-red-400 hover:text-red-700 hover:bg-red-50" style="border-color:var(--border2);color:var(--sub);background:#fff">#StimolusFiskal</a>
+            <a href="#" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-red-400 hover:text-red-700 hover:bg-red-50" style="border-color:var(--border2);color:var(--sub);background:#fff">#ASEAN</a>
+            <a href="#" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-red-400 hover:text-red-700 hover:bg-red-50" style="border-color:var(--border2);color:var(--sub);background:#fff">#Startup</a>
+            <a href="#" class="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:border-red-400 hover:text-red-700 hover:bg-red-50" style="border-color:var(--border2);color:var(--sub);background:#fff">#KorupsiAPBN</a>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DATA & INFOGRAFIS ═══ -->
+<section id="data" class="py-14 px-6" style="background:var(--bg)">
+  <div class="mx-auto" style="max-width:1400px">
+    <div class="section-label reveal"><span>Data & Infografis</span></div>
+
+    <!-- Stat cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 reveal">
+      <div class="rounded-2xl p-6 text-center border" style="background:#fff;border-color:var(--border);box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <p class="serif font-black mb-1" style="font-size:2.2rem;color:var(--red);line-height:1">7,2<span class="text-lg" style="color:var(--red2)">%</span></p>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--ink)">Pertumbuhan PDB</p>
+        <p class="text-xs" style="color:#9a9080">Q2 2026 · YoY</p>
+      </div>
+      <div class="rounded-2xl p-6 text-center border" style="background:#fff;border-color:var(--border);box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <p class="serif font-black mb-1" style="font-size:2.2rem;color:#6d28d9;line-height:1">15.2<span class="text-lg" style="color:#7c3aed">K</span></p>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--ink)">USD/Rupiah</p>
+        <p class="text-xs" style="color:#9a9080">Kurs tengah BI · Hari ini</p>
+      </div>
+      <div class="rounded-2xl p-6 text-center border" style="background:#fff;border-color:var(--border);box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <p class="serif font-black mb-1" style="font-size:2.2rem;color:#059669;line-height:1">4,8<span class="text-lg" style="color:#10b981">%</span></p>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--ink)">Tingkat Pengangguran</p>
+        <p class="text-xs" style="color:#9a9080">Mei 2026 · BPS</p>
+      </div>
+      <div class="rounded-2xl p-6 text-center border" style="background:#fff;border-color:var(--border);box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <p class="serif font-black mb-1" style="font-size:2.2rem;color:var(--gold);line-height:1">7.645</p>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--ink)">IHSG</p>
+        <p class="text-xs" style="color:#9a9080">+1,2% · Penutupan kemarin</p>
+      </div>
+    </div>
+
+    <!-- Infographic wide card -->
+    <div class="rounded-2xl overflow-hidden border reveal" style="background:#fff;border-color:var(--border);box-shadow:0 1px 8px rgba(0,0,0,.05)">
+      <div class="grid lg:grid-cols-[1fr_2fr]">
+        <div class="p-8 border-b lg:border-b-0 lg:border-r" style="border-color:var(--border)">
+          <span class="cat text-white mb-4 inline-block" style="background:var(--red)">Eksklusif</span>
+          <h3 class="serif font-bold leading-snug mb-4" style="font-size:1.2rem;color:var(--ink)">Peta Investasi Asing Indonesia 2026: Sektor Mana yang Paling Diminati?</h3>
+          <p class="text-sm leading-relaxed mb-6" style="color:var(--sub)">Analisis BKPM menunjukkan pergeseran signifikan dari manufaktur ke digital dan energi hijau dalam tiga kuartal terakhir.</p>
+          <a href="#" class="inline-flex items-center gap-1.5 text-sm font-semibold hover:underline" style="color:var(--red)">
+            Lihat infografis lengkap <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+          </a>
+        </div>
+        <div class="p-8" style="background:#fafaf8">
+          <svg viewBox="0 0 640 170" fill="none" class="w-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bD" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#cc2200"/><stop offset="100%" stop-color="#e86a50" stop-opacity=".8"/></linearGradient>
+              <linearGradient id="bE" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#059669"/><stop offset="100%" stop-color="#34d399" stop-opacity=".8"/></linearGradient>
+              <linearGradient id="bM" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0284c7"/><stop offset="100%" stop-color="#38bdf8" stop-opacity=".8"/></linearGradient>
+              <linearGradient id="bI" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#a78bfa" stop-opacity=".8"/></linearGradient>
+              <linearGradient id="bA" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b8860b"/><stop offset="100%" stop-color="#fbbf24" stop-opacity=".8"/></linearGradient>
+            </defs>
+            <line x1="0" y1="130" x2="640" y2="130" stroke="#e5e1d8" stroke-width="1"/>
+            <line x1="0" y1="97"  x2="640" y2="97"  stroke="#ede9df" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="0" y1="64"  x2="640" y2="64"  stroke="#ede9df" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="0" y1="32"  x2="640" y2="32"  stroke="#ede9df" stroke-width="1" stroke-dasharray="4 4"/>
+            <rect x="40"  y="20"  width="80" height="110" rx="6" fill="url(#bD)"/>
+            <rect x="160" y="46"  width="80" height="84"  rx="6" fill="url(#bE)"/>
+            <rect x="280" y="68"  width="80" height="62"  rx="6" fill="url(#bM)"/>
+            <rect x="400" y="80"  width="80" height="50"  rx="6" fill="url(#bI)"/>
+            <rect x="520" y="100" width="80" height="30"  rx="6" fill="url(#bA)"/>
+            <text x="80"  y="14"  text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#1a1208" font-weight="700">$38B</text>
+            <text x="200" y="40"  text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#1a1208" font-weight="700">$29B</text>
+            <text x="320" y="62"  text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#1a1208" font-weight="700">$21B</text>
+            <text x="440" y="74"  text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#1a1208" font-weight="700">$17B</text>
+            <text x="560" y="94"  text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#1a1208" font-weight="700">$10B</text>
+            <text x="80"  y="150" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#7a7264">Digital</text>
+            <text x="200" y="150" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#7a7264">Energi Hijau</text>
+            <text x="320" y="150" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#7a7264">Manufaktur</text>
+            <text x="440" y="150" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#7a7264">Infrastruktur</text>
+            <text x="560" y="150" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#7a7264">Agribisnis</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ VIDEO & PODCAST ═══ -->
+<section id="multimedia" class="py-14 px-6 border-t" style="background:#fff;border-color:var(--border)">
+  <div class="mx-auto" style="max-width:1400px">
+    <div class="grid lg:grid-cols-2 gap-12">
+
+      <!-- VIDEO -->
+      <div class="reveal">
+        <div class="section-label"><span>Video Terbaru</span></div>
+
+        <!-- Featured video -->
+        <a href="#" class="group block rounded-2xl overflow-hidden border mb-5 cursor-pointer card-hover" style="border-color:var(--border);background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.05)">
+          <div class="relative overflow-hidden" style="height:230px">
+            <img src="https://picsum.photos/seed/press-conference/700/230" alt="Video featured" class="thumb transition-transform duration-500 group-hover:scale-105" />
+            <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,.25)">
+              <div class="w-14 h-14 rounded-full flex items-center justify-center transition-all group-hover:scale-110 shadow-lg" style="background:var(--red)">
+                <i data-lucide="play" style="width:24px;height:24px;color:white;margin-left:3px"></i>
+              </div>
+            </div>
+            <div class="absolute bottom-4 right-4 px-2 py-1 rounded text-xs font-semibold" style="background:rgba(0,0,0,.7);color:#fff">18:42</div>
+          </div>
+          <div class="p-5">
+            <span class="cat mb-2 inline-block" style="background:#fee2d5;color:var(--red)">Wawancara Eksklusif</span>
+            <h3 class="serif font-bold leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">Menteri Keuangan Sri Mulyani: "Fondasi Fiskal Indonesia Sudah Siap Hadapi Resesi Global 2027"</h3>
+          </div>
+        </a>
+
+        <!-- Video list -->
+        <div class="space-y-3">
+          <a href="#" class="group flex items-center gap-4 p-3 rounded-xl border transition-all hover:border-red-300 hover:bg-red-50 cursor-pointer" style="border-color:var(--border);background:#fff">
+            <div class="relative w-24 h-16 rounded-lg overflow-hidden flex-shrink-0">
+              <img src="https://picsum.photos/seed/asean-summit/96/64" alt="" class="thumb" />
+              <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,.3)">
+                <i data-lucide="play" style="width:16px;height:16px;color:white;margin-left:2px"></i>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-sm font-semibold leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">KTT ASEAN 2026: Apa yang Disepakati dan Apa yang Gagal</h4>
+              <p class="text-xs mt-1 flex items-center gap-1" style="color:#9a9080"><i data-lucide="clock" style="width:11px;height:11px"></i> 24:15 · Internasional</p>
+            </div>
+          </a>
+          <a href="#" class="group flex items-center gap-4 p-3 rounded-xl border transition-all hover:border-red-300 hover:bg-red-50 cursor-pointer" style="border-color:var(--border);background:#fff">
+            <div class="relative w-24 h-16 rounded-lg overflow-hidden flex-shrink-0">
+              <img src="https://picsum.photos/seed/debate-ekonomi/96/64" alt="" class="thumb" />
+              <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,.3)">
+                <i data-lucide="play" style="width:16px;height:16px;color:white;margin-left:2px"></i>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-sm font-semibold leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">Debat Terbuka: Pro-Kontra Kenaikan UMP 2027 Menurut Ekonom</h4>
+              <p class="text-xs mt-1 flex items-center gap-1" style="color:#9a9080"><i data-lucide="clock" style="width:11px;height:11px"></i> 31:08 · Debat Ekonomi</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- PODCAST -->
+      <div class="reveal">
+        <div class="section-label"><span>Podcast Kabar</span></div>
+
+        <div class="rounded-2xl p-7 mb-5 border" style="background:#fff;border-color:var(--border);box-shadow:0 1px 8px rgba(0,0,0,.05)">
+          <!-- Waveform bars -->
+          <div class="flex items-end gap-0.5 mb-5 justify-center" style="height:48px">
+            <div style="width:3px;height:22%;background:#fca89a;border-radius:2px"></div>
+            <div style="width:3px;height:45%;background:#f47c6a;border-radius:2px"></div>
+            <div style="width:3px;height:68%;background:#e86a50;border-radius:2px"></div>
+            <div style="width:3px;height:88%;background:var(--red);border-radius:2px"></div>
+            <div style="width:3px;height:100%;background:var(--red);border-radius:2px"></div>
+            <div style="width:3px;height:82%;background:#d63010;border-radius:2px"></div>
+            <div style="width:3px;height:60%;background:#e05538;border-radius:2px"></div>
+            <div style="width:3px;height:42%;background:#f07055;border-radius:2px"></div>
+            <div style="width:3px;height:55%;background:#e86040;border-radius:2px"></div>
+            <div style="width:3px;height:78%;background:var(--red);border-radius:2px"></div>
+            <div style="width:3px;height:95%;background:var(--red);border-radius:2px"></div>
+            <div style="width:3px;height:72%;background:#d63010;border-radius:2px"></div>
+            <div style="width:3px;height:50%;background:#e05538;border-radius:2px"></div>
+            <div style="width:3px;height:30%;background:#f07055;border-radius:2px"></div>
+            <div style="width:3px;height:48%;background:#e86040;border-radius:2px"></div>
+            <div style="width:3px;height:74%;background:#d63010;border-radius:2px"></div>
+            <div style="width:3px;height:90%;background:var(--red);border-radius:2px"></div>
+            <div style="width:3px;height:100%;background:var(--red);border-radius:2px"></div>
+            <div style="width:3px;height:76%;background:#d63010;border-radius:2px"></div>
+            <div style="width:3px;height:52%;background:#e05538;border-radius:2px"></div>
+            <div style="width:3px;height:33%;background:#f07055;border-radius:2px"></div>
+            <div style="width:3px;height:58%;background:#e86040;border-radius:2px"></div>
+            <div style="width:3px;height:82%;background:#d63010;border-radius:2px"></div>
+            <div style="width:3px;height:64%;background:#e05538;border-radius:2px"></div>
+            <div style="width:3px;height:40%;background:#f07055;border-radius:2px"></div>
+            <div style="width:3px;height:24%;background:#fca89a;border-radius:2px"></div>
+            <div style="width:3px;height:42%;background:#f07055;border-radius:2px"></div>
+          </div>
+
+          <p class="text-xs uppercase tracking-widest mb-2 font-bold" style="color:var(--red)">Eps. 142 · 52 mnt</p>
+          <h3 class="serif font-bold mb-2" style="font-size:1.1rem;color:var(--ink)">Anatomi Korupsi Infrastruktur: Bagaimana Uang Rakyat Bocor di Proyek Strategis Nasional</h3>
+          <p class="text-xs mb-5" style="color:var(--sub)">Bersama mantan penyidik KPK dan pengacara publik yang mengungkap modus terbaru mark-up kontrak proyek jalan tol.</p>
+
+          <!-- Progress bar -->
+          <div class="mb-4">
+            <div class="h-1.5 rounded-full mb-2" style="background:var(--border)">
+              <div class="h-full rounded-full" style="width:35%;background:var(--red)"></div>
+            </div>
+            <div class="flex justify-between text-xs" style="color:#9a9080"><span>18:12</span><span>52:04</span></div>
+          </div>
+
+          <!-- Controls -->
+          <div class="flex items-center justify-center gap-5">
+            <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors" style="color:var(--muted)">
+              <i data-lucide="skip-back" style="width:18px;height:18px"></i>
+            </button>
+            <button class="w-12 h-12 flex items-center justify-center rounded-full transition-all hover:scale-105 shadow" style="background:var(--red);color:#fff">
+              <i data-lucide="play" style="width:20px;height:20px;margin-left:2px"></i>
+            </button>
+            <button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors" style="color:var(--muted)">
+              <i data-lucide="skip-forward" style="width:18px;height:18px"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Episode list -->
+        <div class="space-y-3">
+          <a href="#" class="group flex items-center gap-4 p-4 rounded-xl border transition-all hover:border-red-300 hover:bg-red-50 cursor-pointer" style="border-color:var(--border);background:#fff">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border" style="background:var(--red-bg);color:var(--red);border-color:#fca89a">141</div>
+            <div class="flex-1">
+              <h4 class="text-sm font-semibold leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">Masa Depan Media Indonesia di Era Generative AI</h4>
+              <p class="text-xs flex items-center gap-1 mt-1" style="color:#9a9080"><i data-lucide="clock" style="width:11px;height:11px"></i> 48 mnt · 22 Jul 2026</p>
+            </div>
+            <i data-lucide="play-circle" style="width:20px;height:20px;color:var(--red);flex-shrink:0"></i>
+          </a>
+          <a href="#" class="group flex items-center gap-4 p-4 rounded-xl border transition-all hover:border-red-300 hover:bg-red-50 cursor-pointer" style="border-color:var(--border);background:#fff">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border" style="background:var(--red-bg);color:var(--red);border-color:#fca89a">140</div>
+            <div class="flex-1">
+              <h4 class="text-sm font-semibold leading-snug group-hover:text-red-700 transition-colors" style="color:var(--ink)">Bisnis Keluarga Indonesia: Sukses atau Bencana Tata Kelola?</h4>
+              <p class="text-xs flex items-center gap-1 mt-1" style="color:#9a9080"><i data-lucide="clock" style="width:11px;height:11px"></i> 61 mnt · 19 Jul 2026</p>
+            </div>
+            <i data-lucide="play-circle" style="width:20px;height:20px;color:var(--red);flex-shrink:0"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA — BERLANGGANAN ═══ -->
+<section id="cta" class="relative py-20 px-6 overflow-hidden border-t" style="background:linear-gradient(135deg,#fff5f3 0%,#fdf8ee 50%,#f0f8ff 100%);border-color:var(--border)">
+  <!-- Dot pattern -->
+  <div class="absolute inset-0 opacity-30" style="background-image:radial-gradient(#d0cbc0 1px,transparent 1px);background-size:24px 24px"></div>
+
+  <div class="relative z-10 mx-auto text-center reveal" style="max-width:680px">
+    <!-- Icon -->
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-8 flex items-center justify-center border" style="background:var(--red-bg);border-color:#fca89a;box-shadow:0 4px 16px rgba(204,34,0,.12)">
+      <i data-lucide="newspaper" style="width:32px;height:32px;color:var(--red)"></i>
+    </div>
+
+    <p class="text-xs uppercase tracking-[.2em] mb-4 font-bold" style="color:var(--red)">Berlangganan Premium</p>
+    <h2 class="serif font-black mb-5" style="font-size:clamp(1.9rem,4vw,3rem);line-height:1.1;color:var(--ink)">
+      Jurnalisme Berkualitas<br/>
+      <span class="shimmer-red">Tanpa Batas Akses</span>
+    </h2>
+    <p class="text-base leading-relaxed mb-10" style="color:var(--sub);max-width:480px;margin-left:auto;margin-right:auto">
+      Baca semua artikel eksklusif, analisis mendalam, laporan investigasi, dan arsip penuh selama 20 tahun. Mulai dari Rp 29.000/bulan.
+    </p>
+
+    <!-- Pricing cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 text-left">
+      <div class="rounded-2xl p-5 border" style="background:#fff;border-color:var(--border);box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color:#9a9080">Bulanan</p>
+        <p class="serif font-black text-2xl mb-1" style="color:var(--ink)">Rp 29K<span class="text-sm font-normal" style="color:#9a9080">/bln</span></p>
+        <p class="text-xs" style="color:var(--muted)">Bayar tiap bulan, bisa berhenti kapan saja</p>
+      </div>
+      <div class="rounded-2xl p-5 relative border" style="background:var(--red-bg);border-color:var(--red);box-shadow:0 4px 20px rgba(204,34,0,.12)">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold text-white" style="background:var(--red)">Terpopuler</div>
+        <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color:var(--red)">Tahunan</p>
+        <p class="serif font-black text-2xl mb-1" style="color:var(--ink)">Rp 249K<span class="text-sm font-normal" style="color:#9a9080">/thn</span></p>
+        <p class="text-xs" style="color:var(--sub)">Hemat 28% dibanding bulanan</p>
+      </div>
+      <div class="rounded-2xl p-5 border" style="background:#fff;border-color:var(--border);box-shadow:0 1px 8px rgba(0,0,0,.05)">
+        <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color:#9a9080">Institusi</p>
+        <p class="serif font-black text-2xl mb-1" style="color:var(--ink)">Custom</p>
+        <p class="text-xs" style="color:var(--muted)">Untuk kantor, kampus, atau media partner</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="#" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-bold text-sm uppercase tracking-wider text-white transition-all hover:opacity-90 hover:scale-[1.02]" style="background:var(--red);box-shadow:0 8px 28px rgba(204,34,0,.25)">
+        <i data-lucide="zap" style="width:15px;height:15px"></i>
+        Mulai Berlangganan
+      </a>
+      <a href="#" class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-sm border transition-all hover:bg-gray-50" style="color:var(--sub);border-color:var(--border2);background:#fff">
+        Pelajari Keuntungan
+        <i data-lucide="chevron-right" style="width:15px;height:15px"></i>
+      </a>
+    </div>
+    <p class="mt-5 text-xs flex items-center justify-center gap-1.5" style="color:#9a9080">
+      <i data-lucide="shield-check" style="width:13px;height:13px"></i>
+      7 hari gratis · Tanpa kartu kredit · Batalkan kapan saja
+    </p>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="border-t py-14 px-6" style="background:#1a1208;border-color:#2d2418">
+  <div class="mx-auto" style="max-width:1400px">
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-10 mb-12">
+
+      <!-- Brand -->
+      <div class="col-span-2 md:col-span-4 lg:col-span-2">
+        <a href="#" class="flex items-center gap-2 mb-5">
+          <div class="w-9 h-9 rounded flex items-center justify-center font-black text-white text-xl serif" style="background:var(--red)">K</div>
+          <span class="serif font-black text-xl tracking-tight text-white">KABAR</span>
+          <span class="text-xs font-medium" style="color:rgba(255,255,255,.35)">INDONESIA</span>
+        </a>
+        <p class="text-xs leading-relaxed mb-6" style="color:rgba(255,255,255,.4);max-width:240px">
+          Portal berita digital terpercaya Indonesia. Jurnalisme independen, akurat, dan bertanggung jawab sejak 2001.
+        </p>
+        <!-- Social icons -->
+        <div class="flex gap-3">
+          <a href="#" class="w-8 h-8 rounded-full flex items-center justify-center border transition-all hover:bg-white/20" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.55)">
+            <i data-lucide="twitter" style="width:14px;height:14px"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-full flex items-center justify-center border transition-all hover:bg-white/20" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.55)">
+            <i data-lucide="instagram" style="width:14px;height:14px"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-full flex items-center justify-center border transition-all hover:bg-white/20" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.55)">
+            <i data-lucide="facebook" style="width:14px;height:14px"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-full flex items-center justify-center border transition-all hover:bg-white/20" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.55)">
+            <i data-lucide="youtube" style="width:14px;height:14px"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Kanal Berita -->
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.3)">Kanal Berita</p>
+        <ul class="space-y-3">
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Politik</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Ekonomi</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Teknologi</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Olahraga</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Hiburan</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Gaya Hidup</a></li>
+        </ul>
+      </div>
+
+      <!-- Layanan -->
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.3)">Layanan</p>
+        <ul class="space-y-3">
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Berlangganan</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Epaper</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Newsletter</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Podcast</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Siaran Langsung</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Arsip Berita</a></li>
+        </ul>
+      </div>
+
+      <!-- Perusahaan -->
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.3)">Perusahaan</p>
+        <ul class="space-y-3">
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Tentang Kami</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Redaksi</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Kode Etik</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Karir</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Iklan & Kemitraan</a></li>
+          <li><a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.5)">Hubungi Kami</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t" style="border-color:rgba(255,255,255,.08)">
+      <p class="text-xs" style="color:rgba(255,255,255,.25)">© 2026 PT Kabar Digital Indonesia. Hak cipta dilindungi. Terdaftar di Dewan Pers Indonesia.</p>
+      <div class="flex gap-6 flex-wrap justify-center">
+        <a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.3)">Kebijakan Privasi</a>
+        <a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.3)">Syarat & Ketentuan</a>
+        <a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.3)">Pedoman Media Siber</a>
+        <a href="#" class="text-xs transition-colors hover:text-white" style="color:rgba(255,255,255,.3)">Koreksi & Klarifikasi</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Init Lucide icons
+  lucide.createIcons();
+
+  // Scroll reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Navbar shadow on scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.style.boxShadow = window.scrollY > 40 ? '0 2px 16px rgba(0,0,0,.08)' : 'none';
+  }, { passive: true });
+</script>
+</body>
+</html>
