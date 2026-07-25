@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volta — Coffee & Co-Working</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>html{opacity:0;transition:opacity .4s ease}</style>
+  <script type="module">
+    import { windrunner } from "../dist/index.esm.js";
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
+  </script>
+  <style>
+    :root {
+      --ink:     #0e0b08;
+      --ink2:    #2a1f14;
+      --cream:   #f5f0e8;
+      --cream2:  #ede6d6;
+      --warm:    #faf6ef;
+      --gold:    #c8973a;
+      --gold2:   #e4b86a;
+      --gold3:   #f5d898;
+      --copper:  #a0632a;
+      --espresso:#3b1f0a;
+      --latte:   #8b5e3c;
+      --border:  rgba(200,151,58,.18);
+      --border2: rgba(200,151,58,.35);
+      --muted:   #7a6a55;
+      --card-bg: rgba(250,246,239,.6);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--ink);
+      color: var(--cream);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .serif  { font-family: 'Cormorant Garamond', Georgia, serif; }
+    .italic { font-style: italic; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--ink); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp    { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:none} }
+    @keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+    @keyframes shimmer   { 0%{background-position:200% center} 100%{background-position:-200% center} }
+    @keyframes floatY    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes rotateSlow{ to{transform:rotate(360deg)} }
+    @keyframes scaleIn   { from{opacity:0;transform:scale(.94)} to{opacity:1;transform:none} }
+    @keyframes lineGrow  { from{width:0} to{width:100%} }
+
+    .fu1{animation:fadeUp .8s .05s ease both}
+    .fu2{animation:fadeUp .8s .18s ease both}
+    .fu3{animation:fadeUp .8s .31s ease both}
+    .fu4{animation:fadeUp .8s .44s ease both}
+    .fi {animation:fadeIn 1.2s ease both}
+
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+    .reveal.visible{opacity:1;transform:none}
+    .reveal-scale{opacity:0;transform:scale(.96);transition:opacity .7s ease,transform .7s ease}
+    .reveal-scale.visible{opacity:1;transform:none}
+
+    /* ── Gold gradient text ── */
+    .text-gold {
+      background: linear-gradient(135deg, var(--gold3) 0%, var(--gold) 40%, var(--gold2) 70%, var(--gold3) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .text-gold-shimmer {
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold3) 25%, var(--gold) 50%, var(--gold3) 75%, var(--gold) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: shimmer 4s linear infinite;
+    }
+
+    /* ── Glass panels ── */
+    .glass-dark {
+      background: rgba(14,11,8,.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+    }
+    .glass-warm {
+      background: rgba(245,240,232,.07);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+    }
+    .glass-hover {
+      transition: background .3s, border-color .3s, transform .3s, box-shadow .3s;
+    }
+    .glass-hover:hover {
+      background: rgba(200,151,58,.08);
+      border-color: var(--border2);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(200,151,58,.12);
+    }
+
+    /* ── Divider ornament ── */
+    .ornament {
+      display: flex; align-items: center; gap: 1rem;
+      color: var(--gold); font-size: .55rem; letter-spacing: .25em; text-transform: uppercase; font-weight: 600;
+    }
+    .ornament::before, .ornament::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    /* ── Section label ── */
+    .sec-label {
+      display: inline-flex; align-items: center; gap: .6rem;
+      font-size: .6rem; font-weight: 600; letter-spacing: .25em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 1.25rem;
+    }
+    .sec-label::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+
+    /* ── Card hover ── */
+    .card-lift {
+      transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+    }
+    .card-lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(200,151,58,.15);
+      border-color: var(--border2) !important;
+    }
+
+    /* ── Nav link ── */
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: ''; position: absolute; left: 0; bottom: -3px;
+      width: 0; height: 1px; background: var(--gold); transition: width .3s;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── Button styles ── */
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .85rem 2rem; border-radius: .5rem;
+      background: linear-gradient(135deg, var(--gold), var(--copper));
+      color: var(--cream); font-size: .8rem; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      text-decoration: none;
+      transition: opacity .2s, transform .2s, box-shadow .2s;
+      box-shadow: 0 8px 28px rgba(200,151,58,.3);
+    }
+    .btn-gold:hover { opacity: .9; transform: translateY(-2px); box-shadow: 0 14px 36px rgba(200,151,58,.4); }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .85rem 2rem; border-radius: .5rem;
+      border: 1px solid var(--border2);
+      color: var(--cream2); font-size: .8rem; font-weight: 500;
+      letter-spacing: .08em; text-transform: uppercase;
+      text-decoration: none;
+      transition: background .2s, border-color .2s, transform .2s;
+    }
+    .btn-outline:hover { background: rgba(200,151,58,.1); border-color: var(--gold); transform: translateY(-2px); }
+
+    /* ── Image thumb ── */
+    .thumb { width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* ── Lucide icon alignment ── */
+    i[data-lucide] { display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;flex-shrink:0 }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+      opacity:.5;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<header id="navbar" class="fixed top-0 inset-x-0 z-50 transition-all duration-500" style="padding-top:1.25rem">
+  <nav class="mx-auto px-8" style="max-width:1320px">
+    <div class="glass-dark rounded-2xl px-8 h-16 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,var(--gold),var(--copper))">
+          <i data-lucide="coffee" style="width:15px;height:15px;color:#fff"></i>
+        </div>
+        <span class="serif font-semibold tracking-[.12em] uppercase text-sm" style="color:var(--cream)">Volta</span>
+      </a>
+
+      <!-- Nav links -->
+      <ul class="hidden md:flex items-center gap-8">
+        <li><a href="#story"      class="nav-link text-xs font-medium uppercase tracking-widest transition-colors hover:text-gold-200" style="color:rgba(245,240,232,.55)">Our Story</a></li>
+        <li><a href="#menu"       class="nav-link text-xs font-medium uppercase tracking-widest transition-colors hover:text-white" style="color:rgba(245,240,232,.55)">Menu</a></li>
+        <li><a href="#workspace"  class="nav-link text-xs font-medium uppercase tracking-widest transition-colors hover:text-white" style="color:rgba(245,240,232,.55)">Workspace</a></li>
+        <li><a href="#membership" class="nav-link text-xs font-medium uppercase tracking-widest transition-colors hover:text-white" style="color:rgba(245,240,232,.55)">Membership</a></li>
+      </ul>
+
+      <!-- CTA -->
+      <div class="flex items-center gap-3">
+        <a href="#membership" class="hidden md:block text-xs font-medium uppercase tracking-widest transition-colors hover:text-white" style="color:rgba(245,240,232,.5)">Reserve a Seat</a>
+        <a href="#membership" class="btn-gold py-2.5 px-5 text-xs">
+          Book Now
+        </a>
+        <button class="md:hidden text-cream/60 hover:text-white transition-colors">
+          <i data-lucide="menu" style="width:20px;height:20px"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero" class="relative min-h-screen flex items-center overflow-hidden" style="background:var(--ink)">
+
+  <!-- Full-bleed background image -->
+  <div class="absolute inset-0">
+    <img src="https://picsum.photos/seed/coffee-interior-dark/1600/900" alt="" class="thumb" style="filter:brightness(.45) saturate(1.1)" />
+    <!-- Dark vignette overlays -->
+    <div class="absolute inset-0" style="background:linear-gradient(to right, rgba(14,11,8,.85) 40%, rgba(14,11,8,.3) 100%)"></div>
+    <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(14,11,8,.8) 0%, transparent 50%)"></div>
+  </div>
+
+  <!-- Floating orbs -->
+  <div class="absolute pointer-events-none" style="width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(200,151,58,.08) 0%,transparent 70%);top:-10%;left:-5%;filter:blur(60px)"></div>
+  <div class="absolute pointer-events-none" style="width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(160,99,42,.06) 0%,transparent 70%);bottom:10%;right:10%;filter:blur(80px)"></div>
+
+  <div class="relative z-10 w-full mx-auto px-8 pt-32 pb-24" style="max-width:1320px">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Left copy -->
+      <div>
+        <!-- Eyebrow -->
+        <div class="flex items-center gap-3 mb-8 fu1">
+          <div class="h-px w-10" style="background:linear-gradient(90deg,transparent,var(--gold))"></div>
+          <span class="text-xs font-semibold uppercase tracking-[.25em]" style="color:var(--gold)">Est. 2022 · Jakarta Selatan</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="serif fu2" style="font-size:clamp(3.2rem,6vw,5.5rem);font-weight:300;line-height:1.05;color:var(--cream)">
+          Where Great<br/>
+          <em class="text-gold not-italic" style="font-weight:600">Coffee</em> Meets<br/>
+          <span style="color:rgba(245,240,232,.55)">Deep Work.</span>
+        </h1>
+
+        <!-- Body -->
+        <p class="fu3 leading-relaxed mt-7" style="font-size:1rem;color:rgba(245,240,232,.6);max-width:400px;font-weight:300">
+          A curated sanctuary for professionals, creators, and thinkers. Artisan coffee, high-speed connectivity, and an atmosphere designed to move you.
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap gap-4 mt-10 fu4">
+          <a href="#workspace" class="btn-gold">
+            <i data-lucide="armchair" style="width:15px;height:15px"></i>
+            Explore Space
+          </a>
+          <a href="#menu" class="btn-outline">
+            <i data-lucide="scroll-text" style="width:15px;height:15px"></i>
+            View Menu
+          </a>
+        </div>
+
+        <!-- Quick trust badges -->
+        <div class="flex flex-wrap gap-3 mt-10 fu4">
+          <div class="flex items-center gap-2 rounded-full px-4 py-2 glass-dark text-xs" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="wifi" style="width:13px;height:13px;color:var(--gold)"></i> 1 Gbps Wi-Fi
+          </div>
+          <div class="flex items-center gap-2 rounded-full px-4 py-2 glass-dark text-xs" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="clock" style="width:13px;height:13px;color:var(--gold)"></i> Open 7AM – 11PM
+          </div>
+          <div class="flex items-center gap-2 rounded-full px-4 py-2 glass-dark text-xs" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="zap" style="width:13px;height:13px;color:var(--gold)"></i> Power at Every Seat
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: floating card stack -->
+      <div class="hidden lg:flex flex-col items-end gap-5 fu3">
+
+        <!-- Now serving card -->
+        <div class="glass-dark rounded-2xl p-5 w-72" style="border-color:var(--border2)">
+          <p class="text-xs uppercase tracking-widest mb-3" style="color:var(--gold)">Now Serving</p>
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
+              <img src="https://picsum.photos/seed/espresso-cup/56/56" alt="Espresso" class="thumb" />
+            </div>
+            <div>
+              <p class="serif font-semibold text-white" style="font-size:1.05rem">Single Origin<br/>Espresso</p>
+              <p class="text-xs mt-1" style="color:rgba(245,240,232,.45)">Flores Bajawa · Dark roast</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t flex items-center justify-between" style="border-color:var(--border)">
+            <span class="serif text-xl font-semibold" style="color:var(--gold)">Rp 52K</span>
+            <span class="text-xs px-3 py-1 rounded-full" style="background:rgba(200,151,58,.12);color:var(--gold2);border:1px solid var(--border)">Staff Pick</span>
+          </div>
+        </div>
+
+        <!-- Occupancy card -->
+        <div class="glass-dark rounded-2xl p-5 w-64">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs uppercase tracking-widest" style="color:var(--gold)">Live Seats</p>
+            <span class="flex items-center gap-1.5 text-xs" style="color:#4ade80">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400 block" style="animation:pulse 2s infinite"></span>
+              Open
+            </span>
+          </div>
+          <p class="serif font-bold" style="font-size:2rem;color:var(--cream);line-height:1">18 <span class="text-base font-normal" style="color:rgba(245,240,232,.4)">/ 40</span></p>
+          <p class="text-xs mt-1" style="color:rgba(245,240,232,.4)">seats available right now</p>
+          <div class="mt-3 h-1.5 rounded-full" style="background:rgba(255,255,255,.08)">
+            <div class="h-full rounded-full" style="width:45%;background:linear-gradient(90deg,var(--gold),var(--copper))"></div>
+          </div>
+        </div>
+
+        <!-- Rating card -->
+        <div class="glass-dark rounded-2xl p-5 w-56">
+          <div class="flex gap-0.5 mb-2">
+            <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+            <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+            <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+            <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+            <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          </div>
+          <p class="serif text-white italic text-sm leading-relaxed" style="font-weight:300">"Best work-from-café setup in the city. Hands down."</p>
+          <p class="text-xs mt-3" style="color:rgba(245,240,232,.4)">— Rafael K., Regular Member</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 fi" style="animation-delay:.8s">
+    <span class="text-xs uppercase tracking-[.2em]" style="color:rgba(245,240,232,.3)">Scroll</span>
+    <div class="w-px h-12" style="background:linear-gradient(to bottom,var(--gold),transparent)"></div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT / STORY ═══ -->
+<section id="story" class="relative py-32 px-8 overflow-hidden" style="background:var(--ink)">
+  <!-- Subtle grid -->
+  <div class="absolute inset-0 opacity-[.025]" style="background-image:linear-gradient(var(--cream) 1px,transparent 1px),linear-gradient(90deg,var(--cream) 1px,transparent 1px);background-size:80px 80px"></div>
+  <!-- Gold orb -->
+  <div class="absolute pointer-events-none" style="width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(200,151,58,.06) 0%,transparent 65%);top:0;right:-10%;filter:blur(80px)"></div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="grid lg:grid-cols-2 gap-20 items-center">
+
+      <!-- Left: image collage -->
+      <div class="relative reveal-scale" style="min-height:540px">
+        <!-- Main image -->
+        <div class="rounded-2xl overflow-hidden" style="height:400px;border:1px solid var(--border)">
+          <img src="https://picsum.photos/seed/barista-craft/700/400" alt="Our barista" class="thumb" style="filter:brightness(.9) saturate(1.1)" />
+        </div>
+        <!-- Floating small image -->
+        <div class="absolute rounded-xl overflow-hidden shadow-2xl" style="width:200px;height:240px;bottom:-40px;right:-20px;border:3px solid var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.6)">
+          <img src="https://picsum.photos/seed/coffee-beans-macro/200/240" alt="Coffee beans" class="thumb" />
+        </div>
+        <!-- Gold accent line -->
+        <div class="absolute" style="width:3px;height:120px;background:linear-gradient(to bottom,var(--gold),transparent);top:40px;left:-20px;border-radius:2px"></div>
+        <!-- Year badge -->
+        <div class="absolute glass-dark rounded-xl px-5 py-4" style="top:20px;right:20px;border-color:var(--border2)">
+          <p class="serif font-bold text-center" style="font-size:2rem;color:var(--gold);line-height:1">2022</p>
+          <p class="text-xs uppercase tracking-widest text-center mt-1" style="color:rgba(245,240,232,.4)">Founded</p>
+        </div>
+      </div>
+
+      <!-- Right: copy -->
+      <div class="reveal">
+        <div class="sec-label">Our Story</div>
+        <h2 class="serif mb-7" style="font-size:clamp(2.4rem,4vw,3.6rem);font-weight:300;line-height:1.1;color:var(--cream)">
+          Crafted for Those<br/>Who <em class="text-gold not-italic" style="font-weight:600">Refuse to Choose</em><br/>
+          <span style="color:rgba(245,240,232,.45)">Between Work & Pleasure.</span>
+        </h2>
+
+        <div class="space-y-5 leading-relaxed" style="color:rgba(245,240,232,.55);font-weight:300;font-size:.95rem">
+          <p>Volta was born from a simple frustration: why must great coffee and serious productivity live in separate worlds? We set out to build a space that demands nothing of you — except to do your best work.</p>
+          <p>Every element is deliberate. The acoustics, the lighting at different hours, the weight of the cups in your hand. We source our beans directly from single-origin farms across the Indonesian archipelago and roast in-house every Monday.</p>
+          <p>The workspace follows the same philosophy. Ergonomic without being clinical. Quiet without being sterile. A room that breathes with you.</p>
+        </div>
+
+        <div class="flex flex-wrap gap-4 mt-10">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(200,151,58,.1);border:1px solid var(--border)">
+              <i data-lucide="leaf" style="width:18px;height:18px;color:var(--gold)"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold" style="color:var(--cream)">Direct Trade</p>
+              <p class="text-xs" style="color:rgba(245,240,232,.4)">Beans from 6 local farms</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(200,151,58,.1);border:1px solid var(--border)">
+              <i data-lucide="award" style="width:18px;height:18px;color:var(--gold)"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold" style="color:var(--cream)">Award-Winning</p>
+              <p class="text-xs" style="color:rgba(245,240,232,.4)">Best Café, Jakarta 2024</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(200,151,58,.1);border:1px solid var(--border)">
+              <i data-lucide="sun" style="width:18px;height:18px;color:var(--gold)"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold" style="color:var(--cream)">In-House Roastery</p>
+              <p class="text-xs" style="color:rgba(245,240,232,.4)">Fresh roasted weekly</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ORNAMENT DIVIDER ═══ -->
+<div class="px-8 py-4" style="background:var(--ink)">
+  <div class="ornament mx-auto" style="max-width:1320px">· Volta Coffee & Co-Working ·</div>
+</div>
+
+<!-- ═══ STATS STRIP ═══ -->
+<section class="py-20 px-8" style="background:linear-gradient(180deg,var(--ink) 0%,var(--ink2) 100%)">
+  <div class="mx-auto" style="max-width:1320px">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-px rounded-2xl overflow-hidden reveal" style="border:1px solid var(--border)">
+
+      <div class="flex flex-col items-center justify-center py-12 px-6 text-center" style="background:rgba(200,151,58,.04)">
+        <p class="serif font-bold mb-2" style="font-size:3.2rem;color:var(--gold);line-height:1">40<span class="text-2xl" style="color:var(--gold2)">+</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:rgba(245,240,232,.4)">Dedicated Seats</p>
+      </div>
+
+      <div class="flex flex-col items-center justify-center py-12 px-6 text-center" style="background:rgba(200,151,58,.04)">
+        <p class="serif font-bold mb-2" style="font-size:3.2rem;color:var(--gold);line-height:1">18<span class="text-2xl" style="color:var(--gold2)">K+</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:rgba(245,240,232,.4)">Cups Served Monthly</p>
+      </div>
+
+      <div class="flex flex-col items-center justify-center py-12 px-6 text-center" style="background:rgba(200,151,58,.04)">
+        <p class="serif font-bold mb-2" style="font-size:3.2rem;color:var(--gold);line-height:1">1<span class="text-2xl" style="color:var(--gold2)">Gbps</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:rgba(245,240,232,.4)">Dedicated Fibre</p>
+      </div>
+
+      <div class="flex flex-col items-center justify-center py-12 px-6 text-center" style="background:rgba(200,151,58,.04)">
+        <p class="serif font-bold mb-2" style="font-size:3.2rem;color:var(--gold);line-height:1">4.9<span class="text-2xl" style="color:var(--gold2)">★</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:rgba(245,240,232,.4)">Average Rating</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MENU / SIGNATURE DRINKS ═══ -->
+<section id="menu" class="relative py-32 px-8 overflow-hidden" style="background:var(--ink2)">
+  <!-- Texture overlay -->
+  <div class="absolute inset-0 opacity-[.03]" style="background-image:url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23c8973a\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"></div>
+  <div class="absolute pointer-events-none" style="width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(200,151,58,.05) 0%,transparent 70%);bottom:-20%;left:-15%;filter:blur(80px)"></div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+
+    <!-- Section header -->
+    <div class="text-center mb-20 reveal">
+      <div class="ornament mb-6">· Signature Collection ·</div>
+      <h2 class="serif" style="font-size:clamp(2.4rem,4vw,3.8rem);font-weight:300;color:var(--cream);line-height:1.1">
+        Every Cup, a <em class="text-gold not-italic" style="font-weight:600">Deliberate</em> Choice
+      </h2>
+      <p class="mt-5 mx-auto leading-relaxed" style="color:rgba(245,240,232,.5);max-width:480px;font-size:.95rem;font-weight:300">
+        Our menu is built around the bean — not the other way around. Each drink is designed to complement your work state, from sharp focus to deep flow.
+      </p>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="flex items-center justify-center gap-3 mb-14 reveal flex-wrap">
+      <button class="px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-widest transition-all" style="background:linear-gradient(135deg,var(--gold),var(--copper));color:var(--cream)">All Drinks</button>
+      <button class="px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:border-gold-400" style="background:transparent;color:rgba(245,240,232,.5);border-color:var(--border)">Espresso</button>
+      <button class="px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:border-gold-400" style="background:transparent;color:rgba(245,240,232,.5);border-color:var(--border)">Pour Over</button>
+      <button class="px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:border-gold-400" style="background:transparent;color:rgba(245,240,232,.5);border-color:var(--border)">Cold Brew</button>
+      <button class="px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-widest border transition-all hover:border-gold-400" style="background:transparent;color:rgba(245,240,232,.5);border-color:var(--border)">Non-Coffee</button>
+    </div>
+
+    <!-- Menu cards — 4 col -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+
+      <!-- Card 1 -->
+      <div class="group glass-dark card-lift rounded-2xl overflow-hidden reveal cursor-pointer" style="border-color:var(--border)">
+        <div class="relative overflow-hidden" style="height:220px">
+          <img src="https://picsum.photos/seed/espresso-black/400/220" alt="Espresso" class="thumb transition-transform duration-700 group-hover:scale-110" style="filter:brightness(.85) saturate(1.2)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(14,11,8,.9) 0%,transparent 60%)"></div>
+          <div class="absolute top-4 left-4">
+            <span class="text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style="background:rgba(200,151,58,.2);color:var(--gold2);border:1px solid var(--border)">Staff Pick</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <h3 class="serif font-semibold text-white" style="font-size:1.15rem">The Midnight</h3>
+              <p class="text-xs mt-1" style="color:rgba(245,240,232,.4)">Double espresso · Flores Bajawa</p>
+            </div>
+            <span class="serif font-semibold flex-shrink-0 ml-2" style="color:var(--gold);font-size:1.1rem">52K</span>
+          </div>
+          <p class="text-xs leading-relaxed mb-4" style="color:rgba(245,240,232,.45)">Intense, syrupy, with a lingering dark chocolate finish. The one that gets things done.</p>
+          <div class="flex items-center gap-2 pt-4 border-t" style="border-color:var(--border)">
+            <i data-lucide="zap" style="width:12px;height:12px;color:var(--gold)"></i>
+            <span class="text-xs" style="color:rgba(245,240,232,.4)">High caffeine · Best for mornings</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="group glass-dark card-lift rounded-2xl overflow-hidden reveal cursor-pointer" style="border-color:var(--border)">
+        <div class="relative overflow-hidden" style="height:220px">
+          <img src="https://picsum.photos/seed/latte-art-coffee/400/220" alt="Latte" class="thumb transition-transform duration-700 group-hover:scale-110" style="filter:brightness(.85) saturate(1.1)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(14,11,8,.9) 0%,transparent 60%)"></div>
+          <div class="absolute top-4 left-4">
+            <span class="text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style="background:rgba(200,151,58,.2);color:var(--gold2);border:1px solid var(--border)">Signature</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <h3 class="serif font-semibold text-white" style="font-size:1.15rem">Gold Latte</h3>
+              <p class="text-xs mt-1" style="color:rgba(245,240,232,.4)">Oat milk · Turmeric · Honey</p>
+            </div>
+            <span class="serif font-semibold flex-shrink-0 ml-2" style="color:var(--gold);font-size:1.1rem">68K</span>
+          </div>
+          <p class="text-xs leading-relaxed mb-4" style="color:rgba(245,240,232,.45)">Silky oat milk with a whisper of turmeric and raw honey. Beautiful and grounding.</p>
+          <div class="flex items-center gap-2 pt-4 border-t" style="border-color:var(--border)">
+            <i data-lucide="flame" style="width:12px;height:12px;color:var(--gold)"></i>
+            <span class="text-xs" style="color:rgba(245,240,232,.4)">Medium caffeine · All-day drink</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="group glass-dark card-lift rounded-2xl overflow-hidden reveal cursor-pointer" style="border-color:var(--border)">
+        <div class="relative overflow-hidden" style="height:220px">
+          <img src="https://picsum.photos/seed/cold-brew-glass/400/220" alt="Cold Brew" class="thumb transition-transform duration-700 group-hover:scale-110" style="filter:brightness(.85) saturate(1.1)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(14,11,8,.9) 0%,transparent 60%)"></div>
+          <div class="absolute top-4 left-4">
+            <span class="text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style="background:rgba(200,151,58,.2);color:var(--gold2);border:1px solid var(--border)">Cold</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <h3 class="serif font-semibold text-white" style="font-size:1.15rem">Nitro Slow</h3>
+              <p class="text-xs mt-1" style="color:rgba(245,240,232,.4)">24-hr cold brew · Nitrogen</p>
+            </div>
+            <span class="serif font-semibold flex-shrink-0 ml-2" style="color:var(--gold);font-size:1.1rem">78K</span>
+          </div>
+          <p class="text-xs leading-relaxed mb-4" style="color:rgba(245,240,232,.45)">Velvety nitrogen-infused cold brew. Smooth, cascading, and quietly potent.</p>
+          <div class="flex items-center gap-2 pt-4 border-t" style="border-color:var(--border)">
+            <i data-lucide="droplets" style="width:12px;height:12px;color:var(--gold)"></i>
+            <span class="text-xs" style="color:rgba(245,240,232,.4)">Very high caffeine · Deep focus</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="group glass-dark card-lift rounded-2xl overflow-hidden reveal cursor-pointer" style="border-color:var(--border)">
+        <div class="relative overflow-hidden" style="height:220px">
+          <img src="https://picsum.photos/seed/pour-over-brewing/400/220" alt="Pour Over" class="thumb transition-transform duration-700 group-hover:scale-110" style="filter:brightness(.85) saturate(1.1)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(14,11,8,.9) 0%,transparent 60%)"></div>
+          <div class="absolute top-4 left-4">
+            <span class="text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full" style="background:rgba(200,151,58,.2);color:var(--gold2);border:1px solid var(--border)">Seasonal</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <h3 class="serif font-semibold text-white" style="font-size:1.15rem">Ceremony V60</h3>
+              <p class="text-xs mt-1" style="color:rgba(245,240,232,.4)">Single origin · Hand-poured</p>
+            </div>
+            <span class="serif font-semibold flex-shrink-0 ml-2" style="color:var(--gold);font-size:1.1rem">88K</span>
+          </div>
+          <p class="text-xs leading-relaxed mb-4" style="color:rgba(245,240,232,.45)">This week's rotating single origin, brewed to order with a gooseneck kettle. Ritual in a cup.</p>
+          <div class="flex items-center gap-2 pt-4 border-t" style="border-color:var(--border)">
+            <i data-lucide="sparkles" style="width:12px;height:12px;color:var(--gold)"></i>
+            <span class="text-xs" style="color:rgba(245,240,232,.4)">Light caffeine · Connoisseur's choice</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full menu CTA -->
+    <div class="text-center reveal">
+      <a href="#" class="btn-outline inline-flex">
+        <i data-lucide="book-open" style="width:15px;height:15px"></i>
+        See Full Menu
+      </a>
+      <p class="text-xs mt-4" style="color:rgba(245,240,232,.3)">Also serving pastries, light bites & mocktails · Seasonal menu changes weekly</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CO-WORKING SPACE FEATURES ═══ -->
+<section id="workspace" class="relative py-32 px-8 overflow-hidden" style="background:var(--ink)">
+  <div class="absolute pointer-events-none" style="width:800px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(200,151,58,.05) 0%,transparent 65%);top:-10%;right:-15%;filter:blur(100px)"></div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+
+    <!-- Header -->
+    <div class="grid lg:grid-cols-2 gap-16 items-end mb-20">
+      <div class="reveal">
+        <div class="sec-label">The Workspace</div>
+        <h2 class="serif" style="font-size:clamp(2.4rem,4vw,3.8rem);font-weight:300;color:var(--cream);line-height:1.1">
+          A Space That<br/>
+          <em class="text-gold not-italic" style="font-weight:600">Works as Hard</em><br/>
+          <span style="color:rgba(245,240,232,.45)">as You Do.</span>
+        </h2>
+      </div>
+      <div class="reveal">
+        <p class="leading-relaxed" style="color:rgba(245,240,232,.5);font-size:.95rem;font-weight:300">
+          Designed from first principles — every table height, lighting zone, and acoustic panel was chosen with a single purpose: to give you the conditions where real work happens. Not just a seat. A system.
+        </p>
+      </div>
+    </div>
+
+    <!-- Full-width workspace image -->
+    <div class="relative rounded-3xl overflow-hidden mb-16 reveal-scale" style="height:480px;border:1px solid var(--border)">
+      <img src="https://picsum.photos/seed/coworking-interior-luxury/1300/480" alt="Volta workspace" class="thumb" style="filter:brightness(.75) saturate(1.1)" />
+      <div class="absolute inset-0" style="background:linear-gradient(to right,rgba(14,11,8,.7) 0%,transparent 50%,rgba(14,11,8,.4) 100%)"></div>
+
+      <!-- Floating zone badges -->
+      <div class="absolute top-8 left-8 glass-dark rounded-xl px-5 py-4" style="border-color:var(--border2)">
+        <p class="text-xs uppercase tracking-widest mb-1" style="color:var(--gold)">Zone A</p>
+        <p class="serif font-semibold text-white">Focus Floor</p>
+        <p class="text-xs mt-1" style="color:rgba(245,240,232,.45)">Silence strictly observed</p>
+      </div>
+      <div class="absolute bottom-8 left-8 glass-dark rounded-xl px-5 py-4" style="border-color:var(--border)">
+        <p class="text-xs uppercase tracking-widest mb-1" style="color:var(--gold)">Zone B</p>
+        <p class="serif font-semibold text-white">The Lounge</p>
+        <p class="text-xs mt-1" style="color:rgba(245,240,232,.45)">Soft music · Collaboration welcome</p>
+      </div>
+      <div class="absolute top-8 right-8 glass-dark rounded-xl px-5 py-4" style="border-color:var(--border)">
+        <p class="text-xs uppercase tracking-widest mb-1" style="color:var(--gold)">Zone C</p>
+        <p class="serif font-semibold text-white">Private Pods</p>
+        <p class="text-xs mt-1" style="color:rgba(245,240,232,.45)">Bookable · For calls & meetings</p>
+      </div>
+    </div>
+
+    <!-- Amenities grid — 3 col -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- Amenity 1 -->
+      <div class="glass-dark glass-hover rounded-2xl p-7 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background:rgba(200,151,58,.1);border:1px solid var(--border)">
+          <i data-lucide="wifi" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-3" style="font-size:1.2rem">1 Gbps Fibre</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(245,240,232,.5)">Dedicated symmetric fibre with separate SSIDs for different work zones. Zero congestion guarantee for members.</p>
+        <div class="mt-5 pt-5 border-t flex items-center gap-2 text-xs" style="border-color:var(--border);color:var(--gold)">
+          <i data-lucide="check-circle" style="width:13px;height:13px"></i> Dedicated · Not shared
+        </div>
+      </div>
+
+      <!-- Amenity 2 -->
+      <div class="glass-dark glass-hover rounded-2xl p-7 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background:rgba(200,151,58,.1);border:1px solid var(--border)">
+          <i data-lucide="monitor" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-3" style="font-size:1.2rem">Dual-Monitor Desks</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(245,240,232,.5)">Every Focus Floor seat comes with two 27" 4K monitors, USB-C hub, and ergonomic Herman Miller chair.</p>
+        <div class="mt-5 pt-5 border-t flex items-center gap-2 text-xs" style="border-color:var(--border);color:var(--gold)">
+          <i data-lucide="check-circle" style="width:13px;height:13px"></i> Free to use with any membership
+        </div>
+      </div>
+
+      <!-- Amenity 3 -->
+      <div class="glass-dark glass-hover rounded-2xl p-7 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background:rgba(200,151,58,.1);border:1px solid var(--border)">
+          <i data-lucide="video" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-3" style="font-size:1.2rem">Soundproof Pods</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(245,240,232,.5)">Six private acoustic pods for video calls, client meetings, or any time you need a door. Bookable in 30-min slots via app.</p>
+        <div class="mt-5 pt-5 border-t flex items-center gap-2 text-xs" style="border-color:var(--border);color:var(--gold)">
+          <i data-lucide="check-circle" style="width:13px;height:13px"></i> 4 included hours/day (Pro)
+        </div>
+      </div>
+
+      <!-- Amenity 4 -->
+      <div class="glass-dark glass-hover rounded-2xl p-7 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background:rgba(200,151,58,.1);border:1px solid var(--border)">
+          <i data-lucide="printer" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-3" style="font-size:1.2rem">Print & Scan Hub</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(245,240,232,.5)">High-speed A3 laser printer, document scanner, and laminator. Paperless encouraged, but covered when you need it.</p>
+        <div class="mt-5 pt-5 border-t flex items-center gap-2 text-xs" style="border-color:var(--border);color:var(--gold)">
+          <i data-lucide="check-circle" style="width:13px;height:13px"></i> 50 pages/month included
+        </div>
+      </div>
+
+      <!-- Amenity 5 -->
+      <div class="glass-dark glass-hover rounded-2xl p-7 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background:rgba(200,151,58,.1);border:1px solid var(--border)">
+          <i data-lucide="lock" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-3" style="font-size:1.2rem">Personal Lockers</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(245,240,232,.5)">Secure biometric lockers for your gear. Leave your laptop overnight. Come back to it exactly as you left it.</p>
+        <div class="mt-5 pt-5 border-t flex items-center gap-2 text-xs" style="border-color:var(--border);color:var(--gold)">
+          <i data-lucide="check-circle" style="width:13px;height:13px"></i> 24/7 accessible (Pro & Founder)
+        </div>
+      </div>
+
+      <!-- Amenity 6 -->
+      <div class="glass-dark glass-hover rounded-2xl p-7 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background:rgba(200,151,58,.1);border:1px solid var(--border)">
+          <i data-lucide="coffee" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-3" style="font-size:1.2rem">Unlimited Drip Coffee</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(245,240,232,.5)">Every member gets unlimited house drip coffee throughout the day. Specialty drinks at 20% off the menu price.</p>
+        <div class="mt-5 pt-5 border-t flex items-center gap-2 text-xs" style="border-color:var(--border);color:var(--gold)">
+          <i data-lucide="check-circle" style="width:13px;height:13px"></i> Included in all plans
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MEMBERSHIP / PRICING ═══ -->
+<section id="membership" class="relative py-32 px-8 overflow-hidden" style="background:var(--ink2)">
+  <div class="absolute pointer-events-none" style="width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(200,151,58,.07) 0%,transparent 65%);bottom:-20%;left:-10%;filter:blur(80px)"></div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+
+    <!-- Header -->
+    <div class="text-center mb-20 reveal">
+      <div class="ornament mb-6">· Membership Plans ·</div>
+      <h2 class="serif" style="font-size:clamp(2.4rem,4vw,3.8rem);font-weight:300;color:var(--cream);line-height:1.1">
+        Invest in Your <em class="text-gold not-italic" style="font-weight:600">Best Work</em>
+      </h2>
+      <p class="mt-5 mx-auto leading-relaxed" style="color:rgba(245,240,232,.5);max-width:460px;font-size:.95rem;font-weight:300">
+        No long-term lock-in. Cancel anytime. Every plan includes unlimited drip coffee and high-speed Wi-Fi.
+      </p>
+    </div>
+
+    <!-- Pricing cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
+
+      <!-- Day Pass -->
+      <div class="glass-dark card-lift rounded-2xl p-8 flex flex-col reveal" style="border-color:var(--border)">
+        <p class="text-xs font-semibold uppercase tracking-widest mb-2" style="color:rgba(245,240,232,.4)">Day Pass</p>
+        <div class="flex items-end gap-2 mb-1">
+          <span class="serif font-bold" style="font-size:3rem;color:var(--cream);line-height:1">75K</span>
+          <span class="text-sm mb-2" style="color:rgba(245,240,232,.4)">/day</span>
+        </div>
+        <p class="text-xs mb-8" style="color:rgba(245,240,232,.35)">Walk in, no reservation needed</p>
+        <ul class="space-y-3 flex-1 mb-8">
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            Full workspace access (7AM–11PM)
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            Unlimited drip coffee
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            1 Gbps Wi-Fi access
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.35)">
+            <i data-lucide="x" style="width:15px;height:15px;color:rgba(245,240,232,.2);margin-top:1px;flex-shrink:0"></i>
+            Locker access
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.35)">
+            <i data-lucide="x" style="width:15px;height:15px;color:rgba(245,240,232,.2);margin-top:1px;flex-shrink:0"></i>
+            Pod booking
+          </li>
+        </ul>
+        <a href="#" class="btn-outline text-center justify-center">Get Day Pass</a>
+      </div>
+
+      <!-- Pro — featured -->
+      <div class="relative card-lift rounded-2xl p-8 flex flex-col reveal overflow-hidden" style="background:linear-gradient(145deg,rgba(200,151,58,.12),rgba(160,99,42,.08));border:1px solid var(--border2);box-shadow:0 0 60px rgba(200,151,58,.1),inset 0 1px 0 rgba(200,151,58,.15)">
+        <!-- Glow top -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none" style="width:200px;height:200px;background:radial-gradient(circle,rgba(200,151,58,.12) 0%,transparent 70%);filter:blur(20px)"></div>
+        <!-- Badge -->
+        <div class="absolute top-5 right-5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider" style="background:linear-gradient(135deg,var(--gold),var(--copper));color:var(--cream)">Most Popular</div>
+
+        <p class="text-xs font-semibold uppercase tracking-widest mb-2" style="color:var(--gold)">Pro Member</p>
+        <div class="flex items-end gap-2 mb-1">
+          <span class="serif font-bold" style="font-size:3rem;color:var(--cream);line-height:1">899K</span>
+          <span class="text-sm mb-2" style="color:rgba(245,240,232,.5)">/month</span>
+        </div>
+        <p class="text-xs mb-8" style="color:rgba(245,240,232,.35)">Billed monthly · No commitment</p>
+        <ul class="space-y-3 flex-1 mb-8">
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.8)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            Unlimited daily access
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.8)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            Unlimited drip coffee + 20% off menu
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.8)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            Dedicated locker
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.8)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            4 pod hours / day
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.8)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            50 print pages / month
+          </li>
+        </ul>
+        <a href="#" class="btn-gold text-center justify-center">
+          <i data-lucide="zap" style="width:14px;height:14px"></i>
+          Start Pro Membership
+        </a>
+      </div>
+
+      <!-- Founder -->
+      <div class="glass-dark card-lift rounded-2xl p-8 flex flex-col reveal" style="border-color:var(--border)">
+        <p class="text-xs font-semibold uppercase tracking-widest mb-2" style="color:rgba(245,240,232,.4)">Founder</p>
+        <div class="flex items-end gap-2 mb-1">
+          <span class="serif font-bold" style="font-size:3rem;color:var(--cream);line-height:1">1.8M</span>
+          <span class="text-sm mb-2" style="color:rgba(245,240,232,.4)">/month</span>
+        </div>
+        <p class="text-xs mb-8" style="color:rgba(245,240,232,.35)">For power users & small teams</p>
+        <ul class="space-y-3 flex-1 mb-8">
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            Everything in Pro
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            Reserved dedicated desk
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            Unlimited pod hours
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            Guest passes (4/month)
+          </li>
+          <li class="flex items-start gap-3 text-sm" style="color:rgba(245,240,232,.6)">
+            <i data-lucide="check" style="width:15px;height:15px;color:var(--gold);margin-top:1px;flex-shrink:0"></i>
+            Priority barista line + free batch brew
+          </li>
+        </ul>
+        <a href="#" class="btn-outline text-center justify-center">Contact for Founder</a>
+      </div>
+    </div>
+
+    <!-- ─── TESTIMONIALS ─── -->
+    <div class="ornament mb-16 reveal">· What Members Say ·</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- T1 -->
+      <div class="glass-dark rounded-2xl p-7 flex flex-col reveal" style="border-color:var(--border)">
+        <div class="flex gap-0.5 mb-6">
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+        </div>
+        <p class="serif italic text-base leading-relaxed flex-1 mb-7" style="color:rgba(245,240,232,.7);font-weight:300">
+          "I've tried every co-working space in South Jakarta. Volta is the only one where I actually get into flow state. Something about the light, the smell, the coffee — it works."
+        </p>
+        <div class="flex items-center gap-4 pt-5 border-t" style="border-color:var(--border)">
+          <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+            <img src="https://picsum.photos/seed/portrait-man-1/40/40" alt="" class="thumb" />
+          </div>
+          <div>
+            <p class="text-sm font-semibold" style="color:var(--cream)">Rafael Kusuma</p>
+            <p class="text-xs" style="color:rgba(245,240,232,.35)">Founder, Arkade Studio · Pro Member</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- T2 -->
+      <div class="glass-dark rounded-2xl p-7 flex flex-col reveal" style="border-color:var(--border)">
+        <div class="flex gap-0.5 mb-6">
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+        </div>
+        <p class="serif italic text-base leading-relaxed flex-1 mb-7" style="color:rgba(245,240,232,.7);font-weight:300">
+          "The Nitro Slow is dangerously good. But honestly the soundproof pods are what sold me on the Founder plan. I run three client calls a day — zero complaints from anyone."
+        </p>
+        <div class="flex items-center gap-4 pt-5 border-t" style="border-color:var(--border)">
+          <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+            <img src="https://picsum.photos/seed/portrait-woman-1/40/40" alt="" class="thumb" />
+          </div>
+          <div>
+            <p class="text-sm font-semibold" style="color:var(--cream)">Dinda Maharani</p>
+            <p class="text-xs" style="color:rgba(245,240,232,.35)">UX Director, Inklabs · Founder Member</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- T3 -->
+      <div class="glass-dark rounded-2xl p-7 flex flex-col reveal" style="border-color:var(--border)">
+        <div class="flex gap-0.5 mb-6">
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+        </div>
+        <p class="serif italic text-base leading-relaxed flex-1 mb-7" style="color:rgba(245,240,232,.7);font-weight:300">
+          "I wrote my entire thesis here over three months. The baristas know my order by 8AM. The Wi-Fi never drops. I genuinely don't know how I'd work anywhere else now."
+        </p>
+        <div class="flex items-center gap-4 pt-5 border-t" style="border-color:var(--border)">
+          <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+            <img src="https://picsum.photos/seed/portrait-man-2/40/40" alt="" class="thumb" />
+          </div>
+          <div>
+            <p class="text-sm font-semibold" style="color:var(--cream)">Bimo Wicaksono</p>
+            <p class="text-xs" style="color:rgba(245,240,232,.35)">PhD Researcher, UI · Pro Member</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GALLERY ═══ -->
+<section class="py-32 px-8 overflow-hidden" style="background:var(--ink)">
+  <div class="mx-auto" style="max-width:1320px">
+
+    <div class="text-center mb-16 reveal">
+      <div class="ornament mb-6">· The Atmosphere ·</div>
+      <h2 class="serif" style="font-size:clamp(2.2rem,3.5vw,3.2rem);font-weight:300;color:var(--cream);line-height:1.1">
+        See It. <em class="text-gold not-italic" style="font-weight:600">Feel It.</em>
+      </h2>
+    </div>
+
+    <!-- Masonry-style gallery grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 reveal-scale">
+
+      <!-- Tall left -->
+      <div class="lg:col-span-2 lg:row-span-2 rounded-2xl overflow-hidden group cursor-pointer" style="height:400px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/cafe-moody-interior/700/400" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.8) saturate(1.1)" />
+      </div>
+
+      <!-- Top right 1 -->
+      <div class="rounded-2xl overflow-hidden group cursor-pointer" style="height:192px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/coffee-steam-dark/300/192" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.75) saturate(1.2)" />
+      </div>
+
+      <!-- Top right 2 -->
+      <div class="rounded-2xl overflow-hidden group cursor-pointer" style="height:192px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/laptop-desk-wood/300/192" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.8)" />
+      </div>
+
+      <!-- Bottom right 1 -->
+      <div class="rounded-2xl overflow-hidden group cursor-pointer" style="height:192px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/people-working-cafe/300/192" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.75) saturate(1.1)" />
+      </div>
+
+      <!-- Bottom right 2 -->
+      <div class="rounded-2xl overflow-hidden group cursor-pointer" style="height:192px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/cappuccino-closeup/300/192" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.8) saturate(1.2)" />
+      </div>
+
+      <!-- Bottom wide -->
+      <div class="col-span-2 lg:col-span-4 rounded-2xl overflow-hidden group cursor-pointer" style="height:240px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/coworking-space-evening/1300/240" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.7) saturate(1.1)" />
+      </div>
+
+    </div>
+
+    <!-- IG link -->
+    <div class="text-center mt-10 reveal">
+      <a href="#" class="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:text-white" style="color:rgba(245,240,232,.4)">
+        <i data-lucide="instagram" style="width:16px;height:16px"></i>
+        Follow us @voltajakarta for daily shots
+        <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LOCATION STRIP ═══ -->
+<section class="py-10 px-8 border-y" style="background:var(--ink2);border-color:var(--border)">
+  <div class="mx-auto" style="max-width:1320px">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center reveal">
+      <div class="flex flex-col items-center gap-3">
+        <i data-lucide="map-pin" style="width:20px;height:20px;color:var(--gold)"></i>
+        <div>
+          <p class="text-xs uppercase tracking-widest mb-1" style="color:rgba(245,240,232,.4)">Find Us</p>
+          <p class="text-sm font-medium" style="color:var(--cream)">Jl. Kemang Raya No. 12, Jakarta Selatan</p>
+        </div>
+      </div>
+      <div class="flex flex-col items-center gap-3">
+        <i data-lucide="clock" style="width:20px;height:20px;color:var(--gold)"></i>
+        <div>
+          <p class="text-xs uppercase tracking-widest mb-1" style="color:rgba(245,240,232,.4)">Hours</p>
+          <p class="text-sm font-medium" style="color:var(--cream)">Monday – Sunday · 07:00 – 23:00 WIB</p>
+        </div>
+      </div>
+      <div class="flex flex-col items-center gap-3">
+        <i data-lucide="phone" style="width:20px;height:20px;color:var(--gold)"></i>
+        <div>
+          <p class="text-xs uppercase tracking-widest mb-1" style="color:rgba(245,240,232,.4)">Reservations</p>
+          <p class="text-sm font-medium" style="color:var(--cream)">+62 21 8888 2200 · hello@voltaspace.id</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FINAL CTA ═══ -->
+<section class="relative py-40 px-8 text-center overflow-hidden" style="background:var(--ink)">
+  <!-- Full-bleed bg -->
+  <div class="absolute inset-0">
+    <img src="https://picsum.photos/seed/coffee-dark-ambience/1600/600" alt="" class="thumb" style="filter:brightness(.25) saturate(1.1)" />
+    <div class="absolute inset-0" style="background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(200,151,58,.08) 0%,rgba(14,11,8,.7) 70%)"></div>
+  </div>
+
+  <div class="relative z-10 mx-auto reveal" style="max-width:700px">
+    <!-- Decorative ring -->
+    <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-10" style="background:rgba(200,151,58,.1);border:1px solid var(--border2)">
+      <i data-lucide="coffee" style="width:32px;height:32px;color:var(--gold)"></i>
+    </div>
+
+    <h2 class="serif mb-6" style="font-size:clamp(2.8rem,5vw,4.5rem);font-weight:300;color:var(--cream);line-height:1.05">
+      Your Best Work<br/>
+      <em class="text-gold-shimmer not-italic" style="font-weight:600">Starts Here.</em>
+    </h2>
+    <p class="leading-relaxed mb-12 mx-auto" style="color:rgba(245,240,232,.5);max-width:460px;font-size:1rem;font-weight:300">
+      Join a community of makers, builders, and thinkers. First visit on us — walk in any day this week and the drip coffee is free.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="#membership" class="btn-gold text-sm">
+        <i data-lucide="calendar-check" style="width:16px;height:16px"></i>
+        Reserve Your Seat
+      </a>
+      <a href="#story" class="btn-outline text-sm">
+        <i data-lucide="play-circle" style="width:16px;height:16px"></i>
+        Watch the Story
+      </a>
+    </div>
+    <p class="mt-8 text-xs" style="color:rgba(245,240,232,.25)">No account needed for Day Pass · Walk-ins always welcome</p>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="border-t py-16 px-8" style="background:#07050302;border-color:var(--border);background-color:var(--ink)">
+  <div class="mx-auto" style="max-width:1320px">
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 mb-14">
+
+      <!-- Brand -->
+      <div class="col-span-2 md:col-span-4 lg:col-span-2">
+        <a href="#" class="flex items-center gap-3 mb-6">
+          <div class="w-9 h-9 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,var(--gold),var(--copper))">
+            <i data-lucide="coffee" style="width:16px;height:16px;color:#fff"></i>
+          </div>
+          <span class="serif font-semibold tracking-[.12em] uppercase text-lg" style="color:var(--cream)">Volta</span>
+        </a>
+        <p class="text-sm leading-relaxed mb-6" style="color:rgba(245,240,232,.4);max-width:260px;font-weight:300">
+          A curated coffee space and co-working sanctuary in the heart of Kemang, South Jakarta.
+        </p>
+        <!-- Socials -->
+        <div class="flex gap-3">
+          <a href="#" class="w-9 h-9 rounded-full flex items-center justify-center border transition-all hover:border-gold-400 hover:bg-white/5" style="border-color:var(--border);color:rgba(245,240,232,.45)">
+            <i data-lucide="instagram" style="width:15px;height:15px"></i>
+          </a>
+          <a href="#" class="w-9 h-9 rounded-full flex items-center justify-center border transition-all hover:border-gold-400 hover:bg-white/5" style="border-color:var(--border);color:rgba(245,240,232,.45)">
+            <i data-lucide="twitter" style="width:15px;height:15px"></i>
+          </a>
+          <a href="#" class="w-9 h-9 rounded-full flex items-center justify-center border transition-all hover:border-gold-400 hover:bg-white/5" style="border-color:var(--border);color:rgba(245,240,232,.45)">
+            <i data-lucide="youtube" style="width:15px;height:15px"></i>
+          </a>
+          <a href="#" class="w-9 h-9 rounded-full flex items-center justify-center border transition-all hover:border-gold-400 hover:bg-white/5" style="border-color:var(--border);color:rgba(245,240,232,.45)">
+            <i data-lucide="map-pin" style="width:15px;height:15px"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Visit -->
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-5" style="color:rgba(245,240,232,.25)">Visit</p>
+        <ul class="space-y-3">
+          <li><a href="#story"      class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Our Story</a></li>
+          <li><a href="#menu"       class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Menu</a></li>
+          <li><a href="#workspace"  class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">The Workspace</a></li>
+          <li><a href="#"           class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Gallery</a></li>
+          <li><a href="#"           class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Events</a></li>
+        </ul>
+      </div>
+
+      <!-- Membership -->
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-5" style="color:rgba(245,240,232,.25)">Membership</p>
+        <ul class="space-y-3">
+          <li><a href="#membership" class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Day Pass</a></li>
+          <li><a href="#membership" class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Pro Plan</a></li>
+          <li><a href="#membership" class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Founder Plan</a></li>
+          <li><a href="#"           class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Corporate</a></li>
+          <li><a href="#"           class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Gift a Membership</a></li>
+        </ul>
+      </div>
+
+      <!-- Info -->
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-5" style="color:rgba(245,240,232,.25)">Info</p>
+        <ul class="space-y-3">
+          <li><a href="#" class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">FAQ</a></li>
+          <li><a href="#" class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">House Rules</a></li>
+          <li><a href="#" class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Privacy Policy</a></li>
+          <li><a href="#" class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Press Kit</a></li>
+          <li><a href="#" class="text-sm transition-colors hover:text-white" style="color:rgba(245,240,232,.45);font-weight:300">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t" style="border-color:var(--border)">
+      <p class="text-xs" style="color:rgba(245,240,232,.2)">© 2026 Volta Space Jakarta. All rights reserved.</p>
+      <div class="flex items-center gap-2 text-xs" style="color:rgba(245,240,232,.2)">
+        <i data-lucide="coffee" style="width:12px;height:12px;color:var(--gold)"></i>
+        Brewed with intention · Built with windrunner
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Init Lucide
+  lucide.createIcons();
+
+  // Scroll reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.07, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal, .reveal-scale').forEach(el => io.observe(el));
+
+  // Navbar shrink + glass on scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      navbar.style.paddingTop = '8px';
+      navbar.querySelector('.glass-dark').style.boxShadow = '0 8px 40px rgba(0,0,0,.5)';
+    } else {
+      navbar.style.paddingTop = '1.25rem';
+      navbar.querySelector('.glass-dark').style.boxShadow = 'none';
+    }
+  }, { passive: true });
+</script>
+</body>
+</html>
