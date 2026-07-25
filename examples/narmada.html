@@ -1,0 +1,1066 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Narmada — Kemurnian Dari Pegunungan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=National+Park:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>html { opacity: 0; transition: opacity .3s ease; }</style>
+  <script type="module">
+    import { windrunner } from "../dist/index.esm.js";
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
+  </script>
+  <style>
+    :root {
+      --navy:  #050d1a;
+      --ocean: #071428;
+      --glass: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.08);
+      --accent: #38bdf8;
+      --accent2: #67e8f9;
+      --gold: #c9a96e;
+    }
+    .serif { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp    { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn    { from { opacity:0; } to { opacity:1; } }
+    @keyframes floatY    { 0%,100% { transform:translateY(0px) rotate(-2deg); } 50% { transform:translateY(-18px) rotate(2deg); } }
+    @keyframes floatSlow { 0%,100% { transform:translateY(0px); } 50% { transform:translateY(-10px); } }
+    @keyframes ripple    { 0% { transform:scale(.8); opacity:.5; } 100% { transform:scale(2.4); opacity:0; } }
+    @keyframes shimmer   { 0% { background-position:200% center; } 100% { background-position:-200% center; } }
+    @keyframes waveMove  { 0%,100% { d:path("M0,60 C150,20 350,100 500,60 C650,20 850,100 1000,60 L1000,120 L0,120 Z"); }
+                           50%     { d:path("M0,60 C150,100 350,20 500,60 C650,100 850,20 1000,60 L1000,120 L0,120 Z"); } }
+    @keyframes spin      { to { transform:rotate(360deg); } }
+    @keyframes countUp   { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes borderGlow { 0%,100% { border-color:rgba(56,189,248,.2); } 50% { border-color:rgba(56,189,248,.6); } }
+
+    .fade-up-1 { animation: fadeUp .8s .1s ease both; }
+    .fade-up-2 { animation: fadeUp .8s .25s ease both; }
+    .fade-up-3 { animation: fadeUp .8s .40s ease both; }
+    .fade-up-4 { animation: fadeUp .8s .55s ease both; }
+    .fade-in   { animation: fadeIn 1.2s ease both; }
+
+    /* ── Glassmorphism ── */
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+    }
+    .glass-hover {
+      transition: background .3s, border-color .3s, transform .3s, box-shadow .3s;
+    }
+    .glass-hover:hover {
+      background: rgba(255,255,255,.07);
+      border-color: rgba(56,189,248,.3);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(56,189,248,.08);
+    }
+
+    /* ── Gradient text ── */
+    .text-gradient {
+      background: linear-gradient(135deg, #67e8f9 0%, #38bdf8 40%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .text-gold {
+      background: linear-gradient(135deg, #f5d898 0%, #c9a96e 50%, #e8c97a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .shimmer-text {
+      background: linear-gradient(90deg, #c9a96e 0%, #f5d898 25%, #c9a96e 50%, #f5d898 75%, #c9a96e 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+    }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content:'';
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: .4;
+    }
+
+    /* ── Glow orbs ── */
+    .orb {
+      position:absolute; border-radius:50%; filter:blur(80px); pointer-events:none;
+    }
+
+    /* ── Wave divider ── */
+    .wave-divider svg path { animation: waveMove 6s ease-in-out infinite; }
+
+    /* ── Bottle visual ── */
+    .bottle-float { animation: floatY 5s ease-in-out infinite; }
+    .bottle-shadow { animation: floatSlow 5s ease-in-out infinite; }
+
+    /* ── Ripple rings ── */
+    .ring-1 { animation: ripple 3s ease-out infinite; }
+    .ring-2 { animation: ripple 3s .9s ease-out infinite; }
+    .ring-3 { animation: ripple 3s 1.8s ease-out infinite; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-track { background:var(--navy); }
+    ::-webkit-scrollbar-thumb { background:rgba(56,189,248,.3); border-radius:2px; }
+
+    /* ── Nav link ── */
+    .nav-link { position:relative; }
+    .nav-link::after { content:''; position:absolute; left:0; bottom:-2px; width:0; height:1px; background:#38bdf8; transition:width .3s; }
+    .nav-link:hover::after { width:100%; }
+
+    /* ── Section reveal ── */
+    .reveal { opacity:0; transform:translateY(28px); transition:opacity .8s ease, transform .8s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    /* ── Mineral badge ── */
+    .mineral-dot {
+      width:8px; height:8px; border-radius:50%;
+      box-shadow:0 0 8px currentColor;
+    }
+
+    /* ── Number counter glow ── */
+    .stat-num { text-shadow:0 0 30px rgba(56,189,248,.4); }
+  </style>
+</head>
+
+<body class="font-[National_Park] bg-slate-950 text-slate-100 antialiased overflow-x-hidden" style="background-color:#050d1a">
+
+<!-- ══════════════════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════════════════ -->
+<header id="navbar" class="fixed top-0 inset-x-0 z-50 transition-all duration-500" style="padding-top:16px">
+  <nav class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="glass rounded-2xl px-6 h-14 flex items-center justify-between" style="border-color:rgba(255,255,255,0.06)">
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="relative w-8 h-8">
+          <svg viewBox="0 0 32 32" fill="none" class="w-full h-full">
+            <defs>
+              <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#67e8f9"/>
+                <stop offset="100%" stop-color="#3b82f6"/>
+              </linearGradient>
+            </defs>
+            <path d="M16 3C11 10 6 13.5 6 18a10 10 0 0020 0c0-4.5-5-8-10-15z" fill="url(#logoGrad)" opacity=".9"/>
+            <path d="M16 11C13.5 15 12 17 12 19a4 4 0 008 0c0-2-1.5-4-4-8z" fill="white" opacity=".3"/>
+          </svg>
+        </div>
+        <span class="text-white font-semibold tracking-widest text-sm uppercase" style="letter-spacing:.15em">Narmada</span>
+      </a>
+
+      <!-- Links -->
+      <ul class="hidden md:flex items-center gap-8">
+        <li><a href="#origin"  class="nav-link text-xs font-medium text-slate-400 hover:text-white transition-colors duration-300 uppercase tracking-widest">Asal Usul</a></li>
+        <li><a href="#purity"  class="nav-link text-xs font-medium text-slate-400 hover:text-white transition-colors duration-300 uppercase tracking-widest">Kemurnian</a></li>
+        <li><a href="#products" class="nav-link text-xs font-medium text-slate-400 hover:text-white transition-colors duration-300 uppercase tracking-widest">Produk</a></li>
+        <li><a href="#journal" class="nav-link text-xs font-medium text-slate-400 hover:text-white transition-colors duration-300 uppercase tracking-widest">Jurnal</a></li>
+      </ul>
+
+      <!-- CTA -->
+      <a href="#products" class="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-widest transition-all duration-300 hover:scale-[1.04]"
+         style="background:linear-gradient(135deg,#0ea5e9,#3b82f6); color:white; box-shadow:0 4px 20px rgba(14,165,233,.3)">
+        Pesan Kini
+      </a>
+      <!-- Mobile menu button -->
+      <button class="md:hidden text-slate-400 hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ══════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════ -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden" style="background-color:#050d1a">
+
+  <!-- Deep background gradient -->
+  <div class="absolute inset-0" style="background:radial-gradient(ellipse 120% 80% at 50% 0%, #071e3d 0%, #050d1a 60%)"></div>
+
+  <!-- Orbs -->
+  <div class="orb w-96 h-96" style="top:-10%;left:-5%;background:rgba(6,182,212,.06)"></div>
+  <div class="orb w-80 h-80" style="bottom:10%;right:-8%;background:rgba(99,102,241,.06)"></div>
+  <div class="orb w-64 h-64" style="top:40%;left:5%;background:rgba(14,165,233,.04)"></div>
+
+  <!-- Subtle grid -->
+  <div class="absolute inset-0 opacity-[0.025]" style="background-image:linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px);background-size:60px 60px"></div>
+
+  <!-- Horizontal line accents -->
+  <div class="absolute left-0 right-0 top-1/3 h-px opacity-10" style="background:linear-gradient(90deg,transparent,#38bdf8 30%,#38bdf8 70%,transparent)"></div>
+
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 pt-32 pb-20">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Left: Copy -->
+      <div>
+        <!-- Eyebrow -->
+        <div class="flex items-center gap-3 mb-8 fade-up-1">
+          <div class="h-px w-12" style="background:linear-gradient(90deg,transparent,#38bdf8)"></div>
+          <span class="text-xs font-medium uppercase tracking-[.2em]" style="color:#38bdf8">Sejak 1988 · Pegunungan Rinjani</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="serif mb-6 fade-up-2" style="font-size:clamp(3rem,6vw,5.5rem);line-height:1.05;font-weight:300;color:white">
+          Air Yang<br/>
+          <em class="text-gradient not-italic" style="font-weight:600">Mengalir</em><br/>
+          <span style="color:rgba(255,255,255,.55);font-style:italic">Dari Alam Murni</span>
+        </h1>
+
+        <!-- Body -->
+        <p class="text-base leading-relaxed mb-10 fade-up-3" style="color:rgba(255,255,255,.5);max-width:420px;font-weight:300">
+          Tersaring oleh lapisan batuan vulkanik selama ribuan tahun di ketinggian 1.200 mdpl — Narmada hadir membawa kemurnian yang tak tertandingi dalam setiap tetesnya.
+        </p>
+
+        <!-- CTA group -->
+        <div class="flex flex-wrap gap-4 mb-14 fade-up-4">
+          <a href="#products" class="flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium text-sm transition-all duration-300 hover:scale-[1.04] hover:shadow-xl"
+             style="background:linear-gradient(135deg,#0ea5e9,#3b82f6);color:white;box-shadow:0 8px 30px rgba(14,165,233,.25)">
+            Temukan Produk
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+          <a href="#origin" class="flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium text-sm glass glass-hover transition-all duration-300"
+             style="color:rgba(255,255,255,.7)">
+            Kisah Kami
+          </a>
+        </div>
+
+        <!-- Trust badges -->
+        <div class="flex flex-wrap gap-4 fade-up-4">
+          <div class="flex items-center gap-2 glass rounded-full px-4 py-2">
+            <span class="mineral-dot" style="color:#34d399;background:#34d399"></span>
+            <span class="text-xs" style="color:rgba(255,255,255,.5)">BPOM Certified</span>
+          </div>
+          <div class="flex items-center gap-2 glass rounded-full px-4 py-2">
+            <span class="mineral-dot" style="color:#38bdf8;background:#38bdf8"></span>
+            <span class="text-xs" style="color:rgba(255,255,255,.5)">Halal MUI</span>
+          </div>
+          <div class="flex items-center gap-2 glass rounded-full px-4 py-2">
+            <span class="mineral-dot" style="color:#c9a96e;background:#c9a96e"></span>
+            <span class="text-xs" style="color:rgba(255,255,255,.5)">ISO 22000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Bottle hero visual -->
+      <div class="relative flex items-center justify-center" style="min-height:520px">
+        <!-- Ripple rings -->
+        <div class="absolute w-80 h-80 rounded-full ring-1" style="border:1px solid rgba(56,189,248,.15)"></div>
+        <div class="absolute w-96 h-96 rounded-full ring-2" style="border:1px solid rgba(56,189,248,.08)"></div>
+        <div class="absolute" style="width:480px;height:480px;border-radius:50%;border:1px solid rgba(56,189,248,.04)" class="ring-3"></div>
+
+        <!-- Glow core -->
+        <div class="absolute rounded-full" style="width:220px;height:220px;background:radial-gradient(circle,rgba(14,165,233,.15) 0%,transparent 70%);filter:blur(20px)"></div>
+
+        <!-- Bottle SVG -->
+        <div class="bottle-float relative z-10" style="width:180px">
+          <svg viewBox="0 0 180 460" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 40px 60px rgba(14,165,233,.3)) drop-shadow(0 0 30px rgba(56,189,248,.15))">
+            <defs>
+              <linearGradient id="bottleGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#1e3a5f"/>
+                <stop offset="40%" stop-color="#0c2240"/>
+                <stop offset="100%" stop-color="#071428"/>
+              </linearGradient>
+              <linearGradient id="bottleShine" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="white" stop-opacity="0"/>
+                <stop offset="30%" stop-color="white" stop-opacity="0.12"/>
+                <stop offset="50%" stop-color="white" stop-opacity="0.22"/>
+                <stop offset="70%" stop-color="white" stop-opacity="0.08"/>
+                <stop offset="100%" stop-color="white" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="waterFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#0369a1" stop-opacity="0.55"/>
+              </linearGradient>
+              <linearGradient id="capGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#67e8f9"/>
+                <stop offset="100%" stop-color="#0284c7"/>
+              </linearGradient>
+              <clipPath id="bottleClip">
+                <path d="M68 60 L68 38 C68 32 72 28 76 26 L104 26 C108 28 112 32 112 38 L112 60 C122 68 134 90 134 110 L134 390 C134 410 118 426 90 426 C62 426 46 410 46 390 L46 110 C46 90 58 68 68 60Z"/>
+              </clipPath>
+            </defs>
+
+            <!-- Bottle body -->
+            <path d="M68 60 L68 38 C68 32 72 28 76 26 L104 26 C108 28 112 32 112 38 L112 60 C122 68 134 90 134 110 L134 390 C134 410 118 426 90 426 C62 426 46 410 46 390 L46 110 C46 90 58 68 68 60Z"
+                  fill="url(#bottleGrad)" stroke="rgba(56,189,248,.25)" stroke-width="1"/>
+
+            <!-- Water fill level -->
+            <rect x="46" y="180" width="88" height="246" rx="0" fill="url(#waterFill)" clip-path="url(#bottleClip)"/>
+
+            <!-- Water surface wave -->
+            <path d="M46 180 Q68 170 90 178 Q112 186 134 178 L134 192 Q112 200 90 192 Q68 184 46 192 Z" fill="rgba(56,189,248,.2)" clip-path="url(#bottleClip)"/>
+
+            <!-- Shine overlay -->
+            <path d="M68 60 L68 38 C68 32 72 28 76 26 L104 26 C108 28 112 32 112 38 L112 60 C122 68 134 90 134 110 L134 390 C134 410 118 426 90 426 C62 426 46 410 46 390 L46 110 C46 90 58 68 68 60Z"
+                  fill="url(#bottleShine)"/>
+
+            <!-- Label area -->
+            <rect x="52" y="200" width="76" height="130" rx="8" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <!-- Label content -->
+            <text x="90" y="240" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="16" font-weight="600" fill="rgba(255,255,255,.7)">NARMADA</text>
+            <text x="90" y="256" text-anchor="middle" font-family="'Inter', sans-serif" font-size="6" fill="rgba(255,255,255,.3)" letter-spacing="2">MINERAL WATER</text>
+            <!-- Small drop icon on label -->
+            <path d="M86 268 Q90 260 94 268 Q96 272 90 276 Q84 272 86 268Z" fill="rgba(56,189,248,.5)"/>
+            <text x="90" y="300" text-anchor="middle" font-family="'Inter', sans-serif" font-size="5.5" fill="rgba(255,255,255,.25)" letter-spacing="1">1200m · RINJANI</text>
+            <text x="90" y="312" text-anchor="middle" font-family="'Inter', sans-serif" font-size="5.5" fill="rgba(255,255,255,.25)" letter-spacing="1">600 ml</text>
+
+            <!-- Cap -->
+            <path d="M73 26 L73 10 C73 6 76 4 80 4 L100 4 C104 4 107 6 107 10 L107 26 Z"
+                  fill="url(#capGrad)" rx="3"/>
+            <rect x="73" y="18" width="34" height="3" rx="1" fill="rgba(255,255,255,.15)"/>
+
+            <!-- Bottom shadow inside -->
+            <ellipse cx="90" cy="416" rx="38" ry="6" fill="rgba(0,0,0,.4)"/>
+
+            <!-- Edge highlight left -->
+            <path d="M48 110 L48 390 Q48 408 58 418" stroke="rgba(255,255,255,.06)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Floating mineral labels -->
+        <div class="absolute glass rounded-xl px-4 py-3 fade-in" style="top:18%;left:-2%;animation-delay:.5s">
+          <p class="text-xs font-semibold" style="color:#38bdf8">Ca²⁺</p>
+          <p class="text-xs" style="color:rgba(255,255,255,.4)">Kalsium</p>
+        </div>
+        <div class="absolute glass rounded-xl px-4 py-3 fade-in" style="top:35%;right:-4%;animation-delay:.8s">
+          <p class="text-xs font-semibold" style="color:#67e8f9">Mg²⁺</p>
+          <p class="text-xs" style="color:rgba(255,255,255,.4)">Magnesium</p>
+        </div>
+        <div class="absolute glass rounded-xl px-4 py-3 fade-in" style="bottom:22%;left:-4%;animation-delay:1.1s">
+          <p class="text-xs font-semibold" style="color:#a78bfa">K⁺</p>
+          <p class="text-xs" style="color:rgba(255,255,255,.4)">Kalium</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom wave -->
+  <div class="absolute bottom-0 left-0 right-0 overflow-hidden" style="height:100px">
+    <svg viewBox="0 0 1440 100" preserveAspectRatio="none" style="width:100%;height:100%" fill="none">
+      <path d="M0 40 C360 80 720 0 1080 40 C1260 60 1380 50 1440 40 L1440 100 L0 100 Z" fill="rgba(5,13,26,.8)"/>
+      <path d="M0 60 C240 30 480 80 720 60 C960 40 1200 70 1440 55 L1440 100 L0 100 Z" fill="#050d1a"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     ASAL USUL / ORIGIN STORY
+══════════════════════════════════════════════════ -->
+<section id="origin" class="relative py-32 px-6 overflow-hidden" style="background-color:#050d1a">
+  <div class="orb w-96 h-96" style="top:10%;right:-10%;background:rgba(6,182,212,.05)"></div>
+
+  <div class="relative z-10 mx-auto max-w-7xl">
+    <!-- Section label -->
+    <div class="flex items-center gap-3 mb-4 reveal">
+      <div class="h-px w-10" style="background:linear-gradient(90deg,transparent,#c9a96e)"></div>
+      <span class="text-xs uppercase tracking-[.2em]" style="color:#c9a96e">Asal Usul</span>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-20 items-center">
+      <!-- Left: story -->
+      <div class="reveal">
+        <h2 class="serif mb-8" style="font-size:clamp(2.5rem,4vw,3.8rem);font-weight:300;line-height:1.1;color:white">
+          Lahir dari<br/>
+          <em class="text-gold not-italic" style="font-weight:600">Kedalaman Bumi</em>
+        </h2>
+        <div class="space-y-5 text-base leading-relaxed" style="color:rgba(255,255,255,.5);font-weight:300">
+          <p>Jauh di bawah punggung Gunung Rinjani, air hujan meresap perlahan menembus lapisan demi lapisan bebatuan vulkanik selama lebih dari 10.000 tahun. Dalam perjalanannya, ia menyerap mineral esensial yang membentuk komposisi sempurna.</p>
+          <p>Di titik yang kami jaga ketat selama lebih dari tiga dekade, air itu muncul ke permukaan — jernih, dingin, dan kaya akan kehidupan. Kami tidak mengubahnya. Kami hanya menjaganya.</p>
+        </div>
+        <div class="mt-10 grid grid-cols-3 gap-6">
+          <div>
+            <p class="serif stat-num mb-1" style="font-size:2rem;font-weight:600;color:#38bdf8">1988</p>
+            <p class="text-xs" style="color:rgba(255,255,255,.4)">Tahun berdiri</p>
+          </div>
+          <div>
+            <p class="serif stat-num mb-1" style="font-size:2rem;font-weight:600;color:#38bdf8">1.200m</p>
+            <p class="text-xs" style="color:rgba(255,255,255,.4)">Ketinggian sumber</p>
+          </div>
+          <div>
+            <p class="serif stat-num mb-1" style="font-size:2rem;font-weight:600;color:#38bdf8">10K+</p>
+            <p class="text-xs" style="color:rgba(255,255,255,.4)">Tahun terbentuk</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: landscape visual -->
+      <div class="reveal relative" style="min-height:380px">
+        <div class="absolute inset-0 rounded-3xl overflow-hidden glass" style="border-color:rgba(255,255,255,.06)">
+          <!-- SVG Landscape -->
+          <svg viewBox="0 0 600 380" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+            <defs>
+              <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#020b18"/>
+                <stop offset="100%" stop-color="#071e3d"/>
+              </linearGradient>
+              <linearGradient id="mountGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0c2240"/>
+                <stop offset="100%" stop-color="#071428"/>
+              </linearGradient>
+              <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0ea5e9" stop-opacity=".6"/>
+                <stop offset="100%" stop-color="#0284c7" stop-opacity=".3"/>
+              </linearGradient>
+              <radialGradient id="moonGlow" cx="75%" cy="20%" r="20%">
+                <stop offset="0%" stop-color="rgba(103,232,249,.08)"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </radialGradient>
+            </defs>
+            <!-- Sky -->
+            <rect width="600" height="380" fill="url(#skyGrad)"/>
+            <rect width="600" height="380" fill="url(#moonGlow)"/>
+            <!-- Stars -->
+            <circle cx="80" cy="40" r="1" fill="white" opacity=".6"/>
+            <circle cx="200" cy="25" r=".8" fill="white" opacity=".5"/>
+            <circle cx="320" cy="55" r="1.2" fill="white" opacity=".7"/>
+            <circle cx="420" cy="30" r=".8" fill="white" opacity=".4"/>
+            <circle cx="520" cy="60" r="1" fill="white" opacity=".6"/>
+            <circle cx="150" cy="70" r=".6" fill="white" opacity=".4"/>
+            <circle cx="460" cy="45" r=".8" fill="white" opacity=".5"/>
+            <!-- Moon -->
+            <circle cx="450" cy="65" r="18" fill="rgba(103,232,249,.12)" />
+            <circle cx="450" cy="65" r="12" fill="rgba(103,232,249,.15)" stroke="rgba(103,232,249,.2)" stroke-width="1"/>
+            <!-- Back mountains -->
+            <path d="M0 220 L100 100 L200 180 L300 80 L400 160 L500 90 L600 150 L600 380 L0 380Z" fill="#071428"/>
+            <!-- Mid mountains -->
+            <path d="M0 260 L80 160 L160 220 L260 140 L360 200 L460 150 L560 210 L600 190 L600 380 L0 380Z" fill="#091930"/>
+            <!-- Water stream -->
+            <path d="M260 140 Q280 200 270 260 Q260 310 275 380" stroke="url(#waterGrad)" stroke-width="8" fill="none" stroke-linecap="round" opacity=".6"/>
+            <path d="M260 140 Q280 200 270 260 Q260 310 275 380" stroke="rgba(103,232,249,.3)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <!-- Lake -->
+            <ellipse cx="300" cy="330" rx="180" ry="30" fill="rgba(14,165,233,.15)" stroke="rgba(56,189,248,.2)" stroke-width="1"/>
+            <ellipse cx="300" cy="330" rx="120" ry="15" fill="rgba(56,189,248,.08)"/>
+            <!-- Foreground -->
+            <path d="M0 340 Q150 320 300 330 Q450 340 600 320 L600 380 L0 380Z" fill="#050d1a"/>
+            <!-- Mist -->
+            <path d="M0 250 Q200 240 400 255 Q500 260 600 248 L600 270 Q500 282 400 275 Q200 262 0 272Z" fill="rgba(255,255,255,.015)"/>
+          </svg>
+        </div>
+        <!-- Overlay quote -->
+        <div class="absolute bottom-6 left-6 right-6">
+          <div class="glass rounded-2xl p-5" style="border-color:rgba(255,255,255,.08)">
+            <p class="serif text-sm italic" style="color:rgba(255,255,255,.6);line-height:1.6">"Air terbaik adalah yang paling lama berdiam dalam keheningan bumi."</p>
+            <p class="text-xs mt-2" style="color:rgba(255,255,255,.3)">— Filosofi Narmada</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     KEMURNIAN / PURITY PROCESS
+══════════════════════════════════════════════════ -->
+<section id="purity" class="relative py-32 px-6 overflow-hidden" style="background:linear-gradient(180deg,#050d1a 0%,#071428 50%,#050d1a 100%)">
+  <!-- Horizontal accent line -->
+  <div class="absolute left-0 right-0" style="top:50%;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(56,189,248,.06) 20%,rgba(56,189,248,.12) 50%,rgba(56,189,248,.06) 80%,transparent 100%)"></div>
+
+  <div class="relative z-10 mx-auto max-w-7xl">
+    <div class="text-center mb-20 reveal">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <div class="h-px w-10" style="background:linear-gradient(90deg,transparent,#38bdf8)"></div>
+        <span class="text-xs uppercase tracking-[.2em]" style="color:#38bdf8">Kemurnian</span>
+        <div class="h-px w-10" style="background:linear-gradient(90deg,#38bdf8,transparent)"></div>
+      </div>
+      <h2 class="serif" style="font-size:clamp(2.2rem,4vw,3.5rem);font-weight:300;color:white;line-height:1.1">
+        Standar <em class="text-gradient not-italic" style="font-weight:600">Kemurnian</em><br/>
+        Kelas Dunia
+      </h2>
+      <p class="mt-5 text-base mx-auto" style="color:rgba(255,255,255,.45);max-width:500px;font-weight:300;line-height:1.7">Setiap batch diproduksi melewati protokol 7 lapis yang tidak kami kompromikan — dari sumber hingga segel.</p>
+    </div>
+
+    <!-- Process timeline - horizontal on desktop -->
+    <div class="relative">
+      <!-- Connecting line -->
+      <div class="hidden lg:block absolute top-10 left-0 right-0 h-px" style="background:linear-gradient(90deg,transparent,rgba(56,189,248,.15) 10%,rgba(56,189,248,.15) 90%,transparent)"></div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        <!-- Step 1 -->
+        <div class="reveal group text-center">
+          <div class="relative inline-flex mb-8">
+            <div class="w-20 h-20 rounded-full glass flex items-center justify-center mx-auto relative z-10 transition-all duration-500 group-hover:scale-110"
+                 style="border-color:rgba(56,189,248,.2);box-shadow:0 0 0 1px rgba(56,189,248,.1)">
+              <svg class="w-8 h-8" style="color:#38bdf8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8 7 4 10.5 4 14a8 8 0 0016 0c0-3.5-4-7-8-12z"/>
+              </svg>
+            </div>
+            <div class="absolute inset-0 rounded-full ring-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="border:1px solid rgba(56,189,248,.3);animation:ripple 2s ease-out infinite"></div>
+          </div>
+          <p class="text-xs uppercase tracking-widest mb-2" style="color:#38bdf8">01</p>
+          <h3 class="font-semibold text-white mb-3 text-sm">Penyadapan Primer</h3>
+          <p class="text-xs leading-relaxed" style="color:rgba(255,255,255,.4)">Pengambilan langsung dari mata air primer di zona lindung, tanpa pompa mekanis yang bisa mencemari.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="reveal group text-center">
+          <div class="relative inline-flex mb-8">
+            <div class="w-20 h-20 rounded-full glass flex items-center justify-center mx-auto relative z-10 transition-all duration-500 group-hover:scale-110"
+                 style="border-color:rgba(56,189,248,.2);box-shadow:0 0 0 1px rgba(56,189,248,.1)">
+              <svg class="w-8 h-8" style="color:#38bdf8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/>
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs uppercase tracking-widest mb-2" style="color:#38bdf8">02</p>
+          <h3 class="font-semibold text-white mb-3 text-sm">Filtrasi 7 Lapisan</h3>
+          <p class="text-xs leading-relaxed" style="color:rgba(255,255,255,.4)">Dari sand filter kasar hingga membrane 0.1 mikron — menyaring tanpa menghilangkan mineral baik.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="reveal group text-center">
+          <div class="relative inline-flex mb-8">
+            <div class="w-20 h-20 rounded-full glass flex items-center justify-center mx-auto relative z-10 transition-all duration-500 group-hover:scale-110"
+                 style="border-color:rgba(56,189,248,.2);box-shadow:0 0 0 1px rgba(56,189,248,.1)">
+              <svg class="w-8 h-8" style="color:#38bdf8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs uppercase tracking-widest mb-2" style="color:#38bdf8">03</p>
+          <h3 class="font-semibold text-white mb-3 text-sm">Uji 200+ Parameter</h3>
+          <p class="text-xs leading-relaxed" style="color:rgba(255,255,255,.4)">Laboratorium terakreditasi KAN menguji setiap batch sebelum izin produksi dikeluarkan.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="reveal group text-center">
+          <div class="relative inline-flex mb-8">
+            <div class="w-20 h-20 rounded-full glass flex items-center justify-center mx-auto relative z-10 transition-all duration-500 group-hover:scale-110"
+                 style="border-color:rgba(56,189,248,.2);box-shadow:0 0 0 1px rgba(56,189,248,.1)">
+              <svg class="w-8 h-8" style="color:#38bdf8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+              </svg>
+            </div>
+          </div>
+          <p class="text-xs uppercase tracking-widest mb-2" style="color:#38bdf8">04</p>
+          <h3 class="font-semibold text-white mb-3 text-sm">Pengisian Steril</h3>
+          <p class="text-xs leading-relaxed" style="color:rgba(255,255,255,.4)">Ruang ISO Class 7 dengan sistem filling otomatis — nol kontaminasi tangan manusia.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mineral composition bar -->
+    <div class="mt-20 reveal">
+      <div class="glass rounded-3xl p-8 lg:p-10" style="border-color:rgba(255,255,255,.06)">
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
+          <div>
+            <h3 class="serif text-white mb-3" style="font-size:1.6rem;font-weight:400">Komposisi Mineral</h3>
+            <p class="text-sm" style="color:rgba(255,255,255,.45);font-weight:300;line-height:1.7">pH 7.2 — sedikit basa, persis yang dibutuhkan tubuhmu untuk menetralkan asam dari metabolisme sehari-hari.</p>
+          </div>
+          <div class="space-y-5">
+            <div>
+              <div class="flex justify-between mb-2">
+                <span class="text-xs font-medium text-white">Kalsium (Ca²⁺)</span>
+                <span class="text-xs" style="color:#38bdf8">48 mg/L</span>
+              </div>
+              <div class="h-1.5 rounded-full" style="background:rgba(255,255,255,.06)">
+                <div class="h-full rounded-full" style="width:72%;background:linear-gradient(90deg,#0ea5e9,#38bdf8)"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2">
+                <span class="text-xs font-medium text-white">Magnesium (Mg²⁺)</span>
+                <span class="text-xs" style="color:#67e8f9">12 mg/L</span>
+              </div>
+              <div class="h-1.5 rounded-full" style="background:rgba(255,255,255,.06)">
+                <div class="h-full rounded-full" style="width:45%;background:linear-gradient(90deg,#06b6d4,#67e8f9)"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2">
+                <span class="text-xs font-medium text-white">Bikarbonat (HCO₃⁻)</span>
+                <span class="text-xs" style="color:#a78bfa">168 mg/L</span>
+              </div>
+              <div class="h-1.5 rounded-full" style="background:rgba(255,255,255,.06)">
+                <div class="h-full rounded-full" style="width:85%;background:linear-gradient(90deg,#6366f1,#a78bfa)"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2">
+                <span class="text-xs font-medium text-white">Kalium (K⁺)</span>
+                <span class="text-xs" style="color:#34d399">3.2 mg/L</span>
+              </div>
+              <div class="h-1.5 rounded-full" style="background:rgba(255,255,255,.06)">
+                <div class="h-full rounded-full" style="width:28%;background:linear-gradient(90deg,#10b981,#34d399)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     PRODUCTS — full-width showcase
+══════════════════════════════════════════════════ -->
+<section id="products" class="relative py-32 px-6 overflow-hidden" style="background-color:#050d1a">
+  <div class="orb w-[500px] h-[500px]" style="top:20%;left:-15%;background:rgba(6,182,212,.04)"></div>
+  <div class="orb w-96 h-96"           style="bottom:0;right:-10%;background:rgba(99,102,241,.04)"></div>
+
+  <div class="relative z-10 mx-auto max-w-7xl">
+    <div class="text-center mb-20 reveal">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <div class="h-px w-10" style="background:linear-gradient(90deg,transparent,#c9a96e)"></div>
+        <span class="text-xs uppercase tracking-[.2em]" style="color:#c9a96e">Koleksi</span>
+        <div class="h-px w-10" style="background:linear-gradient(90deg,#c9a96e,transparent)"></div>
+      </div>
+      <h2 class="serif" style="font-size:clamp(2.2rem,4vw,3.5rem);font-weight:300;color:white;line-height:1.1">
+        Pilih <em class="text-gold not-italic" style="font-weight:600">Ukuran</em><br/>
+        Yang Sempurna
+      </h2>
+    </div>
+
+    <!-- Product cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- 330ml -->
+      <div class="reveal glass glass-hover rounded-3xl p-8 flex flex-col items-center text-center cursor-pointer" style="border-color:rgba(255,255,255,.06)">
+        <!-- Mini bottle SVG -->
+        <div class="mb-8" style="animation:floatSlow 4s ease-in-out infinite;height:160px;display:flex;align-items:center">
+          <svg viewBox="0 0 100 230" fill="none" style="height:160px;filter:drop-shadow(0 20px 30px rgba(14,165,233,.25))">
+            <defs>
+              <linearGradient id="b1g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1e3a5f"/><stop offset="100%" stop-color="#071428"/></linearGradient>
+              <linearGradient id="b1s" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="white" stop-opacity="0"/><stop offset="50%" stop-color="white" stop-opacity=".18"/><stop offset="100%" stop-color="white" stop-opacity="0"/></linearGradient>
+              <linearGradient id="b1w" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".4"/><stop offset="100%" stop-color="#0369a1" stop-opacity=".6"/></linearGradient>
+            </defs>
+            <path d="M38 34L38 22C38 18 40 16 43 15L57 15C60 16 62 18 62 22L62 34C68 40 74 54 74 64L74 200C74 212 64 220 50 220C36 220 26 212 26 200L26 64C26 54 32 40 38 34Z" fill="url(#b1g)" stroke="rgba(56,189,248,.2)" stroke-width="1"/>
+            <rect x="26" y="110" width="48" height="110" fill="url(#b1w)" clip-path="url(#b1clip)"/>
+            <clipPath id="b1clip"><path d="M38 34L38 22C38 18 40 16 43 15L57 15C60 16 62 18 62 22L62 34C68 40 74 54 74 64L74 200C74 212 64 220 50 220C36 220 26 212 26 200L26 64C26 54 32 40 38 34Z"/></clipPath>
+            <path d="M38 34L38 22C38 18 40 16 43 15L57 15C60 16 62 18 62 22L62 34C68 40 74 54 74 64L74 200C74 212 64 220 50 220C36 220 26 212 26 200L26 64C26 54 32 40 38 34Z" fill="url(#b1s)"/>
+            <text x="50" y="85" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="9" fill="rgba(255,255,255,.6)">NARMADA</text>
+            <path d="M42 3L42 15L58 15L58 3C58 1 56 0 54 0L46 0C44 0 42 1 42 3Z" fill="#0ea5e9" opacity=".9"/>
+          </svg>
+        </div>
+        <p class="text-xs uppercase tracking-[.15em] mb-2" style="color:rgba(255,255,255,.4)">On-the-go</p>
+        <h3 class="serif text-white mb-1" style="font-size:2rem;font-weight:600">330 ml</h3>
+        <p class="text-sm mb-6" style="color:rgba(255,255,255,.4)">Bekal, olahraga, perjalanan</p>
+        <ul class="text-xs space-y-2 mb-8 w-full text-left">
+          <li class="flex items-center gap-2" style="color:rgba(255,255,255,.5)"><span style="color:#38bdf8">—</span> Tutup flip sport</li>
+          <li class="flex items-center gap-2" style="color:rgba(255,255,255,.5)"><span style="color:#38bdf8">—</span> Pack isi 24 botol</li>
+          <li class="flex items-center gap-2" style="color:rgba(255,255,255,.5)"><span style="color:#38bdf8">—</span> 100% daur ulang</li>
+        </ul>
+        <a href="#" class="w-full py-3 rounded-xl text-sm font-medium text-center glass glass-hover" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.1)">Pesan Sekarang</a>
+      </div>
+
+      <!-- 600ml — featured -->
+      <div class="reveal relative rounded-3xl p-8 flex flex-col items-center text-center cursor-pointer overflow-hidden" style="background:linear-gradient(145deg,rgba(14,165,233,.12),rgba(99,102,241,.08));border:1px solid rgba(56,189,248,.25);box-shadow:0 0 60px rgba(14,165,233,.1),inset 0 1px 0 rgba(255,255,255,.06)">
+        <!-- Glow inside -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(56,189,248,.08) 0%,transparent 70%);filter:blur(20px)"></div>
+        <!-- Badge -->
+        <div class="absolute top-5 right-5 rounded-full px-3 py-1" style="background:rgba(14,165,233,.2);border:1px solid rgba(56,189,248,.3)">
+          <span class="text-xs font-medium" style="color:#67e8f9">Terlaris</span>
+        </div>
+        <!-- Bottle -->
+        <div class="relative z-10 mb-8" style="animation:floatY 5s ease-in-out infinite;height:190px;display:flex;align-items:center">
+          <svg viewBox="0 0 100 260" fill="none" style="height:190px;filter:drop-shadow(0 30px 40px rgba(14,165,233,.4)) drop-shadow(0 0 20px rgba(56,189,248,.2))">
+            <defs>
+              <linearGradient id="b2g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1e4a7a"/><stop offset="100%" stop-color="#071428"/></linearGradient>
+              <linearGradient id="b2s" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="white" stop-opacity="0"/><stop offset="40%" stop-color="white" stop-opacity=".25"/><stop offset="100%" stop-color="white" stop-opacity="0"/></linearGradient>
+              <linearGradient id="b2w" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#67e8f9" stop-opacity=".5"/><stop offset="100%" stop-color="#0369a1" stop-opacity=".7"/></linearGradient>
+            </defs>
+            <path d="M37 38L37 22C37 17 40 15 44 14L56 14C60 15 63 17 63 22L63 38C70 46 76 62 76 74L76 225C76 238 64 248 50 248C36 248 24 238 24 225L24 74C24 62 30 46 37 38Z" fill="url(#b2g)" stroke="rgba(103,232,249,.35)" stroke-width="1.5"/>
+            <clipPath id="b2clip"><path d="M37 38L37 22C37 17 40 15 44 14L56 14C60 15 63 17 63 22L63 38C70 46 76 62 76 74L76 225C76 238 64 248 50 248C36 248 24 238 24 225L24 74C24 62 30 46 37 38Z"/></clipPath>
+            <rect x="24" y="120" width="52" height="128" fill="url(#b2w)" clip-path="url(#b2clip)"/>
+            <path d="M24 120 Q37 112 50 118 Q63 124 76 118 L76 132 Q63 140 50 134 Q37 128 24 134Z" fill="rgba(103,232,249,.2)" clip-path="url(#b2clip)"/>
+            <path d="M37 38L37 22C37 17 40 15 44 14L56 14C60 15 63 17 63 22L63 38C70 46 76 62 76 74L76 225C76 238 64 248 50 248C36 248 24 238 24 225L24 74C24 62 30 46 37 38Z" fill="url(#b2s)"/>
+            <rect x="30" y="98" width="40" height="68" rx="5" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+            <text x="50" y="122" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="10" fill="rgba(255,255,255,.8)" font-weight="600">NARMADA</text>
+            <text x="50" y="133" text-anchor="middle" font-family="'Inter',sans-serif" font-size="5" fill="rgba(255,255,255,.35)" letter-spacing="2">MINERAL WATER</text>
+            <path x="50" d="M46 142Q50 136 54 142Q56 146 50 150Q44 146 46 142Z" fill="rgba(103,232,249,.6)"/>
+            <path d="M42 1L42 14L58 14L58 1C58 0 56 0 54 0L46 0C44 0 42 0 42 1Z" fill="#0ea5e9"/>
+            <rect x="42" y="8" width="16" height="2" rx="1" fill="rgba(255,255,255,.3)"/>
+          </svg>
+        </div>
+        <p class="text-xs uppercase tracking-[.15em] mb-2" style="color:rgba(103,232,249,.7)">Sehari-hari</p>
+        <h3 class="serif text-white mb-1" style="font-size:2rem;font-weight:600">600 ml</h3>
+        <p class="text-sm mb-6" style="color:rgba(255,255,255,.4)">Ukuran ideal untuk aktivitas harian</p>
+        <ul class="text-xs space-y-2 mb-8 w-full text-left">
+          <li class="flex items-center gap-2" style="color:rgba(255,255,255,.6)"><span style="color:#67e8f9">—</span> Grip ergonomis</li>
+          <li class="flex items-center gap-2" style="color:rgba(255,255,255,.6)"><span style="color:#67e8f9">—</span> Pack isi 24 botol</li>
+          <li class="flex items-center gap-2" style="color:rgba(255,255,255,.6)"><span style="color:#67e8f9">—</span> Harga paling hemat</li>
+          <li class="flex items-center gap-2" style="color:rgba(255,255,255,.6)"><span style="color:#67e8f9">—</span> Tersedia di 34 provinsi</li>
+        </ul>
+        <a href="#" class="w-full py-3 rounded-xl text-sm font-semibold text-center transition-all duration-300 hover:scale-[1.03]"
+           style="background:linear-gradient(135deg,#0ea5e9,#3b82f6);color:white;box-shadow:0 8px 24px rgba(14,165,233,.3)">Pesan Sekarang</a>
+      </div>
+
+      <!-- 1500ml -->
+      <div class="reveal glass glass-hover rounded-3xl p-8 flex flex-col items-center text-center cursor-pointer" style="border-color:rgba(255,255,255,.06)">
+        <div class="mb-8" style="animation:floatSlow 6s ease-in-out infinite;height:160px;display:flex;align-items:center">
+          <svg viewBox="0 0 110 260" fill="none" style="height:160px;filter:drop-shadow(0 20px 30px rgba(14,165,233,.2))">
+            <defs>
+              <linearGradient id="b3g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1e3a5f"/><stop offset="100%" stop-color="#071428"/></linearGradient>
+              <linearGradient id="b3s" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="white" stop-opacity="0"/><stop offset="50%" stop-color="white" stop-opacity=".15"/><stop offset="100%" stop-color="white" stop-opacity="0"/></linearGradient>
+              <linearGradient id="b3w" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".35"/><stop offset="100%" stop-color="#0369a1" stop-opacity=".55"/></linearGradient>
+            </defs>
+            <path d="M42 38L42 22C42 17 45 15 49 14L61 14C65 15 68 17 68 22L68 38C76 46 84 62 84 76L84 225C84 240 72 250 55 250C38 250 26 240 26 225L26 76C26 62 34 46 42 38Z" fill="url(#b3g)" stroke="rgba(56,189,248,.2)" stroke-width="1"/>
+            <clipPath id="b3clip"><path d="M42 38L42 22C42 17 45 15 49 14L61 14C65 15 68 17 68 22L68 38C76 46 84 62 84 76L84 225C84 240 72 250 55 250C38 250 26 240 26 225L26 76C26 62 34 46 42 38Z"/></clipPath>
+            <rect x="26" y="110" width="58" height="140" fill="url(#b3w)" clip-path="url(#b3clip)"/>
+            <path d="M42 38L42 22C42 17 45 15 49 14L61 14C65 15 68 17 68 22L68 38C76 46 84 62 84 76L84 225C84 240 72 250 55 250C38 250 26 240 26 225L26 76C26 62 34 46 42 38Z" fill="url(#b3s)"/>
+            <text x="55" y="80" text-anchor="middle" font-family="'Cormorant Garamond',serif" font-size="9" fill="rgba(255,255,255,.6)">NARMADA</text>
+            <path d="M46 2L46 14L64 14L64 2C64 0 62 0 60 0L50 0C48 0 46 0 46 2Z" fill="#0ea5e9" opacity=".9"/>
+          </svg>
+        </div>
+        <p class="text-xs uppercase tracking-[.15em] mb-2" style="color:rgba(255,255,255,.4)">Keluarga & Kantor</p>
+        <h3 class="serif text-white mb-1" style="font-size:2rem;font-weight:600">1.5 L</h3>
+        <p class="text-sm mb-6" style="color:rgba(255,255,255,.4)">Hemat, efisien, untuk bersama</p>
+        <ul class="text-xs space-y-2 mb-8 w-full text-left">
+          <li class="flex items-center gap-2" style="color:rgba(255,255,255,.5)"><span style="color:#38bdf8">—</span> Tutup ulir rapat</li>
+          <li class="flex items-center gap-2" style="color:rgba(255,255,255,.5)"><span style="color:#38bdf8">—</span> Pack isi 12 botol</li>
+          <li class="flex items-center gap-2" style="color:rgba(255,255,255,.5)"><span style="color:#38bdf8">—</span> Program B2B tersedia</li>
+        </ul>
+        <a href="#" class="w-full py-3 rounded-xl text-sm font-medium text-center glass glass-hover" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.1)">Pesan Sekarang</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     STATS — full width impact numbers
+══════════════════════════════════════════════════ -->
+<section class="relative py-24 px-6 overflow-hidden" style="background:linear-gradient(180deg,#050d1a,#071428)">
+  <!-- Top wave -->
+  <div class="absolute top-0 left-0 right-0" style="height:80px;overflow:hidden">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style="width:100%;height:100%" fill="none">
+      <path d="M0 30 C360 60 720 0 1080 30 C1260 50 1380 40 1440 30 L1440 0 L0 0 Z" fill="#050d1a"/>
+    </svg>
+  </div>
+
+  <div class="relative z-10 mx-auto max-w-6xl">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-px rounded-3xl overflow-hidden reveal" style="border:1px solid rgba(255,255,255,.06)">
+      <div class="flex flex-col items-center justify-center py-12 px-8 text-center" style="background:rgba(255,255,255,.02)">
+        <p class="serif stat-num mb-2" style="font-size:3rem;font-weight:600;color:#67e8f9;line-height:1">5 Juta<span style="color:#38bdf8;font-size:2rem">+</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:rgba(255,255,255,.4)">Keluarga Terlayani</p>
+      </div>
+      <div class="flex flex-col items-center justify-center py-12 px-8 text-center" style="background:rgba(255,255,255,.02)">
+        <p class="serif stat-num mb-2" style="font-size:3rem;font-weight:600;color:#67e8f9;line-height:1">1.200<span style="color:#38bdf8;font-size:2rem">m</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:rgba(255,255,255,.4)">Ketinggian Sumber</p>
+      </div>
+      <div class="flex flex-col items-center justify-center py-12 px-8 text-center" style="background:rgba(255,255,255,.02)">
+        <p class="serif stat-num mb-2" style="font-size:3rem;font-weight:600;color:#67e8f9;line-height:1">200<span style="color:#38bdf8;font-size:2rem">+</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:rgba(255,255,255,.4)">Parameter Uji Kualitas</p>
+      </div>
+      <div class="flex flex-col items-center justify-center py-12 px-8 text-center" style="background:rgba(255,255,255,.02)">
+        <p class="serif stat-num mb-2" style="font-size:3rem;font-weight:600;color:#67e8f9;line-height:1">34</p>
+        <p class="text-xs uppercase tracking-widest" style="color:rgba(255,255,255,.4)">Provinsi Distribusi</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     JURNAL / TESTIMONIALS
+══════════════════════════════════════════════════ -->
+<section id="journal" class="relative py-32 px-6 overflow-hidden" style="background-color:#050d1a">
+  <div class="orb w-80 h-80" style="top:0;right:5%;background:rgba(6,182,212,.04)"></div>
+
+  <div class="relative z-10 mx-auto max-w-7xl">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-6 reveal">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="h-px w-10" style="background:linear-gradient(90deg,transparent,#38bdf8)"></div>
+          <span class="text-xs uppercase tracking-[.2em]" style="color:#38bdf8">Jurnal</span>
+        </div>
+        <h2 class="serif" style="font-size:clamp(2.2rem,4vw,3.5rem);font-weight:300;color:white;line-height:1.1">
+          Apa Kata<br/>
+          <em class="text-gradient not-italic" style="font-weight:600">Mereka</em>
+        </h2>
+      </div>
+      <p class="text-sm" style="color:rgba(255,255,255,.4);max-width:300px;font-weight:300;line-height:1.7">Lebih dari 5 juta keluarga telah merasakan perbedaan nyata dari Narmada dalam kehidupan sehari-hari.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- T1 -->
+      <div class="reveal glass glass-hover rounded-3xl p-8 flex flex-col" style="border-color:rgba(255,255,255,.06)">
+        <div class="flex gap-0.5 mb-6">
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <!-- Big quote mark -->
+        <div class="serif mb-4 leading-none" style="font-size:4rem;line-height:.8;color:rgba(56,189,248,.15);font-weight:700">"</div>
+        <p class="serif text-base italic leading-relaxed flex-1 mb-8" style="color:rgba(255,255,255,.65);font-weight:300">
+          Rasanya benar-benar berbeda. Lebih segar, lebih bersih. Saya bisa merasakan mineralnya — bukan rasa plastik seperti merek lain yang pernah saya coba.
+        </p>
+        <div class="flex items-center gap-4 pt-6" style="border-top:1px solid rgba(255,255,255,.06)">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+               style="background:linear-gradient(135deg,#0ea5e9,#3b82f6)">RH</div>
+          <div>
+            <p class="text-sm font-semibold text-white">Rizky Hermawan</p>
+            <p class="text-xs" style="color:rgba(255,255,255,.35)">Pelari Maraton · Jakarta</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- T2 -->
+      <div class="reveal glass glass-hover rounded-3xl p-8 flex flex-col" style="border-color:rgba(255,255,255,.06)">
+        <div class="flex gap-0.5 mb-6">
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="serif mb-4 leading-none" style="font-size:4rem;line-height:.8;color:rgba(56,189,248,.15);font-weight:700">"</div>
+        <p class="serif text-base italic leading-relaxed flex-1 mb-8" style="color:rgba(255,255,255,.65);font-weight:300">
+          Dokter menyarankan air yang lebih kaya mineral. Setelah rutin minum Narmada, hasil lab elektrolit saya membaik signifikan dalam dua bulan.
+        </p>
+        <div class="flex items-center gap-4 pt-6" style="border-top:1px solid rgba(255,255,255,.06)">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+               style="background:linear-gradient(135deg,#0d9488,#06b6d4)">SA</div>
+          <div>
+            <p class="text-sm font-semibold text-white">dr. Siti Aisyah</p>
+            <p class="text-xs" style="color:rgba(255,255,255,.35)">Dokter Umum · Surabaya</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- T3 -->
+      <div class="reveal glass glass-hover rounded-3xl p-8 flex flex-col" style="border-color:rgba(255,255,255,.06)">
+        <div class="flex gap-0.5 mb-6">
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg class="w-4 h-4" fill="#c9a96e" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="serif mb-4 leading-none" style="font-size:4rem;line-height:.8;color:rgba(56,189,248,.15);font-weight:700">"</div>
+        <p class="serif text-base italic leading-relaxed flex-1 mb-8" style="color:rgba(255,255,255,.65);font-weight:300">
+          Kami jadikan Narmada air resmi kantor. Karyawan puas, program daur ulang botolnya sejalan dengan komitmen ESG perusahaan kami.
+        </p>
+        <div class="flex items-center gap-4 pt-6" style="border-top:1px solid rgba(255,255,255,.06)">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+               style="background:linear-gradient(135deg,#4f46e5,#7c3aed)">BW</div>
+          <div>
+            <p class="text-sm font-semibold text-white">Budi Wibowo</p>
+            <p class="text-xs" style="color:rgba(255,255,255,.35)">GA Manager · Bandung</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SUSTAINABILITY
+══════════════════════════════════════════════════ -->
+<section class="relative py-32 px-6 overflow-hidden" style="background:linear-gradient(180deg,#050d1a,#071428 50%,#050d1a)">
+  <div class="relative z-10 mx-auto max-w-7xl">
+    <div class="glass rounded-3xl overflow-hidden reveal" style="border-color:rgba(255,255,255,.06)">
+      <div class="grid lg:grid-cols-2">
+        <!-- Left: text -->
+        <div class="p-12 lg:p-16 flex flex-col justify-center">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="h-px w-10" style="background:linear-gradient(90deg,transparent,#34d399)"></div>
+            <span class="text-xs uppercase tracking-[.2em]" style="color:#34d399">Keberlanjutan</span>
+          </div>
+          <h2 class="serif mb-6" style="font-size:clamp(2rem,3.5vw,3rem);font-weight:300;color:white;line-height:1.1">
+            Menjaga Sumber<br/>
+            <em style="font-weight:600;font-style:normal;background:linear-gradient(135deg,#34d399,#6ee7b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">untuk Generasi Berikut</em>
+          </h2>
+          <p class="text-base leading-relaxed mb-10" style="color:rgba(255,255,255,.5);font-weight:300">
+            Kami tidak hanya mengambil dari alam — kami mengembalikannya. Program konservasi hutan penyangga, pengolahan limbah nol, dan kemasan 100% recyclable adalah komitmen yang tidak bisa ditawar.
+          </p>
+          <div class="grid grid-cols-3 gap-6">
+            <div class="text-center">
+              <div class="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2)">
+                <svg class="w-5 h-5" style="color:#34d399" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              </div>
+              <p class="text-xs font-medium text-white mb-1">Zero Waste</p>
+              <p class="text-xs" style="color:rgba(255,255,255,.35)">Produksi</p>
+            </div>
+            <div class="text-center">
+              <div class="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2)">
+                <svg class="w-5 h-5" style="color:#34d399" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </div>
+              <p class="text-xs font-medium text-white mb-1">100% Recyclable</p>
+              <p class="text-xs" style="color:rgba(255,255,255,.35)">Kemasan</p>
+            </div>
+            <div class="text-center">
+              <div class="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2)">
+                <svg class="w-5 h-5" style="color:#34d399" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064"/></svg>
+              </div>
+              <p class="text-xs font-medium text-white mb-1">5.000 Ha</p>
+              <p class="text-xs" style="color:rgba(255,255,255,.35)">Hutan dijaga</p>
+            </div>
+          </div>
+        </div>
+        <!-- Right: visual -->
+        <div class="relative min-h-72 lg:min-h-0 overflow-hidden" style="background:linear-gradient(135deg,#071e3d,#0c2a4a)">
+          <svg viewBox="0 0 500 400" fill="none" class="w-full h-full absolute inset-0" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="leafGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(52,211,153,.08)"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </radialGradient>
+            </defs>
+            <rect width="500" height="400" fill="url(#leafGlow)"/>
+            <!-- Leaf silhouettes -->
+            <path d="M250 200 Q200 100 150 150 Q100 200 150 250 Q200 300 250 200Z" fill="rgba(52,211,153,.06)" stroke="rgba(52,211,153,.12)" stroke-width="1"/>
+            <path d="M250 200 Q300 100 350 140 Q400 180 360 240 Q320 300 250 200Z" fill="rgba(52,211,153,.04)" stroke="rgba(52,211,153,.1)" stroke-width="1"/>
+            <path d="M250 200 Q220 280 180 320 Q140 360 200 380 Q260 400 270 350 Q280 300 250 200Z" fill="rgba(52,211,153,.05)" stroke="rgba(52,211,153,.1)" stroke-width="1"/>
+            <!-- Circle rings -->
+            <circle cx="250" cy="200" r="60"  fill="none" stroke="rgba(52,211,153,.08)"  stroke-width="1"/>
+            <circle cx="250" cy="200" r="100" fill="none" stroke="rgba(52,211,153,.05)"  stroke-width="1"/>
+            <circle cx="250" cy="200" r="150" fill="none" stroke="rgba(52,211,153,.03)"  stroke-width="1"/>
+            <!-- Center drop -->
+            <path d="M250 170Q240 185 235 195 a15 15 0 1 0 30 0Q265 185 250 170Z" fill="rgba(52,211,153,.4)" stroke="rgba(52,211,153,.6)" stroke-width="1"/>
+          </svg>
+          <!-- Overlay text -->
+          <div class="absolute bottom-8 left-8">
+            <p class="serif text-3xl font-light text-white opacity-80">Bumi yang sehat<br/>air yang murni.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     CTA BOTTOM — cinematic full-width
+══════════════════════════════════════════════════ -->
+<section class="relative py-40 px-6 text-center overflow-hidden" style="background-color:#050d1a">
+  <!-- Deep glow -->
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <div class="rounded-full" style="width:700px;height:400px;background:radial-gradient(ellipse,rgba(14,165,233,.1) 0%,transparent 70%);filter:blur(40px)"></div>
+  </div>
+  <!-- Grid -->
+  <div class="absolute inset-0 opacity-[0.02]" style="background-image:linear-gradient(rgba(255,255,255,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.15) 1px,transparent 1px);background-size:80px 80px"></div>
+
+  <div class="relative z-10 mx-auto max-w-3xl reveal">
+    <!-- Big drop icon -->
+    <div class="flex justify-center mb-10">
+      <div class="relative">
+        <div class="absolute inset-0 rounded-full ring-1" style="width:80px;height:80px;border:1px solid rgba(56,189,248,.2);animation:ripple 3s ease-out infinite"></div>
+        <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto" style="background:linear-gradient(135deg,rgba(14,165,233,.2),rgba(99,102,241,.15));border:1px solid rgba(56,189,248,.25)">
+          <svg class="w-9 h-9" style="color:#38bdf8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8 7 4 10.5 4 14a8 8 0 0016 0c0-3.5-4-7-8-12z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="serif mb-6" style="font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;color:white;line-height:1.05">
+      Mulai Hari Ini.<br/>
+      <em class="text-gradient not-italic" style="font-weight:600">Rasakan Perbedaannya.</em>
+    </h2>
+    <p class="text-base mb-12 mx-auto" style="color:rgba(255,255,255,.45);max-width:420px;font-weight:300;line-height:1.7">
+      Bergabung bersama 5 juta+ keluarga Indonesia yang sudah memilih kemurnian sejati. Gratis ongkir untuk Jawa & Bali.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="#products" class="px-10 py-4 rounded-xl font-semibold text-sm transition-all duration-300 hover:scale-[1.04]"
+         style="background:linear-gradient(135deg,#0ea5e9,#3b82f6);color:white;box-shadow:0 12px 40px rgba(14,165,233,.3)">
+        Pesan Sekarang
+      </a>
+      <a href="#origin" class="px-10 py-4 rounded-xl font-medium text-sm glass glass-hover" style="color:rgba(255,255,255,.65)">
+        Pelajari Lebih Lanjut
+      </a>
+    </div>
+    <p class="mt-8 text-xs" style="color:rgba(255,255,255,.25)">Bebas BPA · Tersertifikasi BPOM · Halal MUI · ISO 22000</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<footer class="relative py-16 px-6 overflow-hidden" style="background-color:#020910;border-top:1px solid rgba(255,255,255,.05)">
+  <div class="mx-auto max-w-7xl">
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 mb-12">
+      <!-- Brand -->
+      <div class="col-span-2 md:col-span-4 lg:col-span-2">
+        <a href="#" class="flex items-center gap-3 mb-5 group">
+          <div class="relative w-9 h-9">
+            <svg viewBox="0 0 32 32" fill="none" class="w-full h-full">
+              <defs><linearGradient id="footLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#67e8f9"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient></defs>
+              <path d="M16 3C11 10 6 13.5 6 18a10 10 0 0020 0c0-4.5-5-8-10-15z" fill="url(#footLogoGrad)" opacity=".9"/>
+              <path d="M16 11C13.5 15 12 17 12 19a4 4 0 008 0c0-2-1.5-4-4-8z" fill="white" opacity=".3"/>
+            </svg>
+          </div>
+          <span class="text-white font-semibold tracking-widest text-sm uppercase" style="letter-spacing:.15em">Narmada</span>
+        </a>
+        <p class="text-xs leading-relaxed mb-6" style="color:rgba(255,255,255,.35);max-width:260px;font-weight:300">
+          Air mineral alami dari pegunungan Rinjani, Lombok. Murni, kaya mineral, dan berkomitmen pada keberlanjutan.
+        </p>
+        <div class="flex gap-3">
+          <a href="#" class="w-8 h-8 glass rounded-full flex items-center justify-center hover:border-cyan-500/40 transition-all duration-300" style="border-color:rgba(255,255,255,.08)">
+            <svg class="w-3.5 h-3.5" style="color:rgba(255,255,255,.5)" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="#" class="w-8 h-8 glass rounded-full flex items-center justify-center hover:border-cyan-500/40 transition-all duration-300" style="border-color:rgba(255,255,255,.08)">
+            <svg class="w-3.5 h-3.5" style="color:rgba(255,255,255,.5)" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="#" class="w-8 h-8 glass rounded-full flex items-center justify-center hover:border-cyan-500/40 transition-all duration-300" style="border-color:rgba(255,255,255,.08)">
+            <svg class="w-3.5 h-3.5" style="color:rgba(255,255,255,.5)" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.8a4.85 4.85 0 01-1.07-.11z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.3)">Produk</p>
+        <ul class="space-y-3">
+          <li><a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.45)">Narmada 330ml</a></li>
+          <li><a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.45)">Narmada 600ml</a></li>
+          <li><a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.45)">Narmada 1500ml</a></li>
+          <li><a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.45)">Pemesanan B2B</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest mb-5" style="color:rgba(255,255,255,.3)">Perusahaan</p>
+        <ul class="space-y-3">
+          <li><a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.45)">Tentang Kami</a></li>
+          <li><a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.45)">Keberlanjutan</a></li>
+          <li><a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.45)">Distribusi</a></li>
+          <li><a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.45)">Karir</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-8" style="border-top:1px solid rgba(255,255,255,.05)">
+      <p class="text-xs" style="color:rgba(255,255,255,.2)">© 2025 PT Narmada Berkah Alam. Hak cipta dilindungi.</p>
+      <div class="flex gap-6">
+        <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.25)">Privasi</a>
+        <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.25)">Syarat & Ketentuan</a>
+        <a href="#" class="text-xs transition-colors duration-200 hover:text-white" style="color:rgba(255,255,255,.25)">Kebijakan Cookie</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Scroll reveal ──
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => observer.observe(el));
+
+  // ── Navbar shrink on scroll ──
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 60) {
+      navbar.style.paddingTop = '8px';
+    } else {
+      navbar.style.paddingTop = '16px';
+    }
+  }, { passive: true });
+</script>
+</body>
+</html>
