@@ -1,0 +1,1385 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Aurelia — A Sanctuary Above the Clouds</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,700&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <style>html { opacity: 0; transition: opacity .4s ease; }</style>
+  <script type="module">
+    import { windrunner } from "../dist/index.esm.js";
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
+  </script>
+  <style>
+    /* ── Custom Properties ── */
+    :root {
+      --black:    #0a0806;
+      --black2:   #100d0a;
+      --charcoal: #1a1612;
+      --charcoal2:#221e18;
+      --gold:     #c8a96e;
+      --gold2:    #e8cb8d;
+      --gold3:    #f5e4b8;
+      --cream:    #f0e8d8;
+      --warm-50:  rgba(200,169,110,0.05);
+      --warm-10:  rgba(200,169,110,0.1);
+      --warm-20:  rgba(200,169,110,0.2);
+      --warm-30:  rgba(200,169,110,0.3);
+      --text-dim: rgba(240,232,216,0.45);
+      --text-mid: rgba(240,232,216,0.65);
+      --text-bright: rgba(240,232,216,0.88);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background-color: var(--black);
+      color: var(--cream);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    .serif { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* ── Custom Cursor ── */
+    #cursor-dot, #cursor-ring {
+      position: fixed; top: 0; left: 0;
+      border-radius: 50%; pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: opacity .3s;
+    }
+    #cursor-dot  { width: 6px; height: 6px; background: var(--gold); }
+    #cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid var(--warm-30);
+      transition: transform .12s ease, width .2s, height .2s, border-color .2s;
+    }
+    body:hover #cursor-ring { opacity: 1; }
+    .cursor-hover #cursor-ring {
+      width: 52px; height: 52px;
+      border-color: var(--gold);
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--warm-30); border-radius: 2px; }
+
+    /* ── Noise texture overlay ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      z-index: 1; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+      opacity: .5;
+    }
+
+    /* ── Gold line accent ── */
+    .gold-line {
+      display: inline-block;
+      width: 48px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold));
+    }
+    .gold-line-center {
+      display: inline-block;
+      width: 48px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    /* ── Section eyebrow ── */
+    .eyebrow {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 10px; font-weight: 500; letter-spacing: .25em;
+      text-transform: uppercase; color: var(--gold);
+    }
+
+    /* ── Diagonal dividers ── */
+    .clip-bottom-right  { clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%); }
+    .clip-top-left      { clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 100%); }
+    .clip-both          { clip-path: polygon(0 4%, 100% 0, 100% 96%, 0 100%); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(36px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+    @keyframes shimmer  { 0%,100% { opacity:.6; } 50% { opacity:1; } }
+    @keyframes scrollHint { 0%,100% { transform:translateY(0); } 50% { transform:translateY(10px); } }
+    @keyframes rotateSlow { to { transform:rotate(360deg); } }
+    @keyframes lineScan { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+    @keyframes stampIn  { from { opacity:0; transform:scale(1.15) rotate(3deg); } to { opacity:1; transform:scale(1) rotate(0deg); } }
+    @keyframes panBg    { 0% { background-position:50% 0%; } 100% { background-position:50% 20%; } }
+
+    .fade-up-1 { animation: fadeUp .9s .05s ease both; }
+    .fade-up-2 { animation: fadeUp .9s .20s ease both; }
+    .fade-up-3 { animation: fadeUp .9s .35s ease both; }
+    .fade-up-4 { animation: fadeUp .9s .50s ease both; }
+    .fade-in   { animation: fadeIn 1.2s ease both; }
+
+    /* ── Reveal on scroll ── */
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .85s ease, transform .85s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .reveal-left  { opacity:0; transform:translateX(-40px); transition: opacity .85s ease, transform .85s ease; }
+    .reveal-left.in { opacity:1; transform:translateX(0); }
+    .reveal-right { opacity:0; transform:translateX(40px); transition: opacity .85s ease, transform .85s ease; }
+    .reveal-right.in { opacity:1; transform:translateX(0); }
+    .reveal-scale { opacity:0; transform:scale(.94); transition: opacity 1s ease, transform 1s ease; }
+    .reveal-scale.in { opacity:1; transform:scale(1); }
+    .reveal-stagger > * { opacity:0; transform:translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal-stagger.in > *:nth-child(1) { opacity:1; transform:none; transition-delay:.05s; }
+    .reveal-stagger.in > *:nth-child(2) { opacity:1; transform:none; transition-delay:.18s; }
+    .reveal-stagger.in > *:nth-child(3) { opacity:1; transform:none; transition-delay:.31s; }
+    .reveal-stagger.in > *:nth-child(4) { opacity:1; transform:none; transition-delay:.44s; }
+  </style>
+</head>
+
+<body>
+
+<!-- ── Custom Cursor ── -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- ══════════════════════════════════════════
+     SIDE NAV (Desktop) + TOP BAR (Mobile)
+══════════════════════════════════════════ -->
+<nav id="sidenav" class="hidden lg:flex fixed left-0 top-0 bottom-0 z-50 flex-col items-center justify-between py-10 px-6"
+     style="width:80px; border-right:1px solid rgba(200,169,110,0.08); background:rgba(10,8,6,0.6); backdrop-filter:blur(16px);">
+  <!-- Logo mark -->
+  <a href="#" class="flex flex-col items-center gap-2 group" id="nav-logo">
+    <div class="w-9 h-9 rounded-full flex items-center justify-center" style="border:1px solid var(--warm-20)">
+      <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5" style="color:var(--gold)">
+        <path d="M12 2L14.5 9H22L16 13.5L18.5 20.5L12 16L5.5 20.5L8 13.5L2 9H9.5L12 2Z" stroke="currentColor" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+  </a>
+
+  <!-- Vertical links -->
+  <ul class="flex flex-col items-center gap-8">
+    <li><a href="#rooms" class="nav-link" style="writing-mode:vertical-lr; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--text-dim); transition:color .3s;">Rooms</a></li>
+    <li><a href="#experiences" class="nav-link" style="writing-mode:vertical-lr; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--text-dim); transition:color .3s;">Experiences</a></li>
+    <li><a href="#dining" class="nav-link" style="writing-mode:vertical-lr; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--text-dim); transition:color .3s;">Dining</a></li>
+    <li><a href="#gallery" class="nav-link" style="writing-mode:vertical-lr; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--text-dim); transition:color .3s;">Gallery</a></li>
+    <li><a href="#contact" class="nav-link" style="writing-mode:vertical-lr; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--text-dim); transition:color .3s;">Contact</a></li>
+  </ul>
+
+  <!-- Social + scroll indicator -->
+  <div class="flex flex-col items-center gap-4">
+    <div class="w-px h-16" style="background:linear-gradient(to bottom,transparent,var(--warm-20));"></div>
+    <div style="writing-mode:vertical-lr; font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--text-dim);">Scroll</div>
+    <div style="animation:scrollHint 2s ease-in-out infinite; color:var(--gold); font-size:12px;">↓</div>
+  </div>
+</nav>
+
+<!-- Mobile top bar -->
+<header id="mobile-nav" class="lg:hidden fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 h-16"
+        style="border-bottom:1px solid rgba(200,169,110,0.08); background:rgba(10,8,6,0.85); backdrop-filter:blur(16px);">
+  <a href="#" class="flex items-center gap-3">
+    <div class="w-7 h-7 rounded-full flex items-center justify-center" style="border:1px solid var(--warm-20)">
+      <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4" style="color:var(--gold)">
+        <path d="M12 2L14.5 9H22L16 13.5L18.5 20.5L12 16L5.5 20.5L8 13.5L2 9H9.5L12 2Z" stroke="currentColor" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+    <span class="serif" style="font-size:16px; font-weight:400; color:var(--cream); letter-spacing:.08em">The Aurelia</span>
+  </a>
+  <button id="menu-btn" style="color:var(--text-mid);">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+      <path stroke-linecap="round" d="M4 7h16M4 12h12M4 17h8"/>
+    </svg>
+  </button>
+</header>
+
+<!-- Mobile menu overlay -->
+<div id="mobile-menu" class="lg:hidden fixed inset-0 z-40 flex flex-col justify-center items-center gap-8 opacity-0 pointer-events-none transition-all duration-500"
+     style="background:rgba(10,8,6,0.97); backdrop-filter:blur(24px);">
+  <button id="menu-close" class="absolute top-6 right-6" style="color:var(--text-dim);">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+      <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+  </button>
+  <a href="#rooms"       class="serif text-4xl font-light" style="color:var(--text-mid); transition:color .2s;" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-mid)'">Rooms</a>
+  <a href="#experiences" class="serif text-4xl font-light" style="color:var(--text-mid); transition:color .2s;" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-mid)'">Experiences</a>
+  <a href="#dining"      class="serif text-4xl font-light" style="color:var(--text-mid); transition:color .2s;" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-mid)'">Dining</a>
+  <a href="#gallery"     class="serif text-4xl font-light" style="color:var(--text-mid); transition:color .2s;" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-mid)'">Gallery</a>
+  <a href="#contact"     class="serif text-4xl font-light" style="color:var(--text-mid); transition:color .2s;" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-mid)'">Contact</a>
+  <a href="#" class="mt-6 px-8 py-3 rounded-sm text-sm font-medium tracking-widest uppercase"
+     style="border:1px solid var(--warm-30); color:var(--gold); letter-spacing:.2em;">Book Stay</a>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HERO — Full Cinematic
+══════════════════════════════════════════ -->
+<section id="hero" class="relative min-h-screen flex items-end overflow-hidden" style="margin-left:0; padding-left:0;">
+
+  <!-- BG hero photo -->
+  <div class="absolute inset-0">
+    <img src="https://picsum.photos/seed/aurelia-hero/1920/1080" alt="Santorini caldera view" class="w-full h-full object-cover" style="filter:brightness(.45) saturate(.8);"/>
+    <!-- Dark gradient overlay bottom to top -->
+    <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(10,8,6,1) 0%, rgba(10,8,6,.7) 30%, rgba(10,8,6,.2) 70%, rgba(10,8,6,.5) 100%);"></div>
+    <!-- Warm gold tint overlay -->
+    <div class="absolute inset-0" style="background:linear-gradient(160deg,rgba(30,18,4,.5) 0%,transparent 60%);"></div>
+  </div>
+
+
+
+  <!-- Top right hotel name stamp — unique element -->
+  <div class="absolute top-10 right-10 flex flex-col items-end gap-1 fade-in" style="animation-delay:.3s">
+    <p class="text-xs font-light tracking-[.35em] uppercase" style="color:var(--gold)">Est. 1924</p>
+    <p class="serif font-normal" style="font-size:clamp(1.1rem,2vw,1.5rem);color:var(--cream);letter-spacing:.06em">The Aurelia</p>
+    <div style="width:48px;height:1px;background:var(--warm-30);"></div>
+    <p class="text-xs font-light tracking-[.2em] uppercase" style="color:var(--text-dim)">Santorini, Greece</p>
+  </div>
+
+  <!-- Main hero content — bottom left, unique layout -->
+  <div class="relative z-10 w-full lg:pl-[80px]">
+    <div class="max-w-5xl mx-auto lg:mx-0 px-8 lg:px-16 pb-36 lg:pb-28">
+
+      <!-- Eyebrow -->
+      <div class="eyebrow mb-6 fade-up-1">
+        <span class="gold-line"></span>
+        A Sanctuary Above the Clouds
+      </div>
+
+      <!-- Headline — massive serif -->
+      <h1 class="serif fade-up-2" style="font-size:clamp(3.5rem,9vw,8.5rem);font-weight:400;line-height:.95;letter-spacing:-.01em;color:var(--cream);">
+        Where<br/>
+        <em style="color:var(--gold2);font-style:italic;">Silence</em><br/>
+        Speaks.
+      </h1>
+
+      <p class="fade-up-3 mt-8 max-w-md" style="font-size:15px;line-height:1.8;font-weight:300;color:var(--text-mid);">
+        Perched on the volcanic caldera of Santorini, The Aurelia offers an unmatched retreat where the Aegean horizon meets timeless luxury — crafted for those who seek the extraordinary.
+      </p>
+
+      <div class="fade-up-4 mt-10 flex flex-wrap gap-5 items-center">
+        <a href="#" class="relative overflow-hidden px-8 py-4 text-xs font-medium tracking-[.22em] uppercase transition-all duration-400 hover:opacity-90 hover:scale-[1.02]"
+           style="background:var(--gold);color:var(--black);letter-spacing:.22em;">
+          Reserve Your Suite
+        </a>
+        <a href="#rooms" class="flex items-center gap-3 text-xs font-light tracking-[.2em] uppercase transition-colors duration-300" style="color:var(--text-mid);"
+           onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-mid)'">
+          Discover Rooms
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating booking bar at bottom -->
+  <div class="absolute bottom-0 left-0 right-0 z-20 lg:pl-[80px]">
+    <div class="max-w-4xl mx-auto lg:mx-0 mx-8 lg:ml-16 lg:mr-0 mb-0">
+      <div class="flex flex-col sm:flex-row items-stretch" style="border-top:1px solid var(--warm-20);background:rgba(16,13,10,0.9);backdrop-filter:blur(20px);">
+        <div class="flex-1 flex flex-col justify-center px-6 py-4" style="border-right:1px solid var(--warm-10);">
+          <p class="text-xs font-light tracking-[.18em] uppercase mb-1" style="color:var(--gold)">Check In</p>
+          <input type="date" class="bg-transparent text-sm font-light w-full outline-none" style="color:var(--text-bright);font-family:inherit;" value="2025-08-15"/>
+        </div>
+        <div class="flex-1 flex flex-col justify-center px-6 py-4" style="border-right:1px solid var(--warm-10);">
+          <p class="text-xs font-light tracking-[.18em] uppercase mb-1" style="color:var(--gold)">Check Out</p>
+          <input type="date" class="bg-transparent text-sm font-light w-full outline-none" style="color:var(--text-bright);font-family:inherit;" value="2025-08-20"/>
+        </div>
+        <div class="flex-1 flex flex-col justify-center px-6 py-4" style="border-right:1px solid var(--warm-10);">
+          <p class="text-xs font-light tracking-[.18em] uppercase mb-1" style="color:var(--gold)">Guests</p>
+          <select class="bg-transparent text-sm font-light w-full outline-none" style="color:var(--text-bright);font-family:inherit;cursor:none;">
+            <option value="1" style="background:var(--charcoal)">1 Guest</option>
+            <option value="2" style="background:var(--charcoal)" selected>2 Guests</option>
+            <option value="3" style="background:var(--charcoal)">3 Guests</option>
+            <option value="4" style="background:var(--charcoal)">4 Guests</option>
+          </select>
+        </div>
+        <button class="px-8 py-5 text-xs font-medium tracking-[.2em] uppercase flex items-center justify-center gap-2 transition-all duration-300 hover:opacity-90"
+                style="background:var(--gold);color:var(--black);min-width:160px;">
+          Check Availability
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     INTRO — Asymmetric split, numbers accent
+══════════════════════════════════════════ -->
+<section class="relative py-32 overflow-hidden lg:pl-[80px]" style="background:var(--black2);">
+
+  <!-- Large decorative number background -->
+  <div class="absolute right-0 top-0 bottom-0 flex items-center justify-end pointer-events-none overflow-hidden" style="opacity:.03;">
+    <span class="serif" style="font-size:40vw;font-weight:900;line-height:1;color:var(--cream);user-select:none;">I</span>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-8 lg:px-16">
+    <div class="grid lg:grid-cols-2 gap-20 lg:gap-32 items-center">
+
+      <!-- Left: big text -->
+      <div class="reveal-left">
+        <div class="eyebrow mb-8">
+          <span class="gold-line"></span>
+          Our Philosophy
+        </div>
+        <h2 class="serif" style="font-size:clamp(2.2rem,4.5vw,4rem);font-weight:400;line-height:1.15;color:var(--cream);">
+          Not just a hotel.<br/>
+          A <em style="color:var(--gold2);">memory</em><br/>
+          you carry forever.
+        </h2>
+        <p class="mt-8 leading-relaxed" style="font-size:15px;font-weight:300;color:var(--text-mid);max-width:420px;">
+          The Aurelia was born from a singular conviction: that true luxury is not about excess, but about the profound depth of an experience. Every surface, every scent, every silence has been composed with intention.
+        </p>
+        <a href="#" class="mt-10 inline-flex items-center gap-3 text-xs font-light tracking-[.2em] uppercase group" style="color:var(--gold);">
+          Our Story
+          <span class="transition-transform duration-300 group-hover:translate-x-2">→</span>
+        </a>
+      </div>
+
+      <!-- Right: asymmetric image stack + stats -->
+      <div class="reveal-right relative" style="min-height:460px;">
+        <!-- Primary image -->
+        <div class="absolute" style="top:0;right:0;width:75%;height:340px;border:1px solid var(--warm-10);overflow:hidden;">
+          <img src="https://picsum.photos/seed/aurelia-suite1/600/340" alt="Caldera Suite" class="w-full h-full object-cover" style="filter:brightness(.7) saturate(.85);"/>
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(10,8,6,.6) 0%,transparent 60%);"></div>
+          <div class="absolute bottom-4 left-4">
+            <p class="text-xs font-light tracking-widest uppercase" style="color:var(--cream)">Caldera Suite — Floor 3</p>
+          </div>
+        </div>
+
+        <!-- Secondary floating image -->
+        <div class="absolute" style="bottom:0;left:0;width:55%;height:200px;border:1px solid var(--warm-10);overflow:hidden;">
+          <img src="https://picsum.photos/seed/aurelia-pool/400/200" alt="Infinity Pool" class="w-full h-full object-cover" style="filter:brightness(.65) saturate(.85);"/>
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(10,8,6,.55) 0%,transparent 60%);"></div>
+          <div class="absolute bottom-4 left-4">
+            <p class="text-xs font-light tracking-widest uppercase" style="color:var(--cream)">Infinity Pool</p>
+          </div>
+        </div>
+
+        <!-- Gold frame accent -->
+        <div class="absolute" style="top:20px;right:20px;bottom:180px;left:calc(55% + 20px);border:1px solid var(--warm-20);pointer-events:none;"></div>
+      </div>
+    </div>
+
+    <!-- Stats row — unique horizontal ticker style -->
+    <div class="mt-20 reveal" style="border-top:1px solid var(--warm-10);padding-top:40px;">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-0">
+        <div class="flex flex-col py-6 px-8" style="border-right:1px solid var(--warm-10);">
+          <span class="serif" style="font-size:3rem;font-weight:400;line-height:1;color:var(--gold2);">42</span>
+          <span class="mt-2 text-xs font-light tracking-[.2em] uppercase" style="color:var(--text-dim);">Exclusive Suites</span>
+        </div>
+        <div class="flex flex-col py-6 px-8" style="border-right:1px solid var(--warm-10);">
+          <span class="serif" style="font-size:3rem;font-weight:400;line-height:1;color:var(--gold2);">3</span>
+          <span class="mt-2 text-xs font-light tracking-[.2em] uppercase" style="color:var(--text-dim);">Michelin Dining</span>
+        </div>
+        <div class="flex flex-col py-6 px-8" style="border-right:1px solid var(--warm-10);">
+          <span class="serif" style="font-size:3rem;font-weight:400;line-height:1;color:var(--gold2);">100</span>
+          <span class="mt-2 text-xs font-light tracking-[.2em] uppercase" style="color:var(--text-dim);">Years of Mastery</span>
+        </div>
+        <div class="flex flex-col py-6 px-8">
+          <span class="serif" style="font-size:3rem;font-weight:400;line-height:1;color:var(--gold2);">∞</span>
+          <span class="mt-2 text-xs font-light tracking-[.2em] uppercase" style="color:var(--text-dim);">Horizon Views</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     ROOMS — Horizontal Scroll Showcase
+══════════════════════════════════════════ -->
+<section id="rooms" class="relative py-24 overflow-hidden lg:pl-[80px]" style="background:var(--black);">
+
+  <div class="px-8 lg:px-16 mb-14 reveal">
+    <div class="flex items-end justify-between max-w-7xl mx-auto">
+      <div>
+        <div class="eyebrow mb-5">
+          <span class="gold-line"></span>
+          Accommodations
+        </div>
+        <h2 class="serif" style="font-size:clamp(2rem,4vw,3.5rem);font-weight:400;line-height:1.1;color:var(--cream);">
+          Rooms &amp; Suites
+        </h2>
+      </div>
+      <a href="#" class="hidden md:flex items-center gap-3 text-xs font-light tracking-[.2em] uppercase" style="color:var(--gold);">
+        View All <span>→</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Horizontal scroll container -->
+  <div id="rooms-scroll" class="flex gap-6 overflow-x-auto px-8 lg:px-16 pb-8 reveal-scale" style="scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x mandatory;">
+    <style>#rooms-scroll::-webkit-scrollbar{display:none}</style>
+
+    <!-- Room Card 1 -->
+    <div class="flex-none group" style="width:clamp(280px,38vw,440px);scroll-snap-align:start;">
+      <div class="relative overflow-hidden" style="height:520px;">
+        <!-- Room bg photo -->
+        <img src="https://picsum.photos/seed/aurelia-room1/880/520" alt="Caldera View Suite" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" style="filter:brightness(.55) saturate(.8);"/>
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(10,8,6,.95) 0%,rgba(10,8,6,.3) 55%,transparent 100%);"></div>
+        <!-- Content overlay -->
+        <div class="absolute bottom-0 left-0 right-0 p-8">
+          <div class="flex items-end justify-between">
+            <div>
+              <p class="text-xs font-light tracking-[.2em] uppercase mb-2" style="color:var(--gold)">Suite 01</p>
+              <h3 class="serif text-2xl font-normal" style="color:var(--cream);">Caldera View Suite</h3>
+              <p class="text-xs font-light mt-1" style="color:var(--text-dim);">65 m²  ·  King Bed  ·  Private Plunge Pool</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs font-light mb-1" style="color:var(--text-dim);">From</p>
+              <p class="serif text-xl" style="color:var(--gold2);">€ 980<span class="text-xs font-light">/night</span></p>
+            </div>
+          </div>
+          <a href="#" class="mt-5 block text-center py-3 text-xs font-medium tracking-[.2em] uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
+             style="border:1px solid var(--warm-30);color:var(--gold);">Reserve This Suite</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Card 2 -->
+    <div class="flex-none group" style="width:clamp(280px,38vw,440px);scroll-snap-align:start;">
+      <div class="relative overflow-hidden" style="height:520px;">
+        <img src="https://picsum.photos/seed/aurelia-penthouse/880/520" alt="Aegean Sky Penthouse" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" style="filter:brightness(.5) saturate(.8);"/>
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(6,8,16,.95) 0%,rgba(6,8,16,.25) 55%,transparent 100%);"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-8">
+          <div class="flex items-end justify-between">
+            <div>
+              <p class="text-xs font-light tracking-[.2em] uppercase mb-2" style="color:var(--gold)">Suite 02</p>
+              <h3 class="serif text-2xl font-normal" style="color:var(--cream);">Aegean Sky Penthouse</h3>
+              <p class="text-xs font-light mt-1" style="color:var(--text-dim);">120 m²  ·  2 Bedrooms  ·  Rooftop Terrace</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs font-light mb-1" style="color:var(--text-dim);">From</p>
+              <p class="serif text-xl" style="color:var(--gold2);">€ 2,400<span class="text-xs font-light">/night</span></p>
+            </div>
+          </div>
+          <a href="#" class="mt-5 block text-center py-3 text-xs font-medium tracking-[.2em] uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
+             style="border:1px solid var(--warm-30);color:var(--gold);">Reserve This Suite</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Card 3 -->
+    <div class="flex-none group" style="width:clamp(280px,38vw,440px);scroll-snap-align:start;">
+      <div class="relative overflow-hidden" style="height:520px;">
+        <img src="https://picsum.photos/seed/aurelia-cave/880/520" alt="Cave Sanctuary" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" style="filter:brightness(.5) saturate(.75);"/>
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(14,12,6,.95) 0%,rgba(14,12,6,.25) 55%,transparent 100%);"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-8">
+          <div class="flex items-end justify-between">
+            <div>
+              <p class="text-xs font-light tracking-[.2em] uppercase mb-2" style="color:var(--gold)">Suite 03</p>
+              <h3 class="serif text-2xl font-normal" style="color:var(--cream);">Cave Sanctuary</h3>
+              <p class="text-xs font-light mt-1" style="color:var(--text-dim);">88 m²  ·  King Bed  ·  Cave Architecture</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs font-light mb-1" style="color:var(--text-dim);">From</p>
+              <p class="serif text-xl" style="color:var(--gold2);">€ 1,350<span class="text-xs font-light">/night</span></p>
+            </div>
+          </div>
+          <a href="#" class="mt-5 block text-center py-3 text-xs font-medium tracking-[.2em] uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
+             style="border:1px solid var(--warm-30);color:var(--gold);">Reserve This Suite</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Card 4 -->
+    <div class="flex-none group" style="width:clamp(280px,38vw,440px);scroll-snap-align:start;">
+      <div class="relative overflow-hidden" style="height:520px;">
+        <img src="https://picsum.photos/seed/aurelia-villa/880/520" alt="Grand Villa Royale" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" style="filter:brightness(.5) saturate(.75);"/>
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(14,8,6,.95) 0%,rgba(14,8,6,.25) 55%,transparent 100%);"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-8">
+          <div class="flex items-end justify-between">
+            <div>
+              <p class="text-xs font-light tracking-[.2em] uppercase mb-2" style="color:var(--gold)">Suite 04</p>
+              <h3 class="serif text-2xl font-normal" style="color:var(--cream);">Grand Villa Royale</h3>
+              <p class="text-xs font-light mt-1" style="color:var(--text-dim);">200 m²  ·  Villa  ·  Private Pool &amp; Chef</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs font-light mb-1" style="color:var(--text-dim);">From</p>
+              <p class="serif text-xl" style="color:var(--gold2);">€ 4,800<span class="text-xs font-light">/night</span></p>
+            </div>
+          </div>
+          <a href="#" class="mt-5 block text-center py-3 text-xs font-medium tracking-[.2em] uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
+             style="border:1px solid var(--warm-30);color:var(--gold);">Reserve This Suite</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spacer -->
+    <div class="flex-none" style="width:80px;scroll-snap-align:start;"></div>
+  </div>
+
+  <!-- Scroll arrows -->
+  <div class="flex gap-3 px-8 lg:px-16 mt-6 max-w-7xl mx-auto">
+    <button id="rooms-prev" class="w-10 h-10 flex items-center justify-center transition-colors duration-200" style="border:1px solid var(--warm-20);color:var(--text-mid);" onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--warm-20)';this.style.color='var(--text-mid)'">←</button>
+    <button id="rooms-next" class="w-10 h-10 flex items-center justify-center transition-colors duration-200" style="border:1px solid var(--warm-20);color:var(--text-mid);" onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--warm-20)';this.style.color='var(--text-mid)'">→</button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     EXPERIENCES — Diagonal split layout
+══════════════════════════════════════════ -->
+<section id="experiences" class="relative overflow-hidden lg:pl-[80px]" style="background:var(--charcoal);">
+
+  <!-- Section header -->
+  <div class="px-8 lg:px-16 pt-28 pb-16 max-w-7xl mx-auto reveal">
+    <div class="grid lg:grid-cols-2 gap-10 items-end">
+      <div>
+        <div class="eyebrow mb-5">
+          <span class="gold-line"></span>
+          Beyond The Room
+        </div>
+        <h2 class="serif" style="font-size:clamp(2rem,4vw,3.5rem);font-weight:400;line-height:1.1;color:var(--cream);">
+          Curated<br/><em style="color:var(--gold2);">Experiences</em>
+        </h2>
+      </div>
+      <p class="font-light leading-relaxed" style="font-size:15px;color:var(--text-mid);max-width:380px;">
+        From dawn yoga on the caldera's edge to midnight cruises beneath the Milky Way — each moment is choreographed to leave you breathless.
+      </p>
+    </div>
+  </div>
+
+  <!-- Experiences: alternating diagonal blocks -->
+  <div class="max-w-7xl mx-auto px-8 lg:px-16 pb-28">
+
+    <!-- Exp 1: spa — wide left image, right text -->
+    <div class="grid lg:grid-cols-5 gap-0 mb-2 reveal-scale group">
+      <div class="lg:col-span-3 relative overflow-hidden" style="min-height:380px;">
+        <div class="absolute inset-0 overflow-hidden">
+          <img src="https://picsum.photos/seed/aurelia-spa/900/380" alt="Spa & Wellness" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style="filter:brightness(.5) saturate(.8);"/>
+          <div class="absolute inset-0" style="background:linear-gradient(to right,rgba(10,8,6,.7) 0%,transparent 60%);"></div>
+        </div>
+        <div class="absolute top-6 left-6">
+          <span class="serif" style="font-size:5rem;font-weight:900;color:rgba(200,169,110,0.06);line-height:1;">01</span>
+        </div>
+        <div class="absolute bottom-6 left-6 right-6">
+          <span class="text-xs font-light tracking-[.2em] uppercase" style="color:var(--text-dim);">Aurelia Spa & Wellness</span>
+        </div>
+      </div>
+      <div class="lg:col-span-2 flex flex-col justify-center p-10 lg:p-14" style="background:var(--charcoal2);">
+        <h3 class="serif mb-4" style="font-size:1.8rem;font-weight:400;color:var(--cream);">Ancient Rituals,<br/>Modern Sanctuary</h3>
+        <p class="font-light leading-relaxed mb-8" style="font-size:14px;color:var(--text-mid);">
+          Drawing from 3,000-year-old Aegean healing traditions, our spa blends volcanic mineral therapies with contemporary wellness science across 1,200 sqm of pure tranquility.
+        </p>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-center gap-3 text-xs font-light" style="color:var(--text-dim);">
+            <span style="color:var(--gold);font-size:8px;">◆</span> Volcanic stone massage
+          </li>
+          <li class="flex items-center gap-3 text-xs font-light" style="color:var(--text-dim);">
+            <span style="color:var(--gold);font-size:8px;">◆</span> Aegean sea salt rituals
+          </li>
+          <li class="flex items-center gap-3 text-xs font-light" style="color:var(--text-dim);">
+            <span style="color:var(--gold);font-size:8px;">◆</span> Hammam & steam cave
+          </li>
+        </ul>
+        <a href="#" class="inline-flex items-center gap-3 text-xs font-light tracking-[.2em] uppercase group" style="color:var(--gold);">
+          Explore Spa <span class="transition-transform duration-300 group-hover:translate-x-2">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Exp 2: flipped — left text, right image -->
+    <div class="grid lg:grid-cols-5 gap-0 mb-2 reveal-scale group">
+      <div class="lg:col-span-2 flex flex-col justify-center p-10 lg:p-14 order-2 lg:order-1" style="background:var(--black2);">
+        <h3 class="serif mb-4" style="font-size:1.8rem;font-weight:400;color:var(--cream);">Sail the Caldera<br/>at Golden Hour</h3>
+        <p class="font-light leading-relaxed mb-8" style="font-size:14px;color:var(--text-mid);">
+          Private yacht charters departing from our exclusive jetty. Watch Santorini's volcanic cliffs glow amber as the sun descends into the Aegean — champagne in hand.
+        </p>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-center gap-3 text-xs font-light" style="color:var(--text-dim);">
+            <span style="color:var(--gold);font-size:8px;">◆</span> Private catamaran charter
+          </li>
+          <li class="flex items-center gap-3 text-xs font-light" style="color:var(--text-dim);">
+            <span style="color:var(--gold);font-size:8px;">◆</span> Sunset dining on deck
+          </li>
+          <li class="flex items-center gap-3 text-xs font-light" style="color:var(--text-dim);">
+            <span style="color:var(--gold);font-size:8px;">◆</span> Snorkel at volcanic springs
+          </li>
+        </ul>
+        <a href="#" class="inline-flex items-center gap-3 text-xs font-light tracking-[.2em] uppercase group" style="color:var(--gold);">
+          Book Charter <span class="transition-transform duration-300 group-hover:translate-x-2">→</span>
+        </a>
+      </div>
+      <div class="lg:col-span-3 relative overflow-hidden order-1 lg:order-2" style="min-height:380px;">
+        <div class="absolute inset-0 overflow-hidden">
+          <img src="https://picsum.photos/seed/aurelia-yacht/900/380" alt="Yacht Charter" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style="filter:brightness(.48) saturate(.8);"/>
+          <div class="absolute inset-0" style="background:linear-gradient(to left,rgba(6,8,16,.65) 0%,transparent 60%);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exp 3 -->
+    <div class="grid lg:grid-cols-5 gap-0 reveal-scale group">
+      <div class="lg:col-span-3 relative overflow-hidden" style="min-height:380px;">
+        <div class="absolute inset-0 overflow-hidden">
+          <img src="https://picsum.photos/seed/aurelia-stars/900/380" alt="Stargazing at the Caldera" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style="filter:brightness(.45) saturate(.7);"/>
+          <div class="absolute inset-0" style="background:linear-gradient(to right,rgba(10,8,6,.65) 0%,transparent 60%);"></div>
+        </div>
+      </div>
+      <div class="lg:col-span-2 flex flex-col justify-center p-10 lg:p-14" style="background:var(--charcoal2);">
+        <h3 class="serif mb-4" style="font-size:1.8rem;font-weight:400;color:var(--cream);">Stargazing at<br/>The Caldera's Edge</h3>
+        <p class="font-light leading-relaxed mb-8" style="font-size:14px;color:var(--text-mid);">
+          Our resident astronomer guides intimate evening sessions atop the ancient volcanic rim — powerful telescopes, heated blankets, and the universe laid bare above you.
+        </p>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-center gap-3 text-xs font-light" style="color:var(--text-dim);">
+            <span style="color:var(--gold);font-size:8px;">◆</span> Private astronomer guide
+          </li>
+          <li class="flex items-center gap-3 text-xs font-light" style="color:var(--text-dim);">
+            <span style="color:var(--gold);font-size:8px;">◆</span> Professional telescopes
+          </li>
+          <li class="flex items-center gap-3 text-xs font-light" style="color:var(--text-dim);">
+            <span style="color:var(--gold);font-size:8px;">◆</span> Astrophotography sessions
+          </li>
+        </ul>
+        <a href="#" class="inline-flex items-center gap-3 text-xs font-light tracking-[.2em] uppercase group" style="color:var(--gold);">
+          Reserve Night <span class="transition-transform duration-300 group-hover:translate-x-2">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     DINING — Full-width cinematic + menu tabs
+══════════════════════════════════════════ -->
+<section id="dining" class="relative overflow-hidden lg:pl-[80px]" style="background:var(--black);">
+
+  <!-- Full-bleed header bg -->
+  <div class="relative overflow-hidden clip-bottom-right" style="min-height:480px;">
+    <!-- Dining hero photo -->
+    <img src="https://picsum.photos/seed/aurelia-dining-hero/1920/480" alt="Dining at The Aurelia" class="absolute inset-0 w-full h-full object-cover" style="filter:brightness(.35) saturate(.7);"/>
+    <div class="absolute inset-0" style="background:linear-gradient(150deg,rgba(26,18,6,.85) 0%,rgba(10,8,4,.6) 60%,rgba(10,8,4,.8) 100%);"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-8 lg:px-16 pt-28 pb-40">
+      <div class="max-w-lg reveal">
+        <div class="eyebrow mb-5">
+          <span class="gold-line"></span>
+          Culinary Arts
+        </div>
+        <h2 class="serif" style="font-size:clamp(2.2rem,5vw,4.5rem);font-weight:400;line-height:1.05;color:var(--cream);">
+          Three Venues.<br/>
+          One <em style="color:var(--gold2);">Obsession.</em>
+        </h2>
+        <p class="mt-6 font-light leading-relaxed" style="font-size:15px;color:var(--text-mid);">
+          From a cliff-edge fine dining room with a Michelin star, to an underground wine cellar carved into the rock — every meal at The Aurelia is a pilgrimage.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three dining venues — unique tabbed showcase -->
+  <div class="max-w-7xl mx-auto px-8 lg:px-16 -mt-16 relative z-10 pb-28">
+
+    <!-- Tab buttons -->
+    <div class="flex gap-0 mb-0 reveal" id="dining-tabs">
+      <button class="dining-tab active px-8 py-5 text-xs font-medium tracking-[.18em] uppercase transition-all duration-300"
+              data-target="dt1" style="background:var(--gold);color:var(--black);">Elysium</button>
+      <button class="dining-tab px-8 py-5 text-xs font-medium tracking-[.18em] uppercase transition-all duration-300"
+              data-target="dt2" style="background:var(--charcoal2);color:var(--text-dim);border-top:1px solid var(--warm-10);">The Vault</button>
+      <button class="dining-tab px-8 py-5 text-xs font-medium tracking-[.18em] uppercase transition-all duration-300"
+              data-target="dt3" style="background:var(--charcoal2);color:var(--text-dim);border-top:1px solid var(--warm-10);">Agora Terrace</button>
+    </div>
+
+    <!-- Tab panels -->
+    <div id="dt1" class="dining-panel" style="display:block;">
+      <div class="grid lg:grid-cols-2 gap-0" style="border:1px solid var(--warm-10);">
+        <div class="relative overflow-hidden" style="min-height:420px;">
+          <img src="https://picsum.photos/seed/aurelia-elysium/700/420" alt="Elysium Fine Dining" class="absolute inset-0 w-full h-full object-cover" style="filter:brightness(.5) saturate(.8);"/>
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(10,8,6,.7) 0%,transparent 60%);"></div>
+        </div>
+        <div class="flex flex-col justify-between p-10 lg:p-14" style="background:var(--charcoal);">
+          <div>
+            <div class="flex items-center gap-3 mb-6">
+              <span class="text-xs font-light tracking-[.2em] uppercase" style="color:var(--gold);">★ Michelin Star</span>
+              <span style="width:1px;height:14px;background:var(--warm-20);"></span>
+              <span class="text-xs font-light" style="color:var(--text-dim);">Fine Dining</span>
+            </div>
+            <h3 class="serif mb-4" style="font-size:2rem;font-weight:400;color:var(--cream);">Elysium</h3>
+            <p class="font-light leading-relaxed mb-8" style="font-size:14px;color:var(--text-mid);">
+              Our cliff-edge jewel, suspended above the caldera with floor-to-ceiling windows. Chef Nikolaos Papadakis composes tasting menus where Aegean flavors meet haute cuisine mastery.
+            </p>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Cuisine</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">Greek Contemporary</p>
+              </div>
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Hours</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">7:00 PM – 11:30 PM</p>
+              </div>
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Dress Code</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">Smart Elegant</p>
+              </div>
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Courses</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">7 or 11 course</p>
+              </div>
+            </div>
+          </div>
+          <a href="#" class="self-start px-6 py-3 text-xs font-medium tracking-[.2em] uppercase transition-colors duration-300" style="border:1px solid var(--warm-30);color:var(--gold);">
+            Reserve a Table
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div id="dt2" class="dining-panel" style="display:none;">
+      <div class="grid lg:grid-cols-2 gap-0" style="border:1px solid var(--warm-10);">
+        <div class="relative overflow-hidden" style="min-height:420px;">
+          <img src="https://picsum.photos/seed/aurelia-vault/700/420" alt="The Vault Wine Cellar" class="absolute inset-0 w-full h-full object-cover" style="filter:brightness(.45) saturate(.7);"/>
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(6,6,14,.7) 0%,transparent 60%);"></div>
+        </div>
+        <div class="flex flex-col justify-between p-10 lg:p-14" style="background:var(--charcoal);">
+          <div>
+            <div class="flex items-center gap-3 mb-6">
+              <span class="text-xs font-light tracking-[.2em] uppercase" style="color:var(--gold);">2,000+ Labels</span>
+              <span style="width:1px;height:14px;background:var(--warm-20);"></span>
+              <span class="text-xs font-light" style="color:var(--text-dim);">Wine & Cave Dining</span>
+            </div>
+            <h3 class="serif mb-4" style="font-size:2rem;font-weight:400;color:var(--cream);">The Vault</h3>
+            <p class="font-light leading-relaxed mb-8" style="font-size:14px;color:var(--text-mid);">
+              Descend into the volcanic rock for a subterranean experience unlike any other. Private dining alcoves, a sommelier-curated cellar, and the intimacy of 3,000-year-old stone walls.
+            </p>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Cuisine</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">Mediterranean</p>
+              </div>
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Hours</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">6:00 PM – 1:00 AM</p>
+              </div>
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Capacity</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">Max 12 guests</p>
+              </div>
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Wine List</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">2,000+ labels</p>
+              </div>
+            </div>
+          </div>
+          <a href="#" class="self-start px-6 py-3 text-xs font-medium tracking-[.2em] uppercase transition-colors duration-300" style="border:1px solid var(--warm-30);color:var(--gold);">
+            Reserve a Table
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div id="dt3" class="dining-panel" style="display:none;">
+      <div class="grid lg:grid-cols-2 gap-0" style="border:1px solid var(--warm-10);">
+        <div class="relative overflow-hidden" style="min-height:420px;">
+          <img src="https://picsum.photos/seed/aurelia-agora/700/420" alt="Agora Terrace" class="absolute inset-0 w-full h-full object-cover" style="filter:brightness(.5) saturate(.8);"/>
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(12,14,6,.7) 0%,transparent 60%);"></div>
+        </div>
+        <div class="flex flex-col justify-between p-10 lg:p-14" style="background:var(--charcoal);">
+          <div>
+            <div class="flex items-center gap-3 mb-6">
+              <span class="text-xs font-light tracking-[.2em] uppercase" style="color:var(--gold);">Al Fresco</span>
+              <span style="width:1px;height:14px;background:var(--warm-20);"></span>
+              <span class="text-xs font-light" style="color:var(--text-dim);">Breakfast & Lunch</span>
+            </div>
+            <h3 class="serif mb-4" style="font-size:2rem;font-weight:400;color:var(--cream);">Agora Terrace</h3>
+            <p class="font-light leading-relaxed mb-8" style="font-size:14px;color:var(--text-mid);">
+              Our sun-drenched terrace overlooking the caldera. Fresh Cycladic produce, handpressed juices, and slow mornings with the Aegean as your backdrop — casual luxury at its finest.
+            </p>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Cuisine</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">Cycladic & Light</p>
+              </div>
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Hours</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">7:00 AM – 4:00 PM</p>
+              </div>
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">Style</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">Al fresco, relaxed</p>
+              </div>
+              <div style="border-top:1px solid var(--warm-10);padding-top:12px;">
+                <p class="text-xs mb-1" style="color:var(--gold);">View</p>
+                <p class="text-xs font-light" style="color:var(--text-mid);">Full caldera panorama</p>
+              </div>
+            </div>
+          </div>
+          <a href="#" class="self-start px-6 py-3 text-xs font-medium tracking-[.2em] uppercase transition-colors duration-300" style="border:1px solid var(--warm-30);color:var(--gold);">
+            Reserve a Table
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     GALLERY — Masonry-style broken grid
+══════════════════════════════════════════ -->
+<section id="gallery" class="relative py-28 overflow-hidden lg:pl-[80px]" style="background:var(--charcoal);">
+
+  <div class="max-w-7xl mx-auto px-8 lg:px-16 mb-14 reveal">
+    <div class="flex items-end justify-between">
+      <div>
+        <div class="eyebrow mb-5">
+          <span class="gold-line"></span>
+          Visual Journal
+        </div>
+        <h2 class="serif" style="font-size:clamp(2rem,4vw,3.5rem);font-weight:400;line-height:1.1;color:var(--cream);">
+          The Aurelia<br/><em style="color:var(--gold2);">Gallery</em>
+        </h2>
+      </div>
+      <a href="#" class="hidden md:flex items-center gap-3 text-xs font-light tracking-[.2em] uppercase" style="color:var(--gold);">
+        All Photos <span>→</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Broken grid — unique layout with offset rows -->
+  <div class="max-w-7xl mx-auto px-8 lg:px-16">
+
+      <!-- Gallery Row 1 -->
+      <div class="grid grid-cols-12 gap-3 mb-3 reveal-scale">
+        <!-- Large left -->
+        <div class="col-span-12 md:col-span-7 relative overflow-hidden group" style="height:400px;">
+          <img src="https://picsum.photos/seed/gallery-sunset/800/400" alt="Caldera Sunset" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" style="filter:brightness(.65) saturate(.85);"/>
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(10,8,6,.6) 0%,transparent 60%);"></div>
+          <div class="absolute bottom-5 left-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <p class="text-xs font-light tracking-widest uppercase" style="color:var(--cream);">Caldera Sunset</p>
+          </div>
+          <div class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="border:1px solid rgba(240,232,216,0.4);color:var(--cream);">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+          </div>
+        </div>
+        <!-- Stack right -->
+        <div class="col-span-12 md:col-span-5 flex flex-col gap-3">
+          <div class="relative overflow-hidden group flex-1" style="min-height:190px;">
+            <img src="https://picsum.photos/seed/gallery-pool/500/190" alt="Infinity Pool" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" style="filter:brightness(.6) saturate(.8);"/>
+            <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(10,8,6,.55) 0%,transparent 60%);"></div>
+            <div class="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-xs font-light tracking-widest uppercase" style="color:var(--cream);">Infinity Pool</p>
+            </div>
+          </div>
+          <div class="relative overflow-hidden group flex-1" style="min-height:190px;">
+            <img src="https://picsum.photos/seed/gallery-cave/500/190" alt="Cave Suite Interior" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" style="filter:brightness(.55) saturate(.8);"/>
+            <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(10,8,6,.55) 0%,transparent 60%);"></div>
+            <div class="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-xs font-light tracking-widest uppercase" style="color:var(--cream);">Cave Suite Interior</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: reversed — small left, large right, offset -->
+      <div class="grid grid-cols-12 gap-3 reveal-scale">
+        <div class="col-span-12 md:col-span-4 flex flex-col gap-3">
+          <div class="relative overflow-hidden group" style="height:220px;">
+            <img src="https://picsum.photos/seed/gallery-spa/400/220" alt="Aurelia Spa" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" style="filter:brightness(.6) saturate(.8);"/>
+            <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(10,8,6,.55) 0%,transparent 60%);"></div>
+            <div class="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-xs font-light tracking-widest uppercase" style="color:var(--cream);">Aurelia Spa</p>
+            </div>
+          </div>
+          <div class="relative overflow-hidden group" style="height:160px;">
+            <img src="https://picsum.photos/seed/gallery-dining/400/160" alt="Elysium Restaurant" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" style="filter:brightness(.55) saturate(.75);"/>
+            <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(10,8,6,.55) 0%,transparent 60%);"></div>
+            <div class="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-xs font-light tracking-widest uppercase" style="color:var(--cream);">Elysium Restaurant</p>
+            </div>
+          </div>
+        </div>
+        <!-- Large right, vertically offset -->
+        <div class="col-span-12 md:col-span-8 relative overflow-hidden group md:mt-[-80px]" style="height:468px;">
+          <img src="https://picsum.photos/seed/gallery-penthouse/900/468" alt="Penthouse — Aegean Sky" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" style="filter:brightness(.58) saturate(.82);"/>
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(10,8,6,.65) 0%,transparent 55%);"></div>
+          <div class="absolute bottom-5 left-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <p class="text-xs font-light tracking-widest uppercase" style="color:var(--cream);">Penthouse — Aegean Sky</p>
+          </div>
+          <div class="absolute top-5 right-5 w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="border:1px solid rgba(240,232,216,0.4);color:var(--cream);">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+          </div>
+        </div>
+      </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     TESTIMONIALS — Unique horizontal marquee + featured
+══════════════════════════════════════════ -->
+<section class="relative py-28 overflow-hidden lg:pl-[80px]" style="background:var(--black2);">
+
+  <!-- Marquee strip (pure CSS) -->
+  <style>
+    .marquee-track { display:flex; width:max-content; animation: marqueeScroll 30s linear infinite; }
+    @keyframes marqueeScroll { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
+    .marquee-wrap { overflow:hidden; width:100%; }
+    .marquee-wrap:hover .marquee-track { animation-play-state:paused; }
+  </style>
+
+  <div class="marquee-wrap mb-20 opacity-40">
+    <div class="marquee-track">
+      <!-- Repeated twice for seamless loop -->
+      <span class="serif px-10 py-3 text-sm" style="color:var(--cream);white-space:nowrap;border-right:1px solid var(--warm-10);">★ Condé Nast Traveler — Top 10 World's Best Hotel 2024</span>
+      <span class="serif px-10 py-3 text-sm" style="color:var(--cream);white-space:nowrap;border-right:1px solid var(--warm-10);">★ Travel + Leisure — World's Best Award</span>
+      <span class="serif px-10 py-3 text-sm" style="color:var(--cream);white-space:nowrap;border-right:1px solid var(--warm-10);">★ Forbes 5-Star — Consecutive 8 Years</span>
+      <span class="serif px-10 py-3 text-sm" style="color:var(--cream);white-space:nowrap;border-right:1px solid var(--warm-10);">★ Andrew Harper — Hidden Gem Award</span>
+      <span class="serif px-10 py-3 text-sm" style="color:var(--cream);white-space:nowrap;border-right:1px solid var(--warm-10);">★ Michelin Keys — The Aurelia Collection</span>
+      <span class="serif px-10 py-3 text-sm" style="color:var(--cream);white-space:nowrap;border-right:1px solid var(--warm-10);">★ Condé Nast Traveler — Top 10 World's Best Hotel 2024</span>
+      <span class="serif px-10 py-3 text-sm" style="color:var(--cream);white-space:nowrap;border-right:1px solid var(--warm-10);">★ Travel + Leisure — World's Best Award</span>
+      <span class="serif px-10 py-3 text-sm" style="color:var(--cream);white-space:nowrap;border-right:1px solid var(--warm-10);">★ Forbes 5-Star — Consecutive 8 Years</span>
+      <span class="serif px-10 py-3 text-sm" style="color:var(--cream);white-space:nowrap;border-right:1px solid var(--warm-10);">★ Andrew Harper — Hidden Gem Award</span>
+      <span class="serif px-10 py-3 text-sm" style="color:var(--cream);white-space:nowrap;">★ Michelin Keys — The Aurelia Collection</span>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-8 lg:px-16">
+    <div class="reveal mb-16">
+      <div class="eyebrow mb-5">
+        <span class="gold-line"></span>
+        Guest Chronicles
+      </div>
+      <h2 class="serif" style="font-size:clamp(2rem,4vw,3.5rem);font-weight:400;line-height:1.1;color:var(--cream);">
+        Words from<br/><em style="color:var(--gold2);">Our Guests</em>
+      </h2>
+    </div>
+
+    <!-- Featured large testimonial + side small ones -->
+    <div class="grid lg:grid-cols-3 gap-0 reveal-scale" style="border:1px solid var(--warm-10);">
+
+      <!-- Featured -->
+      <div class="lg:col-span-2 p-10 lg:p-14 flex flex-col justify-between" style="border-right:1px solid var(--warm-10);">
+        <!-- Quote mark -->
+        <div class="serif mb-6" style="font-size:6rem;line-height:.7;color:var(--gold);opacity:.3;font-weight:400;">"</div>
+        <p class="serif italic leading-relaxed mb-8" style="font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:400;color:var(--text-bright);line-height:1.5;">
+          I have stayed at Aman, at Six Senses, at the finest properties across four continents. None of them came close to the sensation of waking up at The Aurelia with the Aegean spread beneath my terrace like a living painting. This is not a hotel. It is a state of being.
+        </p>
+        <div class="flex items-center justify-between" style="border-top:1px solid var(--warm-10);padding-top:24px;">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium" style="background:linear-gradient(135deg,#c8a96e,#8a6d3a);color:var(--black);">CM</div>
+            <div>
+              <p class="font-medium text-sm" style="color:var(--cream);">Catherine Moreau</p>
+              <p class="text-xs font-light mt-0.5" style="color:var(--text-dim);">Paris, France — Caldera Suite, June 2024</p>
+            </div>
+          </div>
+          <div class="hidden sm:flex gap-0.5" style="color:var(--gold);">
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side stack -->
+      <div class="flex flex-col">
+        <div class="p-8 flex-1" style="border-bottom:1px solid var(--warm-10);">
+          <div class="serif mb-4" style="font-size:3rem;line-height:.7;color:var(--gold);opacity:.3;">"</div>
+          <p class="font-light italic leading-relaxed mb-6 text-sm" style="color:var(--text-mid);">
+            The silence here is unlike anywhere else. You hear only the wind and the sea. The staff remembered my name from a visit two years prior. Extraordinary.
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-medium" style="background:var(--charcoal);border:1px solid var(--warm-20);color:var(--gold);">JK</div>
+            <div>
+              <p class="text-xs font-medium" style="color:var(--cream);">James Kiriakis</p>
+              <p class="text-xs font-light" style="color:var(--text-dim);">New York — Penthouse</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-8 flex-1">
+          <div class="serif mb-4" style="font-size:3rem;line-height:.7;color:var(--gold);opacity:.3;">"</div>
+          <p class="font-light italic leading-relaxed mb-6 text-sm" style="color:var(--text-mid);">
+            Our honeymoon was beyond imagination. The team arranged a private sunset dinner on the caldera's edge. We cried. We laughed. We never wanted to leave.
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-medium" style="background:var(--charcoal);border:1px solid var(--warm-20);color:var(--gold);">AL</div>
+            <div>
+              <p class="text-xs font-medium" style="color:var(--cream);">Aiko &amp; Lucas</p>
+              <p class="text-xs font-light" style="color:var(--text-dim);">Tokyo — Cave Sanctuary</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CTA — Full-bleed cinematic with gold accent
+══════════════════════════════════════════ -->
+<section class="relative overflow-hidden lg:pl-[80px]" style="min-height:70vh;display:flex;align-items:center;background:var(--black);">
+
+  <!-- Background glow center -->
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <div style="width:800px;height:500px;background:radial-gradient(ellipse,rgba(200,169,110,0.09) 0%,transparent 65%);filter:blur(60px);"></div>
+  </div>
+
+  <!-- Diagonal rule lines -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.025]">
+    <svg class="w-full h-full" viewBox="0 0 1440 600" preserveAspectRatio="none">
+      <line x1="0" y1="0" x2="1440" y2="600" stroke="var(--cream)" stroke-width="1"/>
+      <line x1="0" y1="100" x2="1440" y2="700" stroke="var(--cream)" stroke-width="1"/>
+      <line x1="0" y1="-100" x2="1440" y2="500" stroke="var(--cream)" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <!-- Roman numeral watermark -->
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden" style="opacity:.02;">
+    <span class="serif" style="font-size:50vw;font-weight:900;color:var(--cream);user-select:none;line-height:1;">III</span>
+  </div>
+
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-8 lg:px-16 py-40">
+    <div class="max-w-3xl mx-auto text-center reveal">
+      <!-- Ornamental top -->
+      <div class="flex items-center justify-center gap-5 mb-10">
+        <div style="height:1px;width:60px;background:linear-gradient(90deg,transparent,var(--gold));"></div>
+        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5" style="color:var(--gold)">
+          <path d="M12 2L14.5 9H22L16 13.5L18.5 20.5L12 16L5.5 20.5L8 13.5L2 9H9.5L12 2Z" stroke="currentColor" stroke-width="1" fill="rgba(200,169,110,0.1)"/>
+        </svg>
+        <div style="height:1px;width:60px;background:linear-gradient(90deg,var(--gold),transparent);"></div>
+      </div>
+
+      <h2 class="serif mb-6" style="font-size:clamp(2.5rem,6vw,5.5rem);font-weight:400;line-height:1;letter-spacing:-.01em;color:var(--cream);">
+        Your Story<br/>Begins Here.
+      </h2>
+      <p class="font-light leading-relaxed mb-12 mx-auto" style="font-size:16px;color:var(--text-mid);max-width:480px;">
+        The Aurelia welcomes only 42 guests at a time — ensuring a solitude that money alone cannot guarantee. Reserve your sanctuary while availability remains.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 items-center justify-center mb-10">
+        <a href="#" class="px-10 py-4 text-xs font-medium tracking-[.22em] uppercase transition-all duration-300 hover:opacity-90 hover:scale-[1.02]"
+           style="background:var(--gold);color:var(--black);min-width:200px;text-align:center;">
+          Reserve Your Suite
+        </a>
+        <a href="#contact" class="px-10 py-4 text-xs font-medium tracking-[.22em] uppercase transition-colors duration-300" style="border:1px solid var(--warm-20);color:var(--text-mid);min-width:200px;text-align:center;"
+           onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--warm-20)';this.style.color='var(--text-mid)'">
+          Enquire Now
+        </a>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="flex flex-wrap items-center justify-center gap-6">
+        <span class="text-xs font-light tracking-[.15em] uppercase" style="color:var(--text-dim);">Forbes 5-Star</span>
+        <span style="color:var(--warm-20);">·</span>
+        <span class="text-xs font-light tracking-[.15em] uppercase" style="color:var(--text-dim);">Condé Nast #1</span>
+        <span style="color:var(--warm-20);">·</span>
+        <span class="text-xs font-light tracking-[.15em] uppercase" style="color:var(--text-dim);">1★ Michelin Elysium</span>
+        <span style="color:var(--warm-20);">·</span>
+        <span class="text-xs font-light tracking-[.15em] uppercase" style="color:var(--text-dim);">Private Beach Access</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CONTACT
+══════════════════════════════════════════ -->
+<section id="contact" class="relative py-24 overflow-hidden lg:pl-[80px]" style="background:var(--charcoal);">
+  <div class="max-w-7xl mx-auto px-8 lg:px-16">
+    <div class="grid lg:grid-cols-2 gap-16 items-start reveal">
+
+      <!-- Left info -->
+      <div>
+        <div class="eyebrow mb-6">
+          <span class="gold-line"></span>
+          Contact &amp; Location
+        </div>
+        <h2 class="serif mb-8" style="font-size:clamp(1.8rem,3.5vw,3rem);font-weight:400;color:var(--cream);">
+          We Are Here<br/>for You
+        </h2>
+        <p class="font-light leading-relaxed mb-10" style="font-size:15px;color:var(--text-mid);max-width:380px;">
+          Our Guest Relations team is available 24 hours a day, every day of the year. Reach us by phone, email, or messenger — we typically respond within 15 minutes.
+        </p>
+
+        <div class="space-y-6">
+          <div class="flex items-start gap-5" style="border-top:1px solid var(--warm-10);padding-top:20px;">
+            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0" style="border:1px solid var(--warm-20);">
+              <svg class="w-3.5 h-3.5" style="color:var(--gold);" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium tracking-[.15em] uppercase mb-1" style="color:var(--gold);">Address</p>
+              <p class="font-light text-sm" style="color:var(--text-mid);">Imerovigli, Santorini 847 00<br/>Cyclades, Greece</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-5" style="border-top:1px solid var(--warm-10);padding-top:20px;">
+            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0" style="border:1px solid var(--warm-20);">
+              <svg class="w-3.5 h-3.5" style="color:var(--gold);" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium tracking-[.15em] uppercase mb-1" style="color:var(--gold);">Phone</p>
+              <p class="font-light text-sm" style="color:var(--text-mid);">+30 22860 28000<br/>24 / 7 Concierge Line</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-5" style="border-top:1px solid var(--warm-10);padding-top:20px;">
+            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0" style="border:1px solid var(--warm-20);">
+              <svg class="w-3.5 h-3.5" style="color:var(--gold);" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium tracking-[.15em] uppercase mb-1" style="color:var(--gold);">Email</p>
+              <p class="font-light text-sm" style="color:var(--text-mid);">reservations@theaurelia.com<br/>concierge@theaurelia.com</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right form -->
+      <div style="border:1px solid var(--warm-10);padding:40px;">
+        <h3 class="serif mb-6" style="font-size:1.4rem;font-weight:400;color:var(--cream);">Send an Enquiry</h3>
+        <form class="space-y-5">
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-light tracking-[.18em] uppercase mb-2" style="color:var(--gold);">First Name</label>
+              <input type="text" placeholder="Elena" class="w-full bg-transparent py-3 px-0 text-sm font-light outline-none" style="border-bottom:1px solid var(--warm-20);color:var(--text-bright);font-family:inherit;" />
+            </div>
+            <div>
+              <label class="block text-xs font-light tracking-[.18em] uppercase mb-2" style="color:var(--gold);">Last Name</label>
+              <input type="text" placeholder="Christodoulou" class="w-full bg-transparent py-3 px-0 text-sm font-light outline-none" style="border-bottom:1px solid var(--warm-20);color:var(--text-bright);font-family:inherit;" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-light tracking-[.18em] uppercase mb-2" style="color:var(--gold);">Email Address</label>
+            <input type="email" placeholder="elena@example.com" class="w-full bg-transparent py-3 px-0 text-sm font-light outline-none" style="border-bottom:1px solid var(--warm-20);color:var(--text-bright);font-family:inherit;" />
+          </div>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-light tracking-[.18em] uppercase mb-2" style="color:var(--gold);">Arrival</label>
+              <input type="date" class="w-full bg-transparent py-3 px-0 text-sm font-light outline-none" style="border-bottom:1px solid var(--warm-20);color:var(--text-bright);font-family:inherit;" />
+            </div>
+            <div>
+              <label class="block text-xs font-light tracking-[.18em] uppercase mb-2" style="color:var(--gold);">Departure</label>
+              <input type="date" class="w-full bg-transparent py-3 px-0 text-sm font-light outline-none" style="border-bottom:1px solid var(--warm-20);color:var(--text-bright);font-family:inherit;" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-light tracking-[.18em] uppercase mb-2" style="color:var(--gold);">Message</label>
+            <textarea rows="3" placeholder="Tell us about your stay vision, special occasions, or preferences..." class="w-full bg-transparent py-3 px-0 text-sm font-light outline-none resize-none" style="border-bottom:1px solid var(--warm-20);color:var(--text-bright);font-family:inherit;"></textarea>
+          </div>
+          <button type="submit" class="w-full py-4 text-xs font-medium tracking-[.22em] uppercase mt-4 transition-opacity duration-300 hover:opacity-90"
+                  style="background:var(--gold);color:var(--black);">
+            Send Enquiry
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer class="relative overflow-hidden lg:pl-[80px]" style="background:var(--black);border-top:1px solid var(--warm-10);">
+
+  <!-- Top footer -->
+  <div class="max-w-7xl mx-auto px-8 lg:px-16 py-20">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14">
+
+      <!-- Brand -->
+      <div class="lg:col-span-1">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center" style="border:1px solid var(--warm-20);">
+            <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4" style="color:var(--gold)">
+              <path d="M12 2L14.5 9H22L16 13.5L18.5 20.5L12 16L5.5 20.5L8 13.5L2 9H9.5L12 2Z" stroke="currentColor" stroke-width="1" fill="rgba(200,169,110,0.1)"/>
+            </svg>
+          </div>
+          <span class="serif" style="font-size:18px;font-weight:400;color:var(--cream);letter-spacing:.06em;">The Aurelia</span>
+        </div>
+        <p class="font-light leading-relaxed mb-6 text-sm" style="color:var(--text-dim);max-width:220px;">
+          A collection of 42 suites perched above the Aegean Sea. Est. 1924.
+        </p>
+        <!-- Social links -->
+        <div class="flex gap-3">
+          <a href="#" class="w-8 h-8 flex items-center justify-center transition-colors duration-200" style="border:1px solid var(--warm-10);color:var(--text-dim);" onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--warm-10)';this.style.color='var(--text-dim)'">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center transition-colors duration-200" style="border:1px solid var(--warm-10);color:var(--text-dim);" onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--warm-10)';this.style.color='var(--text-dim)'">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" class="w-8 h-8 flex items-center justify-center transition-colors duration-200" style="border:1px solid var(--warm-10);color:var(--text-dim);" onmouseenter="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseleave="this.style.borderColor='var(--warm-10)';this.style.color='var(--text-dim)'">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.8a4.85 4.85 0 01-1.07-.11z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <p class="text-xs font-medium tracking-[.22em] uppercase mb-6" style="color:var(--gold);">The Hotel</p>
+        <ul class="space-y-4">
+          <li><a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Our Story</a></li>
+          <li><a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Awards &amp; Recognition</a></li>
+          <li><a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Sustainability</a></li>
+          <li><a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Press &amp; Media</a></li>
+          <li><a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Careers</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="text-xs font-medium tracking-[.22em] uppercase mb-6" style="color:var(--gold);">Experiences</p>
+        <ul class="space-y-4">
+          <li><a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Spa &amp; Wellness</a></li>
+          <li><a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Yacht Charters</a></li>
+          <li><a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Stargazing</a></li>
+          <li><a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Wine Tours</a></li>
+          <li><a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Helicopter Transfers</a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div>
+        <p class="text-xs font-medium tracking-[.22em] uppercase mb-6" style="color:var(--gold);">The Aurelia Journal</p>
+        <p class="text-xs font-light leading-relaxed mb-5" style="color:var(--text-dim);">
+          Stories of travel, taste, and tranquility — delivered to those who appreciate the extraordinary.
+        </p>
+        <div class="flex" style="border-bottom:1px solid var(--warm-20);">
+          <input type="email" placeholder="your@email.com" class="flex-1 bg-transparent py-3 text-xs font-light outline-none" style="color:var(--text-bright);font-family:inherit;" />
+          <button class="px-3 text-xs transition-colors duration-200" style="color:var(--gold);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--gold)'">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div style="border-top:1px solid var(--warm-10);">
+    <div class="max-w-7xl mx-auto px-8 lg:px-16 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-xs font-light" style="color:var(--text-dim);">© 2025 The Aurelia. All rights reserved. Imerovigli, Santorini, Greece.</p>
+      <div class="flex gap-6">
+        <a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Privacy Policy</a>
+        <a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Terms</a>
+        <a href="#" class="text-xs font-light transition-colors duration-200" style="color:var(--text-dim);" onmouseenter="this.style.color='var(--cream)'" onmouseleave="this.style.color='var(--text-dim)'">Cookie Settings</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Custom Cursor ──
+const dot  = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+window.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left  = mx + 'px';
+  dot.style.top   = my + 'px';
+});
+
+(function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+
+document.querySelectorAll('a,button,input,select,textarea,[data-hover]').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+});
+
+// ── Mobile Menu ──
+const menuBtn   = document.getElementById('menu-btn');
+const menuClose = document.getElementById('menu-close');
+const mobileMenu = document.getElementById('mobile-menu');
+
+function openMenu() {
+  mobileMenu.style.opacity = '1';
+  mobileMenu.style.pointerEvents = 'auto';
+}
+function closeMenu() {
+  mobileMenu.style.opacity = '0';
+  mobileMenu.style.pointerEvents = 'none';
+}
+if (menuBtn)   menuBtn.addEventListener('click', openMenu);
+if (menuClose) menuClose.addEventListener('click', closeMenu);
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+// ── Scroll Reveal ──
+const revealSelectors = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-stagger';
+const revealEls = document.querySelectorAll(revealSelectors);
+
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+revealEls.forEach(el => revealObs.observe(el));
+
+// ── Side Nav Active ──
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.getAttribute('id');
+      navLinks.forEach(link => {
+        const isActive = link.getAttribute('href') === '#' + id;
+        link.style.color = isActive ? 'var(--gold)' : 'var(--text-dim)';
+      });
+    }
+  });
+}, { threshold: 0.5 });
+
+sections.forEach(s => navObs.observe(s));
+
+// ── Dining Tabs ──
+const diningTabs   = document.querySelectorAll('.dining-tab');
+const diningPanels = document.querySelectorAll('.dining-panel');
+
+diningTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.target;
+
+    // Update tab styles
+    diningTabs.forEach(t => {
+      t.style.background = 'var(--charcoal2)';
+      t.style.color      = 'var(--text-dim)';
+      t.style.borderTop  = '1px solid var(--warm-10)';
+    });
+    tab.style.background = 'var(--gold)';
+    tab.style.color      = 'var(--black)';
+    tab.style.borderTop  = 'none';
+
+    // Show panel
+    diningPanels.forEach(p => p.style.display = 'none');
+    const panel = document.getElementById(target);
+    if (panel) panel.style.display = 'block';
+  });
+});
+
+// ── Room Scroll Arrows ──
+const roomsScroll = document.getElementById('rooms-scroll');
+const roomsPrev   = document.getElementById('rooms-prev');
+const roomsNext   = document.getElementById('rooms-next');
+const SCROLL_AMT  = 460;
+
+if (roomsPrev) roomsPrev.addEventListener('click', () => {
+  roomsScroll.scrollBy({ left: -SCROLL_AMT, behavior: 'smooth' });
+});
+if (roomsNext) roomsNext.addEventListener('click', () => {
+  roomsScroll.scrollBy({ left:  SCROLL_AMT, behavior: 'smooth' });
+});
+
+// ── Sidenav shrink / transparency on scroll ──
+const sidenav   = document.getElementById('sidenav');
+const mobileNav = document.getElementById('mobile-nav');
+
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY > 80;
+  if (sidenav) {
+    sidenav.style.background = scrolled
+      ? 'rgba(10,8,6,0.92)'
+      : 'rgba(10,8,6,0.60)';
+  }
+  if (mobileNav) {
+    mobileNav.style.background = scrolled
+      ? 'rgba(10,8,6,0.95)'
+      : 'rgba(10,8,6,0.85)';
+  }
+}, { passive: true });
+
+// ── Smooth scroll for anchor links ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
