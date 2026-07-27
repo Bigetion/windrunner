@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Axel Rein — Product Designer & Creative Dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>html{opacity:0;transition:opacity .3s ease}</style>
+  <script type="module">
+    import { windrunner } from "../dist/index.esm.js";
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
+  </script>
+  <style>
+    /* ── Variables ── */
+    :root {
+      --void:    #080a08;
+      --surface: #0d100d;
+      --panel:   #111411;
+      --card:    #161a16;
+      --card2:   #1c201c;
+      --lime:    #a8ff3e;
+      --lime2:   #c5ff7a;
+      --lime3:   #dfffb0;
+      --lime-dim: rgba(168,255,62,.12);
+      --lime-glow:rgba(168,255,62,.08);
+      --border:  rgba(168,255,62,.12);
+      --border2: rgba(168,255,62,.28);
+      --ink:     #e8ede0;
+      --ink2:    #c4cdb8;
+      --muted:   rgba(196,205,184,.45);
+      --mono:    'JetBrains Mono', 'Courier New', monospace;
+      --serif:   'Fraunces', Georgia, serif;
+      --sans:    'Inter', system-ui, sans-serif;
+      --sidebar: 340px;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; height: 100%; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--void);
+      color: var(--ink);
+      overflow: hidden;
+      height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      cursor: none; /* custom cursor */
+    }
+
+    /* ── Custom cursor ── */
+    #cursor {
+      position: fixed; z-index: 9999; pointer-events: none;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--lime);
+      transform: translate(-50%,-50%);
+      transition: width .2s, height .2s, opacity .2s;
+      mix-blend-mode: difference;
+    }
+    #cursor-ring {
+      position: fixed; z-index: 9998; pointer-events: none;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid rgba(168,255,62,.5);
+      transform: translate(-50%,-50%);
+      transition: transform .12s ease-out, width .3s, height .3s, border-color .3s;
+    }
+    body:has(a:hover) #cursor,
+    body:has(button:hover) #cursor { width: 18px; height: 18px; }
+    body:has(a:hover) #cursor-ring,
+    body:has(button:hover) #cursor-ring { width: 56px; height: 56px; border-color: var(--lime); }
+
+    /* ── Split layout ── */
+    #app {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* LEFT SIDEBAR — fixed, full height */
+    #sidebar {
+      width: var(--sidebar);
+      flex-shrink: 0;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+      position: relative;
+      z-index: 10;
+    }
+    #sidebar::-webkit-scrollbar { width: 0; }
+
+    /* RIGHT PANEL — scrollable */
+    #main {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+    #main::-webkit-scrollbar { width: 3px; }
+    #main::-webkit-scrollbar-track { background: var(--void); }
+    #main::-webkit-scrollbar-thumb { background: var(--lime); border-radius: 2px; }
+
+    /* ── Typography ── */
+    .mono  { font-family: var(--mono); }
+    .serif { font-family: var(--serif); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp    { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+    @keyframes blink     { 0%,100%{opacity:1} 49%{opacity:1} 50%,99%{opacity:0} }
+    @keyframes scanline  { 0%{transform:translateY(-100%)} 100%{transform:translateY(100vh)} }
+    @keyframes glitch    { 0%,100%{clip-path:inset(0 0 100% 0)} 10%{clip-path:inset(30% 0 40% 0)} 30%{clip-path:inset(70% 0 10% 0)} 50%{clip-path:inset(20% 0 60% 0)} 70%{clip-path:inset(50% 0 20% 0)} 90%{clip-path:inset(10% 0 80% 0)} }
+    @keyframes floatY    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    @keyframes pulseGlow { 0%,100%{box-shadow:0 0 0 0 rgba(168,255,62,.3)} 50%{box-shadow:0 0 20px 4px rgba(168,255,62,.15)} }
+    @keyframes spin      { to{transform:rotate(360deg)} }
+    @keyframes revealBar { from{width:0} to{width:var(--w)} }
+    @keyframes marqueeX  { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    @keyframes gridFade  { from{opacity:0;transform:scale(.97)} to{opacity:1;transform:none} }
+
+    .fu1{animation:fadeUp .6s .05s ease both}
+    .fu2{animation:fadeUp .6s .15s ease both}
+    .fu3{animation:fadeUp .6s .25s ease both}
+    .fu4{animation:fadeUp .6s .35s ease both}
+
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+    .reveal.visible{opacity:1;transform:none}
+    .reveal-scale{opacity:0;transform:scale(.96);transition:opacity .6s ease,transform .6s ease}
+    .reveal-scale.visible{opacity:1;transform:none}
+
+    /* ── Lime text ── */
+    .text-lime { color: var(--lime); }
+    .text-lime-grad {
+      background: linear-gradient(135deg, var(--lime3), var(--lime), var(--lime2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ── Terminal box ── */
+    .term-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: .5rem;
+      font-family: var(--mono);
+    }
+    .term-box .term-bar {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .6rem .8rem; border-bottom: 1px solid var(--border);
+    }
+    .term-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* ── Sidebar nav link ── */
+    .snav-link {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .7rem 1.5rem;
+      font-family: var(--mono); font-size: .72rem; font-weight: 400;
+      color: var(--muted); text-decoration: none; letter-spacing: .04em;
+      border-left: 2px solid transparent;
+      transition: color .2s, border-color .2s, background .2s;
+      position: relative;
+    }
+    .snav-link:hover, .snav-link.active {
+      color: var(--lime); border-left-color: var(--lime);
+      background: var(--lime-glow);
+    }
+    .snav-link .snav-num {
+      font-size: .6rem; opacity: .4;
+      min-width: 20px;
+    }
+
+    /* ── Card styles ── */
+    .proj-card {
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: .75rem;
+      overflow: hidden;
+      background: var(--card);
+      transition: border-color .3s, transform .3s, box-shadow .3s;
+      cursor: pointer;
+    }
+    .proj-card:hover {
+      border-color: var(--border2);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 50px rgba(168,255,62,.08);
+    }
+
+    /* ── Skill bar ── */
+    .skill-bar {
+      height: 2px; background: var(--card2); border-radius: 2px; overflow: hidden;
+    }
+    .skill-fill {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, var(--lime), var(--lime2));
+      width: 0;
+      transition: width 1.2s cubic-bezier(.25,.46,.45,.94);
+    }
+    .skill-fill.animated { width: var(--w); }
+
+    /* ── Section heading ── */
+    .sec-head {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    .sec-head .sec-num {
+      font-family: var(--mono); font-size: .65rem; color: var(--lime); opacity: .7;
+    }
+    .sec-head h2 {
+      font-family: var(--serif); font-weight: 300; color: var(--ink);
+    }
+    .sec-head::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, var(--border2), transparent);
+    }
+
+    /* ── Tag chips ── */
+    .chip {
+      display: inline-flex; align-items: center;
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .06em;
+      padding: .22rem .65rem; border-radius: .25rem;
+      background: var(--lime-dim); color: var(--lime2);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Scrollbar for main ── */
+    .hscroll { display:flex; gap:1.25rem; overflow-x:auto; padding-bottom:.75rem; }
+    .hscroll::-webkit-scrollbar { height: 2px; }
+    .hscroll::-webkit-scrollbar-thumb { background: var(--lime); border-radius: 2px; }
+
+    /* ── Noise ── */
+    body::before {
+      content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+      opacity:.6;
+    }
+
+    /* ── Grid scan line effect ── */
+    #main::before {
+      content:'';
+      position:fixed; top:0; left:var(--sidebar); right:0;
+      height:2px; z-index:1; pointer-events:none;
+      background:linear-gradient(90deg,transparent,rgba(168,255,62,.06),transparent);
+      animation:scanline 8s linear infinite;
+    }
+
+    /* ── Thumb ── */
+    .thumb { width:100%;height:100%;object-fit:cover;display:block; }
+    i[data-lucide]{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;flex-shrink:0}
+
+    /* ── Mobile fallback ── */
+    @media (max-width: 768px) {
+      :root { --sidebar: 100%; }
+      body { overflow: auto; cursor: auto; }
+      #cursor, #cursor-ring { display: none; }
+      #app { flex-direction: column; height: auto; overflow: visible; }
+      #sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+      #main { height: auto; overflow: visible; }
+    }
+
+    /* ── Input/textarea ── */
+    input, textarea { font-family: var(--mono); outline: none; }
+    input:focus, textarea:focus {
+      border-color: var(--lime) !important;
+      box-shadow: 0 0 0 3px rgba(168,255,62,.1);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Custom cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ══════════════════════════════════════════
+     APP WRAPPER — split layout
+══════════════════════════════════════════ -->
+<div id="app">
+
+<!-- ══════════════════════════════════════════
+     LEFT SIDEBAR
+══════════════════════════════════════════ -->
+<aside id="sidebar">
+
+  <!-- Top: identity block -->
+  <div class="px-7 pt-10 pb-7 border-b" style="border-color:var(--border)">
+
+    <!-- Avatar -->
+    <div class="relative w-16 h-16 mb-5 fu1">
+      <div class="w-16 h-16 rounded-2xl overflow-hidden" style="border:1.5px solid var(--border2)">
+        <img src="https://picsum.photos/seed/designer-portrait-male/64/64" alt="Axel" class="thumb" style="filter:saturate(.7) brightness(.9)" />
+      </div>
+      <!-- Online dot -->
+      <div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 flex items-center justify-center" style="background:var(--void);border-color:var(--void)">
+        <div class="w-2.5 h-2.5 rounded-full" style="background:var(--lime);animation:pulseGlow 2s infinite"></div>
+      </div>
+    </div>
+
+    <!-- Name -->
+    <h1 class="serif fu2" style="font-size:1.55rem;font-weight:300;color:var(--ink);line-height:1.1;letter-spacing:-.01em">
+      Axel Rein
+    </h1>
+
+    <!-- Typed role -->
+    <div class="mono mt-2 fu3" style="font-size:.72rem;color:var(--lime);letter-spacing:.06em">
+      <span id="typed-text"></span><span class="mono" style="animation:blink 1s step-end infinite;color:var(--lime)">▌</span>
+    </div>
+
+    <!-- Location + timezone -->
+    <div class="flex items-center gap-3 mt-4 fu4">
+      <span class="flex items-center gap-1.5 text-xs mono" style="color:var(--muted)">
+        <i data-lucide="map-pin" style="width:11px;height:11px;color:var(--lime)"></i> Jakarta, ID
+      </span>
+      <span class="w-px h-3" style="background:var(--border)"></span>
+      <span class="text-xs mono" style="color:var(--muted)" id="local-time">--:-- WIB</span>
+    </div>
+
+    <!-- Availability badge -->
+    <div class="mt-5 fu4">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border" style="background:rgba(168,255,62,.07);border-color:var(--border2)">
+        <div class="w-2 h-2 rounded-full" style="background:var(--lime);animation:pulseGlow 1.8s infinite"></div>
+        <span class="mono text-xs" style="color:var(--lime2);letter-spacing:.08em">Available for work</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Middle: nav links -->
+  <nav class="py-4 flex-1">
+    <div class="px-5 mb-2">
+      <p class="mono text-xs uppercase tracking-widest" style="color:rgba(196,205,184,.2);font-size:.58rem">Navigation</p>
+    </div>
+    <a href="#hero"       class="snav-link active"    data-section="hero">
+      <span class="snav-num">01</span>
+      <i data-lucide="terminal"    style="width:13px;height:13px"></i> Overview
+    </a>
+    <a href="#about"      class="snav-link"           data-section="about">
+      <span class="snav-num">02</span>
+      <i data-lucide="user"        style="width:13px;height:13px"></i> About & Skills
+    </a>
+    <a href="#projects"   class="snav-link"           data-section="projects">
+      <span class="snav-num">03</span>
+      <i data-lucide="layers"      style="width:13px;height:13px"></i> Projects
+    </a>
+    <a href="#works"      class="snav-link"           data-section="works">
+      <span class="snav-num">04</span>
+      <i data-lucide="grid"        style="width:13px;height:13px"></i> Selected Works
+    </a>
+    <a href="#experience" class="snav-link"           data-section="experience">
+      <span class="snav-num">05</span>
+      <i data-lucide="briefcase"   style="width:13px;height:13px"></i> Experience
+    </a>
+    <a href="#contact"    class="snav-link"           data-section="contact">
+      <span class="snav-num">06</span>
+      <i data-lucide="send"        style="width:13px;height:13px"></i> Contact
+    </a>
+
+    <!-- Divider -->
+    <div class="mx-5 my-4 border-t" style="border-color:var(--border)"></div>
+
+    <!-- Stack tags -->
+    <div class="px-5 mb-3">
+      <p class="mono text-xs uppercase tracking-widest mb-3" style="color:rgba(196,205,184,.2);font-size:.58rem">Stack</p>
+      <div class="flex flex-wrap gap-1.5">
+        <span class="chip">Figma</span>
+        <span class="chip">React</span>
+        <span class="chip">TypeScript</span>
+        <span class="chip">Next.js</span>
+        <span class="chip">Tailwind</span>
+        <span class="chip">Framer</span>
+        <span class="chip">Three.js</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Bottom: stats + socials -->
+  <div class="border-t px-5 py-5" style="border-color:var(--border)">
+
+    <!-- Mini stats -->
+    <div class="grid grid-cols-3 gap-2 mb-5">
+      <div class="term-box p-3 text-center">
+        <p class="serif font-semibold" style="font-size:1.3rem;color:var(--lime);line-height:1">6</p>
+        <p class="mono text-xs mt-1" style="color:var(--muted);font-size:.58rem">Years</p>
+      </div>
+      <div class="term-box p-3 text-center">
+        <p class="serif font-semibold" style="font-size:1.3rem;color:var(--lime);line-height:1">48</p>
+        <p class="mono text-xs mt-1" style="color:var(--muted);font-size:.58rem">Projects</p>
+      </div>
+      <div class="term-box p-3 text-center">
+        <p class="serif font-semibold" style="font-size:1.3rem;color:var(--lime);line-height:1">12</p>
+        <p class="mono text-xs mt-1" style="color:var(--muted);font-size:.58rem">Clients</p>
+      </div>
+    </div>
+
+    <!-- Social links -->
+    <div class="flex items-center gap-2">
+      <a href="#" class="w-9 h-9 rounded-lg flex items-center justify-center border transition-all hover:border-lime-400 hover:bg-lime-400/10" style="border-color:var(--border);color:var(--muted)">
+        <i data-lucide="github"   style="width:15px;height:15px"></i>
+      </a>
+      <a href="#" class="w-9 h-9 rounded-lg flex items-center justify-center border transition-all hover:border-lime-400 hover:bg-lime-400/10" style="border-color:var(--border);color:var(--muted)">
+        <i data-lucide="twitter"  style="width:15px;height:15px"></i>
+      </a>
+      <a href="#" class="w-9 h-9 rounded-lg flex items-center justify-center border transition-all hover:border-lime-400 hover:bg-lime-400/10" style="border-color:var(--border);color:var(--muted)">
+        <i data-lucide="linkedin" style="width:15px;height:15px"></i>
+      </a>
+      <a href="#" class="w-9 h-9 rounded-lg flex items-center justify-center border transition-all hover:border-lime-400 hover:bg-lime-400/10" style="border-color:var(--border);color:var(--muted)">
+        <i data-lucide="dribbble" style="width:15px;height:15px"></i>
+      </a>
+      <!-- Download CV -->
+      <a href="#" class="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-lg border text-xs mono transition-all hover:border-lime-400 hover:text-lime-400" style="border-color:var(--border);color:var(--muted)">
+        <i data-lucide="download" style="width:12px;height:12px"></i> CV.pdf
+      </a>
+    </div>
+  </div>
+
+</aside>
+<!-- end sidebar -->
+
+<!-- ══════════════════════════════════════════
+     RIGHT MAIN PANEL
+══════════════════════════════════════════ -->
+<main id="main">
+
+<!-- ═══ HERO ═══ -->
+<section id="hero" data-section="hero" class="relative min-h-screen flex flex-col justify-center px-14 py-20 overflow-hidden" style="background:var(--void)">
+
+  <!-- Background: subtle grid -->
+  <div class="absolute inset-0 pointer-events-none" style="background-image:linear-gradient(rgba(168,255,62,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(168,255,62,.03) 1px,transparent 1px);background-size:48px 48px"></div>
+
+  <!-- Top-right floating terminal window -->
+  <div class="absolute top-12 right-12 term-box w-64 fu3 hidden lg:block" style="animation-delay:.6s">
+    <div class="term-bar">
+      <div class="term-dot" style="background:#ff5f57"></div>
+      <div class="term-dot" style="background:#febc2e"></div>
+      <div class="term-dot" style="background:#28c840"></div>
+      <span class="mono text-xs ml-2" style="color:var(--muted)">status.sh</span>
+    </div>
+    <div class="p-4 space-y-1">
+      <p class="mono text-xs" style="color:var(--muted)"><span style="color:var(--lime)">$</span> whoami</p>
+      <p class="mono text-xs" style="color:var(--ink2)">axel.rein</p>
+      <p class="mono text-xs mt-2" style="color:var(--muted)"><span style="color:var(--lime)">$</span> status</p>
+      <p class="mono text-xs" style="color:var(--lime)">▶ open to opportunities</p>
+      <p class="mono text-xs mt-2" style="color:var(--muted)"><span style="color:var(--lime)">$</span> ping latest_work</p>
+      <p class="mono text-xs" style="color:var(--ink2)">200 OK — shipped 3 days ago</p>
+    </div>
+  </div>
+
+  <!-- Glow orb -->
+  <div class="absolute pointer-events-none" style="width:500px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(168,255,62,.05) 0%,transparent 65%);top:0;right:15%;filter:blur(80px)"></div>
+
+  <div class="relative z-10" style="max-width:680px">
+
+    <!-- Eyebrow -->
+    <div class="flex items-center gap-3 mb-8 fu1">
+      <div class="h-px w-8" style="background:var(--lime)"></div>
+      <span class="mono text-xs" style="color:var(--lime);letter-spacing:.18em">PRODUCT DESIGNER & CREATIVE DEV</span>
+    </div>
+
+    <!-- Main headline -->
+    <h1 class="serif fu2" style="font-size:clamp(3.5rem,6vw,6.5rem);font-weight:300;line-height:.95;color:var(--ink);letter-spacing:-.02em">
+      Design that<br/>
+      <em style="color:var(--lime);font-style:italic">thinks</em><br/>
+      <span style="color:var(--muted);font-weight:300">and ships.</span>
+    </h1>
+
+    <!-- Sub -->
+    <p class="fu3 mt-8 leading-relaxed" style="font-size:1rem;color:var(--muted);max-width:460px;font-weight:300">
+      I bridge the gap between design and engineering — crafting digital products that feel effortless to use and are built to last. 6 years, 48 projects, zero boring work.
+    </p>
+
+    <!-- CTAs -->
+    <div class="flex flex-wrap gap-4 mt-10 fu4">
+      <a href="#projects" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg mono text-xs font-medium uppercase tracking-widest transition-all hover:scale-[1.02]" style="background:var(--lime);color:var(--void);letter-spacing:.1em">
+        <i data-lucide="layers" style="width:14px;height:14px"></i> View Projects
+      </a>
+      <a href="#contact" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg mono text-xs font-medium uppercase tracking-widest border transition-all hover:border-lime-400 hover:text-lime-400" style="border-color:var(--border2);color:var(--ink2)">
+        <i data-lucide="mail" style="width:14px;height:14px"></i> Get in Touch
+      </a>
+    </div>
+
+    <!-- Marquee tech strip -->
+    <div class="mt-16 overflow-hidden border-t border-b py-4" style="border-color:var(--border)">
+      <div style="display:inline-block;white-space:nowrap;animation:marqueeX 20s linear infinite">
+        <span class="mono text-xs" style="color:rgba(168,255,62,.35);letter-spacing:.15em">
+          &nbsp;✦ UX Design &nbsp;✦ Product Strategy &nbsp;✦ Frontend Dev &nbsp;✦ Design Systems &nbsp;✦ Prototyping &nbsp;✦ Motion Design &nbsp;✦ User Research &nbsp;✦ Accessibility &nbsp;✦ UX Design &nbsp;✦ Product Strategy &nbsp;✦ Frontend Dev &nbsp;✦ Design Systems &nbsp;✦ Prototyping &nbsp;✦ Motion Design &nbsp;✦ User Research &nbsp;✦ Accessibility &nbsp;
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div class="absolute bottom-8 right-12 flex flex-col items-center gap-2">
+    <div class="w-px h-12" style="background:linear-gradient(to bottom,var(--lime),transparent)"></div>
+    <span class="mono text-xs" style="color:rgba(168,255,62,.35);writing-mode:vertical-rl;letter-spacing:.1em">SCROLL</span>
+  </div>
+</section>
+
+<!-- ═══ ABOUT + SKILLS ═══ -->
+<section id="about" data-section="about" class="px-14 py-24 border-t" style="background:var(--surface);border-color:var(--border)">
+
+  <div class="sec-head reveal">
+    <span class="sec-num">02 /</span>
+    <h2 style="font-size:clamp(1.8rem,2.5vw,2.4rem)">About & Skills</h2>
+  </div>
+
+  <div class="grid lg:grid-cols-[1fr_1fr] gap-16 items-start">
+
+    <!-- Left: bio -->
+    <div class="reveal">
+      <!-- Terminal bio box -->
+      <div class="term-box mb-8">
+        <div class="term-bar">
+          <div class="term-dot" style="background:#ff5f57"></div>
+          <div class="term-dot" style="background:#febc2e"></div>
+          <div class="term-dot" style="background:#28c840"></div>
+          <span class="mono text-xs ml-2" style="color:var(--muted)">bio.md</span>
+        </div>
+        <div class="p-6">
+          <p class="mono text-xs mb-2" style="color:var(--lime)">## About Me</p>
+          <div class="space-y-4 text-sm leading-relaxed" style="color:var(--ink2);font-weight:300">
+            <p>I'm a product designer and creative developer based in Jakarta, obsessed with the space where visual craft meets technical precision. I don't just hand off designs — I build them.</p>
+            <p>My work spans fintech platforms, SaaS dashboards, consumer apps, and brand identities. I care deeply about the edge cases, the micro-interactions, and the moments users don't notice — because those are the ones they feel.</p>
+            <p style="color:var(--muted)">
+              <span style="color:var(--lime)">Currently:</span> Senior Product Designer @ Studio Kira<br/>
+              <span style="color:var(--lime)">Previously:</span> Tokopedia, Gojek, Telkomsel Digital
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photo collage -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="rounded-xl overflow-hidden" style="height:180px;border:1px solid var(--border)">
+          <img src="https://picsum.photos/seed/workspace-desk-dark/300/180" alt="Workspace" class="thumb" style="filter:saturate(.5) brightness(.7)" />
+        </div>
+        <div class="rounded-xl overflow-hidden" style="height:180px;border:1px solid var(--border)">
+          <img src="https://picsum.photos/seed/design-figma-screen/300/180" alt="Work" class="thumb" style="filter:saturate(.5) brightness(.7)" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: skill bars -->
+    <div class="reveal">
+      <p class="mono text-xs uppercase tracking-widest mb-8" style="color:rgba(168,255,62,.5);letter-spacing:.18em">// Proficiency</p>
+
+      <div class="space-y-7" id="skill-list">
+
+        <div class="skill-item">
+          <div class="flex items-center justify-between mb-2">
+            <span class="mono text-xs" style="color:var(--ink2)">UX / Product Design</span>
+            <span class="mono text-xs" style="color:var(--lime)">96%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:96%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="flex items-center justify-between mb-2">
+            <span class="mono text-xs" style="color:var(--ink2)">React / Next.js</span>
+            <span class="mono text-xs" style="color:var(--lime)">88%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:88%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="flex items-center justify-between mb-2">
+            <span class="mono text-xs" style="color:var(--ink2)">Design Systems</span>
+            <span class="mono text-xs" style="color:var(--lime)">93%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:93%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="flex items-center justify-between mb-2">
+            <span class="mono text-xs" style="color:var(--ink2)">Motion / Framer</span>
+            <span class="mono text-xs" style="color:var(--lime)">80%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:80%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="flex items-center justify-between mb-2">
+            <span class="mono text-xs" style="color:var(--ink2)">TypeScript</span>
+            <span class="mono text-xs" style="color:var(--lime)">84%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:84%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="flex items-center justify-between mb-2">
+            <span class="mono text-xs" style="color:var(--ink2)">User Research</span>
+            <span class="mono text-xs" style="color:var(--lime)">78%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:78%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="flex items-center justify-between mb-2">
+            <span class="mono text-xs" style="color:var(--ink2)">Three.js / WebGL</span>
+            <span class="mono text-xs" style="color:var(--lime)">65%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" style="--w:65%"></div></div>
+        </div>
+      </div>
+
+      <!-- Tools list -->
+      <div class="mt-10 pt-8 border-t" style="border-color:var(--border)">
+        <p class="mono text-xs uppercase tracking-widest mb-5" style="color:rgba(168,255,62,.5)">// Tools</p>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="term-box p-3 flex items-center gap-2">
+            <i data-lucide="figma"  style="width:14px;height:14px;color:var(--lime)"></i>
+            <span class="mono text-xs" style="color:var(--ink2)">Figma</span>
+          </div>
+          <div class="term-box p-3 flex items-center gap-2">
+            <i data-lucide="code-2" style="width:14px;height:14px;color:var(--lime)"></i>
+            <span class="mono text-xs" style="color:var(--ink2)">VS Code</span>
+          </div>
+          <div class="term-box p-3 flex items-center gap-2">
+            <i data-lucide="box"    style="width:14px;height:14px;color:var(--lime)"></i>
+            <span class="mono text-xs" style="color:var(--ink2)">Framer</span>
+          </div>
+          <div class="term-box p-3 flex items-center gap-2">
+            <i data-lucide="git-branch" style="width:14px;height:14px;color:var(--lime)"></i>
+            <span class="mono text-xs" style="color:var(--ink2)">Git</span>
+          </div>
+          <div class="term-box p-3 flex items-center gap-2">
+            <i data-lucide="database"   style="width:14px;height:14px;color:var(--lime)"></i>
+            <span class="mono text-xs" style="color:var(--ink2)">Supabase</span>
+          </div>
+          <div class="term-box p-3 flex items-center gap-2">
+            <i data-lucide="triangle"   style="width:14px;height:14px;color:var(--lime)"></i>
+            <span class="mono text-xs" style="color:var(--ink2)">Vercel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROJECTS — horizontal scroll ═══ -->
+<section id="projects" data-section="projects" class="py-24 border-t overflow-hidden" style="background:var(--void);border-color:var(--border)">
+
+  <div class="px-14">
+    <div class="sec-head reveal">
+      <span class="sec-num">03 /</span>
+      <h2 style="font-size:clamp(1.8rem,2.5vw,2.4rem)">Projects</h2>
+    </div>
+    <p class="mono text-xs mb-10 reveal" style="color:var(--muted)">
+      <span style="color:var(--lime)">→</span> Drag or scroll to explore — 6 featured case studies
+    </p>
+  </div>
+
+  <!-- Horizontal scroll container — full bleed -->
+  <div class="hscroll px-14 pb-6 reveal">
+
+    <!-- Project card 1 -->
+    <div class="proj-card" style="width:360px;flex-shrink:0">
+      <div class="relative overflow-hidden" style="height:220px">
+        <img src="https://picsum.photos/seed/fintech-dashboard-dark/400/220" alt="Fintech" class="thumb transition-transform duration-700 hover:scale-105" style="filter:saturate(.6) brightness(.8)" />
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(8,10,8,.95) 0%,transparent 55%)"></div>
+        <div class="absolute top-4 left-4 flex gap-2">
+          <span class="chip">Fintech</span>
+          <span class="chip">UX</span>
+        </div>
+        <div class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--lime-dim);border:1px solid var(--border2)">
+          <i data-lucide="arrow-up-right" style="width:14px;height:14px;color:var(--lime)"></i>
+        </div>
+      </div>
+      <div class="p-6">
+        <p class="mono text-xs mb-2" style="color:var(--lime)">001 — 2024</p>
+        <h3 class="serif font-normal mb-3" style="font-size:1.2rem;color:var(--ink)">Koin — Investment Super App</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color:var(--muted);font-weight:300">End-to-end UX redesign of a 2M-user investment platform. Reduced onboarding drop-off by 34%.</p>
+        <div class="pt-4 border-t flex items-center justify-between" style="border-color:var(--border)">
+          <div class="flex gap-1.5">
+            <span class="chip" style="font-size:.58rem">Figma</span>
+            <span class="chip" style="font-size:.58rem">React</span>
+            <span class="chip" style="font-size:.58rem">Research</span>
+          </div>
+          <span class="mono text-xs" style="color:var(--muted)">6 months</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project card 2 -->
+    <div class="proj-card" style="width:360px;flex-shrink:0">
+      <div class="relative overflow-hidden" style="height:220px">
+        <img src="https://picsum.photos/seed/saas-platform-ui/400/220" alt="SaaS" class="thumb transition-transform duration-700 hover:scale-105" style="filter:saturate(.6) brightness(.8)" />
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(8,10,8,.95) 0%,transparent 55%)"></div>
+        <div class="absolute top-4 left-4 flex gap-2">
+          <span class="chip">SaaS</span>
+          <span class="chip">Design System</span>
+        </div>
+        <div class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--lime-dim);border:1px solid var(--border2)">
+          <i data-lucide="arrow-up-right" style="width:14px;height:14px;color:var(--lime)"></i>
+        </div>
+      </div>
+      <div class="p-6">
+        <p class="mono text-xs mb-2" style="color:var(--lime)">002 — 2024</p>
+        <h3 class="serif font-normal mb-3" style="font-size:1.2rem;color:var(--ink)">Orbit — B2B Analytics Dashboard</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color:var(--muted);font-weight:300">Built a scalable design system + 40-screen dashboard for a data analytics startup pre-Series B.</p>
+        <div class="pt-4 border-t flex items-center justify-between" style="border-color:var(--border)">
+          <div class="flex gap-1.5">
+            <span class="chip" style="font-size:.58rem">Design System</span>
+            <span class="chip" style="font-size:.58rem">Next.js</span>
+          </div>
+          <span class="mono text-xs" style="color:var(--muted)">4 months</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project card 3 -->
+    <div class="proj-card" style="width:360px;flex-shrink:0">
+      <div class="relative overflow-hidden" style="height:220px">
+        <img src="https://picsum.photos/seed/ecommerce-mobile-app/400/220" alt="E-com" class="thumb transition-transform duration-700 hover:scale-105" style="filter:saturate(.6) brightness(.8)" />
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(8,10,8,.95) 0%,transparent 55%)"></div>
+        <div class="absolute top-4 left-4 flex gap-2">
+          <span class="chip">Mobile</span>
+          <span class="chip">E-commerce</span>
+        </div>
+        <div class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--lime-dim);border:1px solid var(--border2)">
+          <i data-lucide="arrow-up-right" style="width:14px;height:14px;color:var(--lime)"></i>
+        </div>
+      </div>
+      <div class="p-6">
+        <p class="mono text-xs mb-2" style="color:var(--lime)">003 — 2023</p>
+        <h3 class="serif font-normal mb-3" style="font-size:1.2rem;color:var(--ink)">Laris — Social Commerce App</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color:var(--muted);font-weight:300">Designed a live-commerce mobile app for Indonesian SMEs. 50K downloads in first 3 weeks post-launch.</p>
+        <div class="pt-4 border-t flex items-center justify-between" style="border-color:var(--border)">
+          <div class="flex gap-1.5">
+            <span class="chip" style="font-size:.58rem">iOS/Android</span>
+            <span class="chip" style="font-size:.58rem">Prototyping</span>
+          </div>
+          <span class="mono text-xs" style="color:var(--muted)">3 months</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project card 4 -->
+    <div class="proj-card" style="width:360px;flex-shrink:0">
+      <div class="relative overflow-hidden" style="height:220px">
+        <img src="https://picsum.photos/seed/design-system-components/400/220" alt="System" class="thumb transition-transform duration-700 hover:scale-105" style="filter:saturate(.6) brightness(.8)" />
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(8,10,8,.95) 0%,transparent 55%)"></div>
+        <div class="absolute top-4 left-4 flex gap-2">
+          <span class="chip">Open Source</span>
+          <span class="chip">Dev</span>
+        </div>
+        <div class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--lime-dim);border:1px solid var(--border2)">
+          <i data-lucide="arrow-up-right" style="width:14px;height:14px;color:var(--lime)"></i>
+        </div>
+      </div>
+      <div class="p-6">
+        <p class="mono text-xs mb-2" style="color:var(--lime)">004 — 2023</p>
+        <h3 class="serif font-normal mb-3" style="font-size:1.2rem;color:var(--ink)">Stratum UI — Component Library</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color:var(--muted);font-weight:300">Open-source React + Tailwind component library. 1.4K GitHub stars, adopted by 200+ projects.</p>
+        <div class="pt-4 border-t flex items-center justify-between" style="border-color:var(--border)">
+          <div class="flex gap-1.5">
+            <span class="chip" style="font-size:.58rem">React</span>
+            <span class="chip" style="font-size:.58rem">Storybook</span>
+          </div>
+          <span class="mono text-xs" style="color:var(--muted)">Ongoing</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project card 5 -->
+    <div class="proj-card" style="width:360px;flex-shrink:0">
+      <div class="relative overflow-hidden" style="height:220px">
+        <img src="https://picsum.photos/seed/healthcare-app-design/400/220" alt="Health" class="thumb transition-transform duration-700 hover:scale-105" style="filter:saturate(.6) brightness(.8)" />
+        <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(8,10,8,.95) 0%,transparent 55%)"></div>
+        <div class="absolute top-4 left-4 flex gap-2">
+          <span class="chip">Health</span>
+          <span class="chip">UX Research</span>
+        </div>
+        <div class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--lime-dim);border:1px solid var(--border2)">
+          <i data-lucide="arrow-up-right" style="width:14px;height:14px;color:var(--lime)"></i>
+        </div>
+      </div>
+      <div class="p-6">
+        <p class="mono text-xs mb-2" style="color:var(--lime)">005 — 2022</p>
+        <h3 class="serif font-normal mb-3" style="font-size:1.2rem;color:var(--ink)">Sehat — Telemedicine Platform</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color:var(--muted);font-weight:300">UX lead for a telemedicine platform serving 500K patients. WCAG 2.1 AA compliant, full accessibility audit.</p>
+        <div class="pt-4 border-t flex items-center justify-between" style="border-color:var(--border)">
+          <div class="flex gap-1.5">
+            <span class="chip" style="font-size:.58rem">Accessibility</span>
+            <span class="chip" style="font-size:.58rem">Figma</span>
+          </div>
+          <span class="mono text-xs" style="color:var(--muted)">8 months</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project card 6 — "View All" -->
+    <div class="flex-shrink-0 flex items-center justify-center rounded-xl border cursor-pointer transition-all hover:border-lime-400/50" style="width:200px;border-color:var(--border);background:var(--card)">
+      <div class="text-center p-8">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style="background:var(--lime-dim);border:1px solid var(--border2)">
+          <i data-lucide="arrow-right" style="width:20px;height:20px;color:var(--lime)"></i>
+        </div>
+        <p class="mono text-xs" style="color:var(--lime);letter-spacing:.1em">View All</p>
+        <p class="mono text-xs mt-1" style="color:var(--muted)">48 projects</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SELECTED WORKS — asymmetric grid ═══ -->
+<section id="works" data-section="works" class="px-14 py-24 border-t" style="background:var(--surface);border-color:var(--border)">
+
+  <div class="sec-head reveal">
+    <span class="sec-num">04 /</span>
+    <h2 style="font-size:clamp(1.8rem,2.5vw,2.4rem)">Selected Works</h2>
+  </div>
+
+  <!-- Asymmetric 3-col grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+    <!-- Big wide card -->
+    <div class="lg:col-span-2 group relative rounded-xl overflow-hidden cursor-pointer reveal-scale" style="height:320px;border:1px solid var(--border)">
+      <img src="https://picsum.photos/seed/brand-identity-design/800/320" alt="Brand" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:saturate(.5) brightness(.65)" />
+      <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(8,10,8,.8) 0%,transparent 60%)"></div>
+      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="background:rgba(168,255,62,.04)"></div>
+      <div class="absolute top-5 left-5 right-5">
+        <div class="flex items-start justify-between">
+          <span class="chip">Brand Identity</span>
+          <div class="w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style="background:var(--lime);color:var(--void)">
+            <i data-lucide="arrow-up-right" style="width:14px;height:14px"></i>
+          </div>
+        </div>
+      </div>
+      <div class="absolute bottom-5 left-5 right-5">
+        <p class="mono text-xs mb-1" style="color:var(--lime)">Arkana — Brand System</p>
+        <h3 class="serif" style="font-size:1.35rem;color:var(--ink);font-weight:300">Full brand identity for a Jakarta-based fintech startup: logo, design tokens, motion language.</h3>
+      </div>
+    </div>
+
+    <!-- Tall right card -->
+    <div class="group relative rounded-xl overflow-hidden cursor-pointer reveal-scale" style="height:320px;border:1px solid var(--border)">
+      <img src="https://picsum.photos/seed/mobile-ui-prototype/400/320" alt="Mobile" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:saturate(.5) brightness(.65)" />
+      <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(8,10,8,.9) 0%,transparent 50%)"></div>
+      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style="background:rgba(168,255,62,.04)"></div>
+      <div class="absolute bottom-5 left-5 right-5">
+        <p class="mono text-xs mb-1" style="color:var(--lime)">Pulse — Mobile App</p>
+        <h3 class="serif" style="font-size:1.1rem;color:var(--ink);font-weight:300">Health tracking app UI with custom motion system.</h3>
+      </div>
+    </div>
+
+    <!-- Three small cards -->
+    <div class="group relative rounded-xl overflow-hidden cursor-pointer reveal" style="height:220px;border:1px solid var(--border)">
+      <img src="https://picsum.photos/seed/web3-interface-dark/400/220" alt="Web3" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:saturate(.5) brightness(.65)" />
+      <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(8,10,8,.9) 0%,transparent 55%)"></div>
+      <div class="absolute bottom-4 left-4 right-4">
+        <p class="mono text-xs mb-1" style="color:var(--lime)">Web3 Wallet UI</p>
+        <p class="serif text-sm" style="color:var(--ink2);font-weight:300">Crypto dashboard redesign</p>
+      </div>
+    </div>
+
+    <div class="group relative rounded-xl overflow-hidden cursor-pointer reveal" style="height:220px;border:1px solid var(--border)">
+      <img src="https://picsum.photos/seed/data-visualization-chart/400/220" alt="Data" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:saturate(.5) brightness(.65)" />
+      <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(8,10,8,.9) 0%,transparent 55%)"></div>
+      <div class="absolute bottom-4 left-4 right-4">
+        <p class="mono text-xs mb-1" style="color:var(--lime)">DataViz Component</p>
+        <p class="serif text-sm" style="color:var(--ink2);font-weight:300">Interactive chart library</p>
+      </div>
+    </div>
+
+    <div class="group relative rounded-xl overflow-hidden cursor-pointer reveal" style="height:220px;border:1px solid var(--border)">
+      <img src="https://picsum.photos/seed/editorial-website-design/400/220" alt="Editorial" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:saturate(.5) brightness(.65)" />
+      <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(8,10,8,.9) 0%,transparent 55%)"></div>
+      <div class="absolute bottom-4 left-4 right-4">
+        <p class="mono text-xs mb-1" style="color:var(--lime)">Editorial Platform</p>
+        <p class="serif text-sm" style="color:var(--ink2);font-weight:300">Long-form reading experience</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ EXPERIENCE TIMELINE ═══ -->
+<section id="experience" data-section="experience" class="px-14 py-24 border-t" style="background:var(--void);border-color:var(--border)">
+
+  <div class="sec-head reveal">
+    <span class="sec-num">05 /</span>
+    <h2 style="font-size:clamp(1.8rem,2.5vw,2.4rem)">Experience</h2>
+  </div>
+
+  <div class="grid lg:grid-cols-[1fr_1fr] gap-16">
+
+    <!-- Left: timeline -->
+    <div class="relative">
+      <!-- Vertical line -->
+      <div class="absolute left-3 top-0 bottom-0 w-px" style="background:linear-gradient(to bottom,var(--lime),var(--border),transparent)"></div>
+
+      <div class="space-y-10">
+
+        <!-- Job 1 -->
+        <div class="relative pl-10 reveal">
+          <div class="absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center" style="background:var(--lime);box-shadow:0 0 0 4px var(--void),0 0 0 5px var(--lime)">
+            <div class="w-2 h-2 rounded-full" style="background:var(--void)"></div>
+          </div>
+          <div class="flex items-start justify-between mb-2">
+            <div>
+              <h3 class="serif font-normal" style="font-size:1.05rem;color:var(--ink)">Senior Product Designer</h3>
+              <p class="mono text-xs mt-1" style="color:var(--lime)">Studio Kira</p>
+            </div>
+            <span class="mono text-xs px-2 py-1 rounded" style="background:var(--lime-dim);color:var(--lime2);white-space:nowrap">2023 — Now</span>
+          </div>
+          <p class="text-sm leading-relaxed" style="color:var(--muted);font-weight:300">Lead designer for 4 concurrent product squads. Built the company's first unified design system. Reduced design-to-dev handoff time by 40%.</p>
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            <span class="chip" style="font-size:.58rem">Design Systems</span>
+            <span class="chip" style="font-size:.58rem">Leadership</span>
+            <span class="chip" style="font-size:.58rem">Figma</span>
+          </div>
+        </div>
+
+        <!-- Job 2 -->
+        <div class="relative pl-10 reveal">
+          <div class="absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center border-2" style="background:var(--surface);border-color:var(--lime)">
+            <div class="w-1.5 h-1.5 rounded-full" style="background:var(--lime)"></div>
+          </div>
+          <div class="flex items-start justify-between mb-2">
+            <div>
+              <h3 class="serif font-normal" style="font-size:1.05rem;color:var(--ink)">Product Designer II</h3>
+              <p class="mono text-xs mt-1" style="color:var(--lime)">Tokopedia (GoTo Group)</p>
+            </div>
+            <span class="mono text-xs px-2 py-1 rounded" style="background:var(--card);color:var(--muted);white-space:nowrap">2021 — 2023</span>
+          </div>
+          <p class="text-sm leading-relaxed" style="color:var(--muted);font-weight:300">Owned UX for Tokopedia's seller tools. Led 0→1 design for a logistics management feature used by 200K+ merchants.</p>
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            <span class="chip" style="font-size:.58rem">B2B UX</span>
+            <span class="chip" style="font-size:.58rem">Research</span>
+            <span class="chip" style="font-size:.58rem">Mobile</span>
+          </div>
+        </div>
+
+        <!-- Job 3 -->
+        <div class="relative pl-10 reveal">
+          <div class="absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center border-2" style="background:var(--surface);border-color:var(--border2)">
+            <div class="w-1.5 h-1.5 rounded-full" style="background:var(--muted)"></div>
+          </div>
+          <div class="flex items-start justify-between mb-2">
+            <div>
+              <h3 class="serif font-normal" style="font-size:1.05rem;color:var(--ink)">UI/UX Designer</h3>
+              <p class="mono text-xs mt-1" style="color:var(--lime)">Gojek</p>
+            </div>
+            <span class="mono text-xs px-2 py-1 rounded" style="background:var(--card);color:var(--muted);white-space:nowrap">2019 — 2021</span>
+          </div>
+          <p class="text-sm leading-relaxed" style="color:var(--muted);font-weight:300">Consumer product designer on the GoPay team. Designed transaction flows handling 5M+ daily active users across Southeast Asia.</p>
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            <span class="chip" style="font-size:.58rem">Fintech UX</span>
+            <span class="chip" style="font-size:.58rem">Consumer</span>
+            <span class="chip" style="font-size:.58rem">Motion</span>
+          </div>
+        </div>
+
+        <!-- Education -->
+        <div class="relative pl-10 reveal">
+          <div class="absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center border-2" style="background:var(--surface);border-color:var(--border)">
+            <i data-lucide="graduation-cap" style="width:10px;height:10px;color:var(--muted)"></i>
+          </div>
+          <div class="flex items-start justify-between mb-2">
+            <div>
+              <h3 class="serif font-normal" style="font-size:1.05rem;color:var(--ink2)">B.Des — Visual Communication Design</h3>
+              <p class="mono text-xs mt-1" style="color:var(--muted)">Institut Teknologi Bandung (ITB)</p>
+            </div>
+            <span class="mono text-xs px-2 py-1 rounded" style="background:var(--card);color:var(--muted);white-space:nowrap">2015 — 2019</span>
+          </div>
+          <p class="text-sm leading-relaxed" style="color:var(--muted);font-weight:300">Cum Laude. Thesis on "Reducing cognitive load in financial interfaces for low-literacy users."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: testimonials -->
+    <div class="space-y-5">
+      <p class="mono text-xs uppercase tracking-widest mb-6" style="color:rgba(168,255,62,.5)">// What people say</p>
+
+      <!-- T1 -->
+      <div class="term-box p-6 reveal">
+        <div class="flex gap-0.5 mb-4">
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+        </div>
+        <p class="serif italic text-sm leading-relaxed mb-5" style="color:var(--ink2);font-weight:300;font-size:.95rem">
+          "Axel doesn't just design interfaces — he designs outcomes. The product metrics improved measurably after every major release he led."
+        </p>
+        <div class="flex items-center gap-3 pt-4 border-t" style="border-color:var(--border)">
+          <div class="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0" style="border:1px solid var(--border2)">
+            <img src="https://picsum.photos/seed/cto-portrait-male/36/36" alt="" class="thumb" style="filter:saturate(.5)" />
+          </div>
+          <div>
+            <p class="mono text-xs font-medium" style="color:var(--ink2)">Reza Mahardika</p>
+            <p class="mono text-xs" style="color:var(--muted)">CTO, Koin Fintech</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- T2 -->
+      <div class="term-box p-6 reveal">
+        <div class="flex gap-0.5 mb-4">
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+        </div>
+        <p class="serif italic text-sm leading-relaxed mb-5" style="color:var(--ink2);font-weight:300;font-size:.95rem">
+          "Rare combination: pixel-perfect taste and the ability to ship production code. He closed the designer-developer gap on our team completely."
+        </p>
+        <div class="flex items-center gap-3 pt-4 border-t" style="border-color:var(--border)">
+          <div class="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0" style="border:1px solid var(--border2)">
+            <img src="https://picsum.photos/seed/pm-portrait-woman/36/36" alt="" class="thumb" style="filter:saturate(.5)" />
+          </div>
+          <div>
+            <p class="mono text-xs font-medium" style="color:var(--ink2)">Nadia Setiawan</p>
+            <p class="mono text-xs" style="color:var(--muted)">Head of Product, Orbit</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- T3 -->
+      <div class="term-box p-6 reveal">
+        <div class="flex gap-0.5 mb-4">
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+          <i data-lucide="star" style="width:12px;height:12px;color:var(--lime);fill:var(--lime)"></i>
+        </div>
+        <p class="serif italic text-sm leading-relaxed mb-5" style="color:var(--ink2);font-weight:300;font-size:.95rem">
+          "He built our design system from scratch in 6 weeks. The component library he created is still the backbone of our product 2 years later."
+        </p>
+        <div class="flex items-center gap-3 pt-4 border-t" style="border-color:var(--border)">
+          <div class="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0" style="border:1px solid var(--border2)">
+            <img src="https://picsum.photos/seed/founder-portrait-male/36/36" alt="" class="thumb" style="filter:saturate(.5)" />
+          </div>
+          <div>
+            <p class="mono text-xs font-medium" style="color:var(--ink2)">Marcus Halim</p>
+            <p class="mono text-xs" style="color:var(--muted)">Co-founder, Laris</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section id="contact" data-section="contact" class="px-14 py-24 border-t" style="background:var(--surface);border-color:var(--border)">
+
+  <div class="sec-head reveal">
+    <span class="sec-num">06 /</span>
+    <h2 style="font-size:clamp(1.8rem,2.5vw,2.4rem)">Contact</h2>
+  </div>
+
+  <div class="grid lg:grid-cols-[1fr_1fr] gap-16 items-start">
+
+    <!-- Left: copy + channels -->
+    <div class="reveal">
+      <h3 class="serif mb-4" style="font-size:clamp(1.6rem,2.5vw,2.2rem);font-weight:300;color:var(--ink);line-height:1.1">
+        Let's build something<br/>
+        <em style="color:var(--lime);font-style:italic">worth shipping.</em>
+      </h3>
+      <p class="text-sm leading-relaxed mb-10" style="color:var(--muted);max-width:360px;font-weight:300">
+        I'm currently open to senior IC roles, contract design work, and founding-team opportunities at early-stage startups. Response time: &lt; 24h.
+      </p>
+
+      <div class="space-y-4">
+        <a href="mailto:axel@axelrein.co" class="flex items-center gap-4 p-4 rounded-xl border transition-all hover:border-lime-400/50 group" style="border-color:var(--border);background:var(--card)">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background:var(--lime-dim);border:1px solid var(--border2)">
+            <i data-lucide="mail" style="width:16px;height:16px;color:var(--lime)"></i>
+          </div>
+          <div>
+            <p class="mono text-xs" style="color:var(--muted)">Email</p>
+            <p class="mono text-sm font-medium group-hover:text-lime-400 transition-colors" style="color:var(--ink2)">axel@axelrein.co</p>
+          </div>
+          <i data-lucide="arrow-up-right" style="width:14px;height:14px;color:var(--muted);margin-left:auto" class="group-hover:text-lime-400 transition-colors"></i>
+        </a>
+
+        <a href="#" class="flex items-center gap-4 p-4 rounded-xl border transition-all hover:border-lime-400/50 group" style="border-color:var(--border);background:var(--card)">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background:var(--lime-dim);border:1px solid var(--border2)">
+            <i data-lucide="linkedin" style="width:16px;height:16px;color:var(--lime)"></i>
+          </div>
+          <div>
+            <p class="mono text-xs" style="color:var(--muted)">LinkedIn</p>
+            <p class="mono text-sm font-medium group-hover:text-lime-400 transition-colors" style="color:var(--ink2)">linkedin.com/in/axelrein</p>
+          </div>
+          <i data-lucide="arrow-up-right" style="width:14px;height:14px;color:var(--muted);margin-left:auto" class="group-hover:text-lime-400 transition-colors"></i>
+        </a>
+
+        <a href="#" class="flex items-center gap-4 p-4 rounded-xl border transition-all hover:border-lime-400/50 group" style="border-color:var(--border);background:var(--card)">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background:var(--lime-dim);border:1px solid var(--border2)">
+            <i data-lucide="github" style="width:16px;height:16px;color:var(--lime)"></i>
+          </div>
+          <div>
+            <p class="mono text-xs" style="color:var(--muted)">GitHub</p>
+            <p class="mono text-sm font-medium group-hover:text-lime-400 transition-colors" style="color:var(--ink2)">github.com/axelrein</p>
+          </div>
+          <i data-lucide="arrow-up-right" style="width:14px;height:14px;color:var(--muted);margin-left:auto" class="group-hover:text-lime-400 transition-colors"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Right: contact form as terminal -->
+    <div class="reveal">
+      <div class="term-box">
+        <div class="term-bar">
+          <div class="term-dot" style="background:#ff5f57"></div>
+          <div class="term-dot" style="background:#febc2e"></div>
+          <div class="term-dot" style="background:#28c840"></div>
+          <span class="mono text-xs ml-2" style="color:var(--muted)">new_project.sh</span>
+        </div>
+        <div class="p-6 space-y-5">
+          <div>
+            <label class="mono text-xs block mb-2" style="color:var(--lime)"><span style="color:var(--muted)">$</span> your_name=</label>
+            <input type="text" placeholder='"John Doe"' class="w-full bg-transparent px-0 py-1 border-b mono text-sm" style="border-color:var(--border);color:var(--ink2)" />
+          </div>
+          <div>
+            <label class="mono text-xs block mb-2" style="color:var(--lime)"><span style="color:var(--muted)">$</span> email=</label>
+            <input type="email" placeholder='"john@company.com"' class="w-full bg-transparent px-0 py-1 border-b mono text-sm" style="border-color:var(--border);color:var(--ink2)" />
+          </div>
+          <div>
+            <label class="mono text-xs block mb-2" style="color:var(--lime)"><span style="color:var(--muted)">$</span> project_type=</label>
+            <select class="w-full bg-transparent px-0 py-1 border-b mono text-sm cursor-pointer" style="border-color:var(--border);color:var(--ink2);background:transparent">
+              <option value="" style="background:var(--card)">"Select type..."</option>
+              <option style="background:var(--card)">"Full-time role"</option>
+              <option style="background:var(--card)">"Contract / Freelance"</option>
+              <option style="background:var(--card)">"Founding team"</option>
+              <option style="background:var(--card)">"Consultation"</option>
+            </select>
+          </div>
+          <div>
+            <label class="mono text-xs block mb-2" style="color:var(--lime)"><span style="color:var(--muted)">$</span> message=</label>
+            <textarea rows="4" placeholder='"Tell me about the project..."' class="w-full bg-transparent px-0 py-1 border-b mono text-sm resize-none" style="border-color:var(--border);color:var(--ink2)"></textarea>
+          </div>
+          <div class="pt-2">
+            <p class="mono text-xs mb-3" style="color:var(--muted)"><span style="color:var(--lime)">$</span> send_message --async</p>
+            <button class="w-full py-3 rounded-lg mono text-xs font-medium uppercase tracking-widest transition-all hover:scale-[1.01] flex items-center justify-center gap-2" style="background:var(--lime);color:var(--void);letter-spacing:.1em">
+              <i data-lucide="terminal" style="width:14px;height:14px"></i>
+              Execute → Send Message
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="px-14 py-10 border-t" style="background:var(--void);border-color:var(--border)">
+  <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-6 h-6 rounded flex items-center justify-center" style="background:var(--lime)">
+        <div class="w-2 h-2 rounded-full" style="background:var(--void)"></div>
+      </div>
+      <span class="mono text-xs" style="color:var(--muted)">axelrein.co — Designed & built by Axel Rein · 2026</span>
+    </div>
+    <div class="flex items-center gap-2 mono text-xs" style="color:var(--muted)">
+      <span style="color:var(--lime)">▶</span> Open to work
+      <span class="w-px h-3 mx-1" style="background:var(--border)"></span>
+      <span>Jakarta, UTC+7</span>
+      <span class="w-px h-3 mx-1" style="background:var(--border)"></span>
+      <span id="footer-time">--:--</span>
+    </div>
+  </div>
+</footer>
+
+</main><!-- end #main -->
+</div><!-- end #app -->
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+  // ── Init Lucide ──
+  lucide.createIcons();
+
+  // ── Custom cursor ──
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animateCursor() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    cursor.style.left = mx + 'px';
+    cursor.style.top  = my + 'px';
+    ring.style.left   = rx + 'px';
+    ring.style.top    = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // ── Typed animation ──
+  const roles = [
+    'Product Designer_',
+    'Creative Developer_',
+    'Design Systems Lead_',
+    'UI/UX Engineer_',
+  ];
+  let ri = 0, ci = 0, deleting = false;
+  const typed = document.getElementById('typed-text');
+  function typeWriter() {
+    const current = roles[ri];
+    if (!deleting) {
+      typed.textContent = current.substring(0, ci + 1);
+      ci++;
+      if (ci === current.length) { deleting = true; setTimeout(typeWriter, 1800); return; }
+      setTimeout(typeWriter, 70);
+    } else {
+      typed.textContent = current.substring(0, ci - 1);
+      ci--;
+      if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; }
+      setTimeout(typeWriter, 35);
+    }
+  }
+  typeWriter();
+
+  // ── Live clock ──
+  function updateClock() {
+    const now = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', timeZone:'Asia/Jakarta' });
+    const t = document.getElementById('local-time');
+    const f = document.getElementById('footer-time');
+    if (t) t.textContent = now + ' WIB';
+    if (f) f.textContent = now;
+  }
+  updateClock(); setInterval(updateClock, 1000);
+
+  // ── Scroll reveal ──
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { root: document.getElementById('main'), threshold: 0.08 });
+  document.querySelectorAll('.reveal, .reveal-scale').forEach(el => io.observe(el));
+
+  // ── Skill bar animation (triggered by intersection) ──
+  const skillIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.skill-fill').forEach(bar => bar.classList.add('animated'));
+        skillIO.unobserve(e.target);
+      }
+    });
+  }, { root: document.getElementById('main'), threshold: 0.3 });
+  const skillList = document.getElementById('skill-list');
+  if (skillList) skillIO.observe(skillList);
+
+  // ── Active nav highlight on scroll ──
+  const sections  = document.querySelectorAll('[data-section]');
+  const navLinks  = document.querySelectorAll('.snav-link[data-section]');
+  const mainEl    = document.getElementById('main');
+
+  mainEl.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      const top = sec.getBoundingClientRect().top;
+      if (top <= mainEl.clientHeight * 0.4) current = sec.dataset.section;
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.dataset.section === current);
+    });
+  }, { passive: true });
+
+  // ── Sidebar nav smooth scroll into right panel ──
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector('#' + link.dataset.section);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
