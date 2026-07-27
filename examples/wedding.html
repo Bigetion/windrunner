@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Magnolia — Luxury Wedding Organizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>html{opacity:0;transition:opacity .4s ease}</style>
+  <script type="module">
+    import { windrunner } from "../dist/index.esm.js";
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
+  </script>
+  <style>
+    :root {
+      --noir:     #0c0810;
+      --plum:     #1a0f1e;
+      --plum2:    #120b16;
+      --rose:     #e8c4c4;
+      --rose2:    #f0d8d8;
+      --blush:    #f7eeee;
+      --mauve:    #c9a0b0;
+      --champagne:#d4b896;
+      --gold:     #c9a060;
+      --gold2:    #e0bf88;
+      --gold3:    #f5ddb0;
+      --muted:    rgba(240,216,216,.5);
+      --border:   rgba(201,160,96,.18);
+      --border2:  rgba(201,160,96,.38);
+      --ink:      #0c0810;
+    }
+
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family:'Inter',system-ui,sans-serif;
+      background:var(--noir);
+      color:var(--rose2);
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+    .serif  { font-family:'DM Serif Display',Georgia,serif; }
+    .serif2 { font-family:'Cormorant Garamond',Georgia,serif; }
+    .thumb  { width:100%;height:100%;object-fit:cover;display:block; }
+    i[data-lucide]{display:inline-flex;align-items:center;justify-content:vertical-align:middle;flex-shrink:0}
+    i[data-lucide]{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;flex-shrink:0}
+
+    ::-webkit-scrollbar{width:3px}
+    ::-webkit-scrollbar-track{background:var(--noir)}
+    ::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
+
+    /* ── Animations ── */
+    @keyframes fadeUp  {from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+    @keyframes fadeIn  {from{opacity:0}to{opacity:1}}
+    @keyframes shimmer {0%{background-position:200% center}100%{background-position:-200% center}}
+    @keyframes floatUp {0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-14px) rotate(var(--r,0deg))}}
+    @keyframes petalDrift {0%{transform:translateY(0) rotate(0deg) translateX(0)}100%{transform:translateY(100vh) rotate(720deg) translateX(80px)}}
+    @keyframes rotateSlow{to{transform:rotate(360deg)}}
+    @keyframes pulseRing{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.1;transform:scale(1.15)}}
+
+    .fu1{animation:fadeUp .9s .05s ease both}
+    .fu2{animation:fadeUp .9s .2s ease both}
+    .fu3{animation:fadeUp .9s .35s ease both}
+    .fu4{animation:fadeUp .9s .5s ease both}
+    .fi {animation:fadeIn 1.4s ease both}
+
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease}
+    .reveal.visible{opacity:1;transform:none}
+    .reveal-left{opacity:0;transform:translateX(-28px);transition:opacity .8s ease,transform .8s ease}
+    .reveal-left.visible{opacity:1;transform:none}
+    .reveal-scale{opacity:0;transform:scale(.95);transition:opacity .8s ease,transform .8s ease}
+    .reveal-scale.visible{opacity:1;transform:none}
+
+    /* ── Gold gradient text ── */
+    .text-gold {
+      background:linear-gradient(135deg,var(--gold3) 0%,var(--gold) 40%,var(--gold2) 70%,var(--gold3) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .text-gold-shimmer {
+      background:linear-gradient(90deg,var(--gold) 0%,var(--gold3) 30%,var(--gold) 60%,var(--gold3) 90%);
+      background-size:200% auto;
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      animation:shimmer 4s linear infinite;
+    }
+    .text-rose-grad {
+      background:linear-gradient(135deg,var(--rose2),var(--mauve),var(--rose2));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+
+    /* ── Glass ── */
+    .glass-dark {
+      background:rgba(12,8,16,.65);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      border:1px solid var(--border);
+    }
+    .glass-plum {
+      background:rgba(26,15,30,.55);
+      backdrop-filter:blur(16px);
+      border:1px solid var(--border);
+    }
+    .glass-hover{transition:background .3s,border-color .3s,transform .3s,box-shadow .3s}
+    .glass-hover:hover{background:rgba(201,160,96,.07);border-color:var(--border2);transform:translateY(-4px);box-shadow:0 20px 50px rgba(201,160,96,.1)}
+
+    /* ── Buttons ── */
+    .btn-gold{
+      display:inline-flex;align-items:center;gap:.55rem;
+      padding:.9rem 2.4rem;border-radius:.4rem;
+      background:linear-gradient(135deg,var(--gold),#8a5c28);
+      color:var(--noir);font-size:.78rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;text-decoration:none;
+      transition:opacity .2s,transform .2s,box-shadow .2s;
+      box-shadow:0 8px 30px rgba(201,160,96,.3);
+    }
+    .btn-gold:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 14px 40px rgba(201,160,96,.4)}
+    .btn-ghost{
+      display:inline-flex;align-items:center;gap:.55rem;
+      padding:.9rem 2.4rem;border-radius:.4rem;
+      border:1px solid var(--border2);
+      color:var(--rose2);font-size:.78rem;font-weight:400;
+      letter-spacing:.1em;text-transform:uppercase;text-decoration:none;
+      transition:background .2s,border-color .2s,transform .2s;
+    }
+    .btn-ghost:hover{background:rgba(201,160,96,.08);border-color:var(--gold);transform:translateY(-2px)}
+
+    /* ── Ornament divider ── */
+    .ornament{
+      display:flex;align-items:center;gap:1.2rem;
+      color:var(--gold);font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;font-weight:400;
+      font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.7rem;
+    }
+    .ornament::before,.ornament::after{
+      content:'';flex:1;height:1px;
+      background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    }
+
+    /* ── Section label ── */
+    .sec-label{
+      display:inline-flex;align-items:center;gap:.7rem;
+      font-size:.58rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);
+      font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.75rem;
+    }
+    .sec-label::before{content:'✦';color:var(--gold);font-style:normal}
+
+    /* ── Card hover ── */
+    .card-lift{transition:transform .3s,box-shadow .3s,border-color .3s}
+    .card-lift:hover{transform:translateY(-5px);box-shadow:0 24px 60px rgba(201,160,96,.12);border-color:var(--border2)!important}
+
+    /* ── Falling petals ── */
+    .petal{
+      position:absolute;pointer-events:none;opacity:0;
+      animation:petalDrift linear infinite;
+    }
+
+    /* ── Noise overlay ── */
+    body::before{
+      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+      opacity:.5;
+    }
+
+    /* ── Input focus ── */
+    input,select,textarea{font-family:'Inter',sans-serif;outline:none}
+    input:focus,select:focus,textarea:focus{border-color:var(--gold)!important;box-shadow:0 0 0 3px rgba(201,160,96,.15)}
+
+    /* ── Countdown boxes ── */
+    .countdown-box{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:1.5rem 1rem;border-radius:1rem;
+      background:rgba(26,15,30,.7);border:1px solid var(--border);
+      min-width:80px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<header id="navbar" class="fixed top-0 inset-x-0 z-50 transition-all duration-500" style="padding-top:1.4rem">
+  <nav class="mx-auto px-8" style="max-width:1320px">
+    <div class="glass-dark rounded-2xl px-7 h-16 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-3">
+        <!-- Floral monogram SVG -->
+        <div class="relative w-9 h-9 flex-shrink-0">
+          <svg viewBox="0 0 36 36" fill="none" class="w-full h-full">
+            <circle cx="18" cy="18" r="17" stroke="var(--gold)" stroke-width=".8" opacity=".5"/>
+            <!-- Petals -->
+            <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".6" transform="rotate(0 18 18)"/>
+            <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".5" transform="rotate(60 18 18)"/>
+            <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".5" transform="rotate(120 18 18)"/>
+            <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".6" transform="rotate(180 18 18)"/>
+            <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".5" transform="rotate(240 18 18)"/>
+            <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".5" transform="rotate(300 18 18)"/>
+            <circle cx="18" cy="18" r="4" fill="var(--gold)" opacity=".8"/>
+          </svg>
+        </div>
+        <div>
+          <p class="serif tracking-widest text-sm" style="color:var(--rose2);letter-spacing:.15em">MAGNOLIA</p>
+          <p class="text-xs uppercase tracking-widest" style="color:rgba(201,160,96,.6);font-size:.52rem;letter-spacing:.22em">Wedding Organizer</p>
+        </div>
+      </a>
+
+      <!-- Nav -->
+      <ul class="hidden lg:flex items-center gap-8 text-xs font-light uppercase tracking-widest" style="color:var(--muted);letter-spacing:.15em">
+        <li><a href="#story"      class="hover:text-white transition-colors duration-300">Our Story</a></li>
+        <li><a href="#services"   class="hover:text-white transition-colors duration-300">Services</a></li>
+        <li><a href="#gallery"    class="hover:text-white transition-colors duration-300">Gallery</a></li>
+        <li><a href="#testimonials" class="hover:text-white transition-colors duration-300">Love Notes</a></li>
+        <li><a href="#contact"    class="hover:text-white transition-colors duration-300">Contact</a></li>
+      </ul>
+
+      <!-- CTA -->
+      <div class="flex items-center gap-3">
+        <a href="#contact" class="hidden md:block text-xs font-light uppercase tracking-widest transition-colors hover:text-white" style="color:var(--muted)">Book Consultation</a>
+        <a href="#contact" class="btn-gold py-2.5 px-5 text-xs">
+          Begin Your Story
+        </a>
+        <button class="lg:hidden" style="color:var(--muted)">
+          <i data-lucide="menu" style="width:20px;height:20px"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="relative min-h-screen flex items-center overflow-hidden" style="background:var(--noir)">
+
+  <!-- Full-bleed bg -->
+  <div class="absolute inset-0">
+    <img src="https://picsum.photos/seed/wedding-ceremony-dark-floral/1600/900" alt="Wedding" class="thumb" style="filter:brightness(.3) saturate(.9)" />
+    <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(12,8,16,.95) 30%,rgba(26,15,30,.5) 70%,rgba(12,8,16,.8) 100%)"></div>
+    <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(12,8,16,.9) 0%,transparent 45%)"></div>
+  </div>
+
+  <!-- Falling petals (CSS animated) -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden">
+    <!-- 8 petals with varied positions/speeds -->
+    <div class="petal" style="left:8%;top:-5%;width:12px;height:18px;border-radius:50% 0 50% 0;background:rgba(232,196,196,.25);animation-duration:8s;animation-delay:0s;opacity:.4;--r:-20deg"></div>
+    <div class="petal" style="left:22%;top:-8%;width:8px;height:13px;border-radius:50% 0 50% 0;background:rgba(212,184,150,.2);animation-duration:11s;animation-delay:2s;opacity:.35;--r:15deg"></div>
+    <div class="petal" style="left:45%;top:-3%;width:10px;height:16px;border-radius:50% 0 50% 0;background:rgba(232,196,196,.3);animation-duration:9s;animation-delay:1s;opacity:.4;--r:-30deg"></div>
+    <div class="petal" style="left:62%;top:-6%;width:7px;height:11px;border-radius:50% 0 50% 0;background:rgba(201,160,96,.2);animation-duration:13s;animation-delay:3s;opacity:.3;--r:25deg"></div>
+    <div class="petal" style="left:75%;top:-4%;width:11px;height:17px;border-radius:50% 0 50% 0;background:rgba(232,196,196,.25);animation-duration:10s;animation-delay:.5s;opacity:.35;--r:-15deg"></div>
+    <div class="petal" style="left:88%;top:-7%;width:9px;height:14px;border-radius:50% 0 50% 0;background:rgba(212,184,150,.2);animation-duration:12s;animation-delay:4s;opacity:.3;--r:35deg"></div>
+    <div class="petal" style="left:33%;top:-2%;width:6px;height:10px;border-radius:50% 0 50% 0;background:rgba(232,196,196,.2);animation-duration:14s;animation-delay:1.5s;opacity:.25;--r:-10deg"></div>
+    <div class="petal" style="left:55%;top:-9%;width:13px;height:20px;border-radius:50% 0 50% 0;background:rgba(201,160,96,.15);animation-duration:7s;animation-delay:2.5s;opacity:.35;--r:20deg"></div>
+  </div>
+
+  <!-- Floral corner decoration SVG — top right -->
+  <div class="absolute top-0 right-0 pointer-events-none" style="width:420px;height:420px;opacity:.12">
+    <svg viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+      <!-- Branch stems -->
+      <path d="M420 0 Q300 80 220 160 Q160 220 100 320 Q60 380 20 420" stroke="var(--gold)" stroke-width="1.2" fill="none"/>
+      <path d="M420 40 Q340 100 280 180 Q230 240 180 320" stroke="var(--gold)" stroke-width=".8" fill="none"/>
+      <!-- Flowers -->
+      <g transform="translate(240,140)">
+        <circle cx="0" cy="0" r="12" fill="none" stroke="var(--gold)" stroke-width=".8"/>
+        <ellipse cx="0" cy="-16" rx="5" ry="8" fill="var(--gold)" opacity=".5"/>
+        <ellipse cx="0" cy="-16" rx="5" ry="8" fill="var(--gold)" opacity=".4" transform="rotate(60 0 0)"/>
+        <ellipse cx="0" cy="-16" rx="5" ry="8" fill="var(--gold)" opacity=".4" transform="rotate(120 0 0)"/>
+        <ellipse cx="0" cy="-16" rx="5" ry="8" fill="var(--gold)" opacity=".5" transform="rotate(180 0 0)"/>
+        <ellipse cx="0" cy="-16" rx="5" ry="8" fill="var(--gold)" opacity=".4" transform="rotate(240 0 0)"/>
+        <ellipse cx="0" cy="-16" rx="5" ry="8" fill="var(--gold)" opacity=".4" transform="rotate(300 0 0)"/>
+        <circle cx="0" cy="0" r="5" fill="var(--gold)" opacity=".7"/>
+      </g>
+      <g transform="translate(310,200)">
+        <ellipse cx="0" cy="-10" rx="4" ry="7" fill="var(--mauve)" opacity=".5" transform="rotate(0 0 0)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="7" fill="var(--mauve)" opacity=".4" transform="rotate(72 0 0)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="7" fill="var(--mauve)" opacity=".4" transform="rotate(144 0 0)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="7" fill="var(--mauve)" opacity=".5" transform="rotate(216 0 0)"/>
+        <ellipse cx="0" cy="-10" rx="4" ry="7" fill="var(--mauve)" opacity=".4" transform="rotate(288 0 0)"/>
+        <circle cx="0" cy="0" r="4" fill="var(--mauve)" opacity=".6"/>
+      </g>
+      <!-- Leaves -->
+      <path d="M260,170 Q270,150 290,155 Q280,175 260,170Z" fill="var(--gold)" opacity=".25"/>
+      <path d="M295,210 Q305,190 325,195 Q315,215 295,210Z" fill="var(--gold)" opacity=".2"/>
+      <path d="M195,185 Q185,165 205,160 Q210,180 195,185Z" fill="var(--gold)" opacity=".2"/>
+    </svg>
+  </div>
+
+  <!-- Bottom-left mirror floral -->
+  <div class="absolute bottom-0 left-0 pointer-events-none" style="width:320px;height:320px;opacity:.09;transform:rotate(180deg)">
+    <svg viewBox="0 0 320 320" fill="none" class="w-full h-full">
+      <path d="M320 0 Q220 70 160 140 Q110 190 60 270 Q30 305 0 320" stroke="var(--mauve)" stroke-width="1" fill="none"/>
+      <g transform="translate(175,125)">
+        <ellipse cx="0" cy="-12" rx="4.5" ry="7.5" fill="var(--rose)" opacity=".6" transform="rotate(0 0 0)"/>
+        <ellipse cx="0" cy="-12" rx="4.5" ry="7.5" fill="var(--rose)" opacity=".5" transform="rotate(60 0 0)"/>
+        <ellipse cx="0" cy="-12" rx="4.5" ry="7.5" fill="var(--rose)" opacity=".5" transform="rotate(120 0 0)"/>
+        <ellipse cx="0" cy="-12" rx="4.5" ry="7.5" fill="var(--rose)" opacity=".6" transform="rotate(180 0 0)"/>
+        <ellipse cx="0" cy="-12" rx="4.5" ry="7.5" fill="var(--rose)" opacity=".5" transform="rotate(240 0 0)"/>
+        <ellipse cx="0" cy="-12" rx="4.5" ry="7.5" fill="var(--rose)" opacity=".5" transform="rotate(300 0 0)"/>
+        <circle cx="0" cy="0" r="5" fill="var(--rose)" opacity=".7"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Gold radial glow -->
+  <div class="absolute pointer-events-none" style="width:700px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(201,160,96,.06) 0%,transparent 65%);top:5%;left:10%;filter:blur(80px)"></div>
+
+  <!-- Content -->
+  <div class="relative z-10 w-full mx-auto px-8 pt-36 pb-28" style="max-width:1320px">
+    <div class="grid lg:grid-cols-[1.15fr_1fr] gap-16 items-center">
+
+      <!-- Left copy -->
+      <div>
+        <!-- Eyebrow -->
+        <div class="flex items-center gap-3 mb-8 fu1">
+          <div class="h-px w-10" style="background:linear-gradient(90deg,transparent,var(--gold))"></div>
+          <span class="text-xs font-light uppercase tracking-[.28em]" style="color:var(--gold)">Luxury Wedding Organizer · Jakarta</span>
+        </div>
+
+        <!-- Headline — DM Serif Display -->
+        <h1 class="serif fu2" style="font-size:clamp(3.2rem,6vw,6rem);font-weight:400;line-height:1;color:var(--rose2);letter-spacing:-.01em">
+          Where Love<br/>
+          <em style="color:var(--gold);font-style:italic">Becomes</em><br/>
+          Eternal.
+        </h1>
+
+        <!-- Sub -->
+        <p class="fu3 mt-7 leading-relaxed serif2" style="font-size:1.15rem;color:var(--muted);max-width:420px;font-weight:300;font-style:italic">
+          We craft weddings that feel like a dream — because to us, every detail is a love letter in itself.
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap gap-4 mt-12 fu4">
+          <a href="#contact" class="btn-gold">
+            <i data-lucide="heart" style="width:16px;height:16px"></i>
+            Start Planning
+          </a>
+          <a href="#gallery" class="btn-ghost">
+            <i data-lucide="image" style="width:16px;height:16px"></i>
+            View Portfolio
+          </a>
+        </div>
+
+        <!-- Stats row -->
+        <div class="fu4 flex flex-wrap gap-8 mt-12 pt-12 border-t" style="border-color:var(--border)">
+          <div>
+            <p class="serif2 font-semibold" style="font-size:2.2rem;color:var(--gold);line-height:1">800<span style="color:var(--gold2);font-size:1.4rem">+</span></p>
+            <p class="text-xs uppercase tracking-widest mt-1" style="color:var(--muted)">Weddings Crafted</p>
+          </div>
+          <div style="width:1px;background:var(--border)"></div>
+          <div>
+            <p class="serif2 font-semibold" style="font-size:2.2rem;color:var(--gold);line-height:1">12</p>
+            <p class="text-xs uppercase tracking-widest mt-1" style="color:var(--muted)">Years Experience</p>
+          </div>
+          <div style="width:1px;background:var(--border)"></div>
+          <div>
+            <p class="serif2 font-semibold" style="font-size:2.2rem;color:var(--gold);line-height:1">4.98<span style="color:var(--gold2);font-size:1.4rem">★</span></p>
+            <p class="text-xs uppercase tracking-widest mt-1" style="color:var(--muted)">Avg. Rating</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: stacked image cards -->
+      <div class="hidden lg:block relative fu3" style="height:580px">
+
+        <!-- Main image — rotated slightly -->
+        <div class="absolute rounded-2xl overflow-hidden shadow-2xl" style="width:72%;height:420px;top:0;right:0;transform:rotate(2deg);border:1px solid var(--border)">
+          <img src="https://picsum.photos/seed/bride-portrait-dark/420/420" alt="Bride" class="thumb" style="filter:brightness(.85) saturate(.9)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(12,8,16,.7) 0%,transparent 50%)"></div>
+        </div>
+
+        <!-- Second image — counter-rotated -->
+        <div class="absolute rounded-2xl overflow-hidden shadow-2xl" style="width:55%;height:280px;bottom:0;left:0;transform:rotate(-2.5deg);border:3px solid var(--noir);box-shadow:0 24px 60px rgba(0,0,0,.6)">
+          <img src="https://picsum.photos/seed/wedding-flowers-bouquet/320/280" alt="Bouquet" class="thumb" style="filter:brightness(.8) saturate(.85)" />
+        </div>
+
+        <!-- Floating review card -->
+        <div class="absolute glass-dark rounded-2xl p-5 shadow-2xl" style="bottom:60px;right:-10px;width:210px;border-color:var(--border2);transform:rotate(1deg)">
+          <div class="flex gap-0.5 mb-3">
+            <i data-lucide="star" style="width:12px;height:12px;color:var(--gold);fill:var(--gold)"></i>
+            <i data-lucide="star" style="width:12px;height:12px;color:var(--gold);fill:var(--gold)"></i>
+            <i data-lucide="star" style="width:12px;height:12px;color:var(--gold);fill:var(--gold)"></i>
+            <i data-lucide="star" style="width:12px;height:12px;color:var(--gold);fill:var(--gold)"></i>
+            <i data-lucide="star" style="width:12px;height:12px;color:var(--gold);fill:var(--gold)"></i>
+          </div>
+          <p class="serif2 italic text-xs leading-relaxed" style="color:var(--muted);font-weight:300">"Beyond anything we could have imagined."</p>
+          <p class="text-xs mt-3 font-medium" style="color:var(--rose2)">Raisa & Dimas</p>
+          <p class="text-xs" style="color:rgba(201,160,96,.5)">The Ritz-Carlton, 2024</p>
+        </div>
+
+        <!-- Gold vertical line accent -->
+        <div style="position:absolute;width:2px;height:100px;background:linear-gradient(to bottom,var(--gold),transparent);top:20px;left:-12px;border-radius:2px;opacity:.7"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll cue -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 fi" style="animation-delay:1s">
+    <span class="serif2 italic text-xs" style="color:rgba(201,160,96,.4)">Scroll to explore</span>
+    <div class="w-px h-12" style="background:linear-gradient(to bottom,var(--gold),transparent)"></div>
+  </div>
+</section>
+
+<!-- ═══ BRAND STRIP ═══ -->
+<section class="py-8 px-8 border-y" style="background:rgba(26,15,30,.6);border-color:var(--border)">
+  <div class="mx-auto flex flex-wrap items-center justify-center gap-10" style="max-width:1100px">
+    <p class="text-xs uppercase tracking-[.25em] font-light" style="color:rgba(201,160,96,.45)">Featured in</p>
+    <span class="serif2 italic text-lg" style="color:rgba(232,196,196,.35)">Vogue Wedding</span>
+    <span class="text-xs uppercase tracking-widest" style="color:rgba(232,196,196,.25)">·</span>
+    <span class="serif2 italic text-lg" style="color:rgba(232,196,196,.35)">Harper's Bazaar</span>
+    <span class="text-xs uppercase tracking-widest" style="color:rgba(232,196,196,.25)">·</span>
+    <span class="serif2 italic text-lg" style="color:rgba(232,196,196,.35)">Martha Stewart Weddings</span>
+    <span class="text-xs uppercase tracking-widest" style="color:rgba(232,196,196,.25)">·</span>
+    <span class="serif2 italic text-lg" style="color:rgba(232,196,196,.35)">Destination Weddings</span>
+  </div>
+</section>
+
+<!-- ═══ STORY / ABOUT ═══ -->
+<section id="story" class="relative py-32 px-8 overflow-hidden" style="background:var(--noir)">
+  <div class="absolute pointer-events-none" style="width:600px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,160,96,.05) 0%,transparent 65%);top:-10%;right:-5%;filter:blur(80px)"></div>
+  <div class="absolute pointer-events-none" style="width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(201,144,176,.04) 0%,transparent 70%);bottom:-5%;left:-5%;filter:blur(80px)"></div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="grid lg:grid-cols-2 gap-20 items-center">
+      <div class="reveal">
+        <div class="sec-label mb-6">Our Philosophy</div>
+        <h2 class="serif mb-7" style="font-size:clamp(2.4rem,4vw,3.8rem);font-weight:400;line-height:1.1;color:var(--rose2)">
+          Every Wedding is a<br/>
+          <em style="color:var(--gold)">Once-in-a-Lifetime</em><br/>
+          <span style="color:var(--muted)">Masterpiece.</span>
+        </h2>
+        <div class="space-y-5 leading-relaxed serif2" style="color:var(--muted);font-weight:300;font-size:1.05rem">
+          <p>We don't do templates. We don't do formulas. We start with your story — how you met, what you love, what makes you laugh — and build outward from there.</p>
+          <p>In twelve years, we've orchestrated over 800 weddings across ballrooms, clifftops, gardens, and historic villas. Not one has looked like another.</p>
+        </div>
+        <div class="flex flex-wrap gap-5 mt-10">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(201,160,96,.1);border:1px solid var(--border)">
+              <i data-lucide="feather" style="width:18px;height:18px;color:var(--gold)"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium" style="color:var(--rose2)">Story-First Design</p>
+              <p class="text-xs" style="color:var(--muted)">Your narrative drives every detail</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(201,160,96,.1);border:1px solid var(--border)">
+              <i data-lucide="gem" style="width:18px;height:18px;color:var(--gold)"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium" style="color:var(--rose2)">White-Glove Service</p>
+              <p class="text-xs" style="color:var(--muted)">Your dedicated team, always on call</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(201,160,96,.1);border:1px solid var(--border)">
+              <i data-lucide="globe" style="width:18px;height:18px;color:var(--gold)"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium" style="color:var(--rose2)">Global Network</p>
+              <p class="text-xs" style="color:var(--muted)">Vendors across 20+ countries</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative reveal-scale" style="min-height:520px">
+        <div class="rounded-2xl overflow-hidden" style="height:400px;border:1px solid var(--border)">
+          <img src="https://picsum.photos/seed/wedding-reception-hall/700/400" alt="Reception" class="thumb" style="filter:brightness(.75) saturate(.9)" />
+        </div>
+        <div class="absolute rounded-xl overflow-hidden shadow-2xl" style="width:190px;height:230px;bottom:-30px;right:-10px;border:3px solid var(--noir)">
+          <img src="https://picsum.photos/seed/wedding-couple-portrait/190/230" alt="Couple" class="thumb" style="filter:brightness(.8) saturate(.9)" />
+        </div>
+        <div class="absolute glass-dark rounded-2xl px-5 py-4" style="top:20px;left:-10px;border-color:var(--border2)">
+          <p class="text-xs uppercase tracking-widest mb-1" style="color:var(--gold)">Est. 2012</p>
+          <p class="serif font-normal text-white" style="font-size:1.1rem">12 Years of Love</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SERVICES / PAKET ═══ -->
+<section id="services" class="relative py-32 px-8 overflow-hidden" style="background:var(--plum2)">
+  <div class="absolute pointer-events-none top-0 right-0 opacity-8" style="width:300px;height:300px">
+    <svg viewBox="0 0 300 300" fill="none" class="w-full h-full">
+      <g opacity=".15">
+        <ellipse cx="150" cy="80" rx="18" ry="28" fill="var(--gold)" transform="rotate(0 150 150)"/>
+        <ellipse cx="150" cy="80" rx="18" ry="28" fill="var(--gold)" transform="rotate(60 150 150)"/>
+        <ellipse cx="150" cy="80" rx="18" ry="28" fill="var(--gold)" transform="rotate(120 150 150)"/>
+        <ellipse cx="150" cy="80" rx="18" ry="28" fill="var(--gold)" transform="rotate(180 150 150)"/>
+        <ellipse cx="150" cy="80" rx="18" ry="28" fill="var(--gold)" transform="rotate(240 150 150)"/>
+        <ellipse cx="150" cy="80" rx="18" ry="28" fill="var(--gold)" transform="rotate(300 150 150)"/>
+        <circle cx="150" cy="150" r="22" fill="var(--gold)"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="text-center mb-20 reveal">
+      <div class="ornament mb-6">✦ Our Services ✦</div>
+      <h2 class="serif" style="font-size:clamp(2.4rem,4vw,3.6rem);font-weight:400;color:var(--rose2);line-height:1.1">
+        Choose Your <em style="color:var(--gold)">Chapter</em>
+      </h2>
+      <p class="serif2 italic mt-5 mx-auto" style="color:var(--muted);max-width:440px;font-size:1.05rem;font-weight:300">
+        Three distinct service tiers, each designed with the same obsessive attention to detail.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- Tier 1: Essentials -->
+      <div class="glass-dark card-lift rounded-2xl overflow-hidden reveal" style="border-color:var(--border)">
+        <div class="relative" style="height:220px">
+          <img src="https://picsum.photos/seed/wedding-garden-ceremony/500/220" alt="Garden" class="thumb" style="filter:brightness(.6) saturate(.85)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(12,8,16,.95) 0%,transparent 55%)"></div>
+          <div class="absolute top-5 left-5 text-xs font-light uppercase tracking-widest px-3 py-1.5 rounded-full" style="background:rgba(201,160,96,.15);color:var(--gold2);border:1px solid var(--border)">Essentials</div>
+        </div>
+        <div class="p-7">
+          <div class="flex items-end gap-2 mb-4">
+            <span class="serif" style="font-size:2.4rem;color:var(--rose2);line-height:1">Rp 35M</span>
+            <span class="text-xs mb-1" style="color:var(--muted)">mulai dari</span>
+          </div>
+          <h3 class="serif font-normal text-white mb-3" style="font-size:1.2rem">The Garden Affair</h3>
+          <p class="text-sm leading-relaxed mb-5" style="color:var(--muted)">An intimate outdoor ceremony and reception for up to 150 guests. Elegant, unhurried, and entirely yours.</p>
+          <ul class="space-y-2.5 mb-6">
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Full-day coordination</li>
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Floral arrangement (6 arrangements)</li>
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Lighting design</li>
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Vendor management</li>
+          </ul>
+          <a href="#contact" class="btn-ghost w-full justify-center text-xs">Inquire Now</a>
+        </div>
+      </div>
+
+      <!-- Tier 2: Signature (featured) -->
+      <div class="card-lift rounded-2xl overflow-hidden reveal relative" style="background:linear-gradient(160deg,rgba(201,160,96,.1),rgba(26,15,30,.9));border:1px solid var(--border2);box-shadow:0 0 60px rgba(201,160,96,.1),inset 0 1px 0 rgba(201,160,96,.15)">
+        <div class="absolute top-5 right-5 px-3 py-1 rounded-full text-xs font-medium" style="background:linear-gradient(135deg,var(--gold),#8a5c28);color:var(--noir)">Most Beloved</div>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none" style="width:220px;height:150px;background:radial-gradient(circle,rgba(201,160,96,.08) 0%,transparent 70%);filter:blur(20px)"></div>
+        <div class="relative" style="height:220px">
+          <img src="https://picsum.photos/seed/luxury-ballroom-wedding/500/220" alt="Ballroom" class="thumb" style="filter:brightness(.55) saturate(.85)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(12,8,16,.95) 0%,transparent 55%)"></div>
+          <div class="absolute top-5 left-5 text-xs font-light uppercase tracking-widest px-3 py-1.5 rounded-full" style="background:rgba(201,160,96,.2);color:var(--gold2);border:1px solid var(--border2)">Signature</div>
+        </div>
+        <div class="p-7">
+          <div class="flex items-end gap-2 mb-4">
+            <span class="serif" style="font-size:2.4rem;color:var(--rose2);line-height:1">Rp 85M</span>
+            <span class="text-xs mb-1" style="color:var(--muted)">mulai dari</span>
+          </div>
+          <h3 class="serif font-normal text-white mb-3" style="font-size:1.2rem">The Grand Romance</h3>
+          <p class="text-sm leading-relaxed mb-5" style="color:rgba(240,216,216,.65)">A full ballroom production for up to 500 guests. Everything included — from the first flower to the final dance.</p>
+          <ul class="space-y-2.5 mb-6">
+            <li class="flex items-center gap-2 text-xs" style="color:rgba(240,216,216,.7)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Complete wedding design & styling</li>
+            <li class="flex items-center gap-2 text-xs" style="color:rgba(240,216,216,.7)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Premium floral + canopy installation</li>
+            <li class="flex items-center gap-2 text-xs" style="color:rgba(240,216,216,.7)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Live music & entertainment</li>
+            <li class="flex items-center gap-2 text-xs" style="color:rgba(240,216,216,.7)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> 3-month planning support</li>
+            <li class="flex items-center gap-2 text-xs" style="color:rgba(240,216,216,.7)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Photography & videography</li>
+          </ul>
+          <a href="#contact" class="btn-gold w-full justify-center text-xs">
+            <i data-lucide="heart" style="width:14px;height:14px"></i> Begin Planning
+          </a>
+        </div>
+      </div>
+
+      <!-- Tier 3: Bespoke -->
+      <div class="glass-dark card-lift rounded-2xl overflow-hidden reveal" style="border-color:var(--border)">
+        <div class="relative" style="height:220px">
+          <img src="https://picsum.photos/seed/destination-wedding-villa/500/220" alt="Villa" class="thumb" style="filter:brightness(.6) saturate(.85)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(12,8,16,.95) 0%,transparent 55%)"></div>
+          <div class="absolute top-5 left-5 text-xs font-light uppercase tracking-widest px-3 py-1.5 rounded-full" style="background:rgba(201,160,96,.15);color:var(--gold2);border:1px solid var(--border)">Bespoke</div>
+        </div>
+        <div class="p-7">
+          <div class="flex items-end gap-2 mb-4">
+            <span class="serif" style="font-size:2.4rem;color:var(--rose2);line-height:1">Custom</span>
+          </div>
+          <h3 class="serif font-normal text-white mb-3" style="font-size:1.2rem">The Unforgettable</h3>
+          <p class="text-sm leading-relaxed mb-5" style="color:var(--muted)">A fully bespoke destination wedding — crafted from zero to extraordinary. The world is your venue.</p>
+          <ul class="space-y-2.5 mb-6">
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Destination scouting worldwide</li>
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Custom concept & mood board</li>
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Private villa / resort buyout</li>
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)"><i data-lucide="check" style="width:13px;height:13px;color:var(--gold)"></i> Guest concierge services</li>
+          </ul>
+          <a href="#contact" class="btn-ghost w-full justify-center text-xs">Request Proposal</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GALLERY MASONRY ═══ -->
+<section id="gallery" class="relative py-32 px-8 overflow-hidden" style="background:var(--noir)">
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="text-center mb-16 reveal">
+      <div class="ornament mb-6">✦ Portfolio ✦</div>
+      <h2 class="serif" style="font-size:clamp(2.2rem,3.5vw,3.2rem);font-weight:400;color:var(--rose2)">
+        Moments We've <em style="color:var(--gold)">Witnessed</em>
+      </h2>
+    </div>
+
+    <!-- Masonry-style 5-column grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 reveal-scale">
+      <!-- Row 1: tall + 2 square + tall -->
+      <div class="lg:row-span-2 rounded-2xl overflow-hidden group cursor-pointer" style="height:420px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/wedding-aisle-candles/400/420" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.75) saturate(.85)" />
+      </div>
+      <div class="rounded-2xl overflow-hidden group cursor-pointer" style="height:200px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/wedding-rings-detail/400/200" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.8) saturate(.85)" />
+      </div>
+      <div class="rounded-2xl overflow-hidden group cursor-pointer" style="height:200px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/wedding-table-decor/400/200" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.75) saturate(.85)" />
+      </div>
+      <div class="lg:row-span-2 rounded-2xl overflow-hidden group cursor-pointer" style="height:420px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/wedding-veil-portrait/400/420" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.75) saturate(.85)" />
+      </div>
+      <!-- Row 2 (middle two fill) -->
+      <div class="rounded-2xl overflow-hidden group cursor-pointer" style="height:200px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/wedding-first-dance/400/200" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.75) saturate(.85)" />
+      </div>
+      <div class="rounded-2xl overflow-hidden group cursor-pointer" style="height:200px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/wedding-cake-gold/400/200" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.8) saturate(.85)" />
+      </div>
+      <!-- Row 3: wide span -->
+      <div class="col-span-2 lg:col-span-4 rounded-2xl overflow-hidden group cursor-pointer" style="height:260px;border:1px solid var(--border)">
+        <img src="https://picsum.photos/seed/wedding-outdoor-reception-night/1300/260" alt="" class="thumb transition-transform duration-700 group-hover:scale-105" style="filter:brightness(.65) saturate(.85)" />
+      </div>
+    </div>
+
+    <div class="text-center mt-10 reveal">
+      <a href="#" class="inline-flex items-center gap-2 text-sm font-light transition-colors hover:text-white serif2 italic" style="color:var(--muted)">
+        <i data-lucide="instagram" style="width:16px;height:16px;color:var(--gold)"></i>
+        Follow our work @magnoliaevents
+        <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section id="testimonials" class="relative py-28 px-8 overflow-hidden" style="background:var(--plum2)">
+  <div class="absolute pointer-events-none inset-0 flex items-center justify-center">
+    <div class="serif2" style="font-size:32rem;font-weight:300;color:rgba(201,160,96,.025);line-height:1;user-select:none;pointer-events:none">"</div>
+  </div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="text-center mb-16 reveal">
+      <div class="ornament mb-6">✦ Love Notes ✦</div>
+      <h2 class="serif" style="font-size:clamp(2.2rem,3.5vw,3.2rem);font-weight:400;color:var(--rose2)">
+        What Our Couples <em style="color:var(--gold)">Say</em>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- T1 -->
+      <div class="glass-dark card-lift rounded-2xl p-8 flex flex-col reveal" style="border-color:var(--border)">
+        <div class="flex gap-0.5 mb-6">
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+        </div>
+        <p class="serif2 italic leading-relaxed flex-1 mb-7" style="font-size:1.05rem;color:var(--muted);font-weight:300">
+          "I cried three times during our wedding — once at the altar, once during the vows, and once when I walked into the reception and saw what Magnolia had created. It was beyond words."
+        </p>
+        <div class="flex items-center gap-4 pt-5 border-t" style="border-color:var(--border)">
+          <div class="w-11 h-11 rounded-full overflow-hidden flex-shrink-0 border" style="border-color:var(--border2)">
+            <img src="https://picsum.photos/seed/bride-woman-portrait/44/44" alt="" class="thumb" />
+          </div>
+          <div>
+            <p class="text-sm font-medium" style="color:var(--rose2)">Priyanka & Aryan</p>
+            <p class="text-xs" style="color:rgba(201,160,96,.5)">Four Seasons Jakarta · March 2025</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- T2 — featured -->
+      <div class="card-lift rounded-2xl p-8 flex flex-col reveal relative overflow-hidden" style="background:linear-gradient(145deg,rgba(201,160,96,.1),rgba(26,15,30,.8));border:1px solid var(--border2)">
+        <div class="absolute top-0 right-0 w-40 h-40 pointer-events-none" style="background:radial-gradient(circle,rgba(201,160,96,.07) 0%,transparent 70%);filter:blur(20px)"></div>
+        <div class="flex gap-0.5 mb-6">
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+        </div>
+        <p class="serif2 italic leading-relaxed flex-1 mb-7" style="font-size:1.05rem;color:rgba(240,216,216,.75);font-weight:300">
+          "We gave them complete creative freedom and went on a 3-week honeymoon. We came back to photos of a wedding that looked like it came straight out of a film. Every single guest said it was the most beautiful event they'd ever attended."
+        </p>
+        <div class="flex items-center gap-4 pt-5 border-t" style="border-color:var(--border)">
+          <div class="w-11 h-11 rounded-full overflow-hidden flex-shrink-0 border" style="border-color:var(--border2)">
+            <img src="https://picsum.photos/seed/wedding-couple-smile/44/44" alt="" class="thumb" />
+          </div>
+          <div>
+            <p class="text-sm font-medium" style="color:var(--rose2)">Celine & Marcus</p>
+            <p class="text-xs" style="color:rgba(201,160,96,.5)">Villa Plenilunio, Bali · Jan 2025</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- T3 -->
+      <div class="glass-dark card-lift rounded-2xl p-8 flex flex-col reveal" style="border-color:var(--border)">
+        <div class="flex gap-0.5 mb-6">
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+          <i data-lucide="star" style="width:13px;height:13px;color:var(--gold);fill:var(--gold)"></i>
+        </div>
+        <p class="serif2 italic leading-relaxed flex-1 mb-7" style="font-size:1.05rem;color:var(--muted);font-weight:300">
+          "The attention to detail was extraordinary. They noticed things we'd completely forgotten — and turned them into the most meaningful moments of the day."
+        </p>
+        <div class="flex items-center gap-4 pt-5 border-t" style="border-color:var(--border)">
+          <div class="w-11 h-11 rounded-full overflow-hidden flex-shrink-0 border" style="border-color:var(--border2)">
+            <img src="https://picsum.photos/seed/groom-portrait-suit/44/44" alt="" class="thumb" />
+          </div>
+          <div>
+            <p class="text-sm font-medium" style="color:var(--rose2)">Amara & Daniel</p>
+            <p class="text-xs" style="color:rgba(201,160,96,.5)">The Dharmawangsa · Nov 2024</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COUNTDOWN + CTA ═══ -->
+<section class="relative py-28 px-8 overflow-hidden" style="background:var(--noir)">
+  <!-- Full-bleed romantic bg -->
+  <div class="absolute inset-0">
+    <img src="https://picsum.photos/seed/wedding-candle-bokeh/1600/600" alt="" class="thumb" style="filter:brightness(.2) saturate(.8) blur(2px)" />
+    <div class="absolute inset-0" style="background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(201,160,96,.06) 0%,rgba(12,8,16,.85) 70%)"></div>
+  </div>
+
+  <!-- Floral SVG center decoration -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" style="width:500px;height:500px;opacity:.06">
+    <svg viewBox="0 0 500 500" fill="none" class="w-full h-full">
+      <circle cx="250" cy="250" r="240" stroke="var(--gold)" stroke-width=".8"/>
+      <circle cx="250" cy="250" r="180" stroke="var(--gold)" stroke-width=".6"/>
+      <g>
+        <ellipse cx="250" cy="90" rx="22" ry="40" fill="var(--gold)" transform="rotate(0 250 250)"/>
+        <ellipse cx="250" cy="90" rx="22" ry="40" fill="var(--gold)" transform="rotate(45 250 250)"/>
+        <ellipse cx="250" cy="90" rx="22" ry="40" fill="var(--gold)" transform="rotate(90 250 250)"/>
+        <ellipse cx="250" cy="90" rx="22" ry="40" fill="var(--gold)" transform="rotate(135 250 250)"/>
+        <ellipse cx="250" cy="90" rx="22" ry="40" fill="var(--gold)" transform="rotate(180 250 250)"/>
+        <ellipse cx="250" cy="90" rx="22" ry="40" fill="var(--gold)" transform="rotate(225 250 250)"/>
+        <ellipse cx="250" cy="90" rx="22" ry="40" fill="var(--gold)" transform="rotate(270 250 250)"/>
+        <ellipse cx="250" cy="90" rx="22" ry="40" fill="var(--gold)" transform="rotate(315 250 250)"/>
+      </g>
+      <circle cx="250" cy="250" r="35" fill="var(--gold)"/>
+    </svg>
+  </div>
+
+  <div class="relative z-10 mx-auto text-center reveal" style="max-width:700px">
+    <div class="ornament mb-8">✦ Limited Availability ✦</div>
+    <h2 class="serif mb-4" style="font-size:clamp(2.4rem,4.5vw,4rem);font-weight:400;color:var(--rose2);line-height:1.05">
+      2025 Dates Are<br/>
+      <em class="text-gold-shimmer" style="font-style:italic">Almost Gone.</em>
+    </h2>
+    <p class="serif2 italic mb-12 mx-auto" style="color:var(--muted);max-width:400px;font-size:1.05rem;font-weight:300">
+      We accept a maximum of 6 weddings per month to ensure each couple receives our full dedication.
+    </p>
+
+    <!-- Countdown timer -->
+    <div class="flex items-center justify-center gap-4 mb-12" id="countdown-wrap">
+      <div class="countdown-box">
+        <span class="serif font-normal" id="cd-days" style="font-size:2.8rem;color:var(--rose2);line-height:1">00</span>
+        <span class="text-xs uppercase tracking-widest mt-1" style="color:var(--muted)">Days</span>
+      </div>
+      <span class="serif" style="font-size:2rem;color:var(--gold);opacity:.4">:</span>
+      <div class="countdown-box">
+        <span class="serif font-normal" id="cd-hours" style="font-size:2.8rem;color:var(--rose2);line-height:1">00</span>
+        <span class="text-xs uppercase tracking-widest mt-1" style="color:var(--muted)">Hours</span>
+      </div>
+      <span class="serif" style="font-size:2rem;color:var(--gold);opacity:.4">:</span>
+      <div class="countdown-box">
+        <span class="serif font-normal" id="cd-mins" style="font-size:2.8rem;color:var(--rose2);line-height:1">00</span>
+        <span class="text-xs uppercase tracking-widest mt-1" style="color:var(--muted)">Minutes</span>
+      </div>
+      <span class="serif" style="font-size:2rem;color:var(--gold);opacity:.4">:</span>
+      <div class="countdown-box">
+        <span class="serif font-normal" id="cd-secs" style="font-size:2.8rem;color:var(--rose2);line-height:1">00</span>
+        <span class="text-xs uppercase tracking-widest mt-1" style="color:var(--muted)">Seconds</span>
+      </div>
+    </div>
+    <p class="text-xs mb-10" style="color:rgba(201,160,96,.4)">Until early-booking closes for December 2025 slots</p>
+
+    <a href="#contact" class="btn-gold text-sm mx-auto">
+      <i data-lucide="heart" style="width:16px;height:16px"></i>
+      Reserve Your Date Now
+    </a>
+  </div>
+</section>
+
+<!-- ═══ CONTACT FORM ═══ -->
+<section id="contact" class="relative py-32 px-8 overflow-hidden" style="background:var(--plum)">
+  <div class="absolute pointer-events-none" style="width:600px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,160,96,.06) 0%,transparent 65%);top:-15%;right:-10%;filter:blur(80px)"></div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1100px">
+    <div class="grid lg:grid-cols-[1fr_1.4fr] gap-16 items-start">
+
+      <!-- Left: copy -->
+      <div class="reveal">
+        <div class="ornament mb-8" style="justify-content:flex-start">✦ Begin Your Story ✦</div>
+        <h2 class="serif mb-6" style="font-size:clamp(2.2rem,3.5vw,3.2rem);font-weight:400;color:var(--rose2);line-height:1.1">
+          Let's Create<br/>
+          <em style="color:var(--gold)">Something</em><br/>
+          <span style="color:var(--muted)">Extraordinary.</span>
+        </h2>
+        <p class="serif2 italic leading-relaxed mb-10" style="color:var(--muted);font-size:1.05rem;font-weight:300;max-width:320px">
+          Tell us your story. We'll show you what's possible. Every dream wedding begins with a single conversation.
+        </p>
+        <div class="space-y-5">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(201,160,96,.1);border:1px solid var(--border)">
+              <i data-lucide="phone" style="width:17px;height:17px;color:var(--gold)"></i>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-widest mb-0.5" style="color:rgba(201,160,96,.5)">Call or WhatsApp</p>
+              <p class="text-sm font-medium" style="color:var(--rose2)">+62 812-0000-8899</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(201,160,96,.1);border:1px solid var(--border)">
+              <i data-lucide="mail" style="width:17px;height:17px;color:var(--gold)"></i>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-widest mb-0.5" style="color:rgba(201,160,96,.5)">Email Us</p>
+              <p class="text-sm font-medium" style="color:var(--rose2)">hello@magnoliaevents.id</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(201,160,96,.1);border:1px solid var(--border)">
+              <i data-lucide="map-pin" style="width:17px;height:17px;color:var(--gold)"></i>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-widest mb-0.5" style="color:rgba(201,160,96,.5)">Studio</p>
+              <p class="text-sm font-medium" style="color:var(--rose2)">Jl. Senopati No. 28, Kebayoran Baru, Jakarta</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div class="glass-dark rounded-2xl p-8 reveal" style="border-color:var(--border2)">
+        <p class="serif font-normal text-white mb-1" style="font-size:1.3rem">Initial Consultation Request</p>
+        <p class="text-xs mb-8 serif2 italic" style="color:var(--muted)">We respond within 24 hours — always personally, never automated.</p>
+
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-light uppercase tracking-widest block mb-2" style="color:var(--gold)">Your Name</label>
+              <input type="text" placeholder="First & last name" class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(255,255,255,.05);border-color:var(--border);color:var(--rose2)" />
+            </div>
+            <div>
+              <label class="text-xs font-light uppercase tracking-widest block mb-2" style="color:var(--gold)">Partner's Name</label>
+              <input type="text" placeholder="First & last name" class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(255,255,255,.05);border-color:var(--border);color:var(--rose2)" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-light uppercase tracking-widest block mb-2" style="color:var(--gold)">Wedding Date</label>
+              <input type="text" placeholder="DD / MM / YYYY" class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(255,255,255,.05);border-color:var(--border);color:var(--rose2)" />
+            </div>
+            <div>
+              <label class="text-xs font-light uppercase tracking-widest block mb-2" style="color:var(--gold)">Guest Count</label>
+              <select class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(12,8,16,.9);border-color:var(--border);color:var(--rose2)">
+                <option>Under 100</option>
+                <option>100 – 250</option>
+                <option>250 – 500</option>
+                <option>500+</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-light uppercase tracking-widest block mb-2" style="color:var(--gold)">Preferred Service</label>
+            <select class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(12,8,16,.9);border-color:var(--border);color:var(--rose2)">
+              <option>The Garden Affair (from Rp 35M)</option>
+              <option>The Grand Romance (from Rp 85M)</option>
+              <option>The Unforgettable (Bespoke)</option>
+              <option>Not sure yet — help me decide</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-light uppercase tracking-widest block mb-2" style="color:var(--gold)">Your Love Story</label>
+            <textarea rows="4" placeholder="Tell us how you met, what you dream your wedding feels like, any venues in mind..." class="w-full px-4 py-3 rounded-xl text-sm border resize-none" style="background:rgba(255,255,255,.05);border-color:var(--border);color:var(--rose2)"></textarea>
+          </div>
+          <button class="btn-gold w-full justify-center mt-2">
+            <i data-lucide="send" style="width:15px;height:15px"></i>
+            Send Our Story
+          </button>
+          <p class="text-xs text-center serif2 italic" style="color:rgba(201,160,96,.4)">Your information is kept strictly private and never shared.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="relative border-t py-16 px-8" style="background:var(--noir);border-color:var(--border)">
+  <!-- Top floral SVG decoration -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" style="opacity:.2">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <ellipse cx="40" cy="16" rx="7" ry="12" fill="var(--gold)" transform="rotate(0 40 40)"/>
+      <ellipse cx="40" cy="16" rx="7" ry="12" fill="var(--gold)" transform="rotate(60 40 40)"/>
+      <ellipse cx="40" cy="16" rx="7" ry="12" fill="var(--gold)" transform="rotate(120 40 40)"/>
+      <ellipse cx="40" cy="16" rx="7" ry="12" fill="var(--gold)" transform="rotate(180 40 40)"/>
+      <ellipse cx="40" cy="16" rx="7" ry="12" fill="var(--gold)" transform="rotate(240 40 40)"/>
+      <ellipse cx="40" cy="16" rx="7" ry="12" fill="var(--gold)" transform="rotate(300 40 40)"/>
+      <circle cx="40" cy="40" r="9" fill="var(--gold)"/>
+    </svg>
+  </div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 mb-14">
+      <!-- Brand -->
+      <div class="col-span-2">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="relative w-10 h-10 flex-shrink-0">
+            <svg viewBox="0 0 36 36" fill="none" class="w-full h-full">
+              <circle cx="18" cy="18" r="17" stroke="var(--gold)" stroke-width=".8" opacity=".4"/>
+              <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".6" transform="rotate(0 18 18)"/>
+              <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".5" transform="rotate(60 18 18)"/>
+              <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".5" transform="rotate(120 18 18)"/>
+              <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".6" transform="rotate(180 18 18)"/>
+              <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".5" transform="rotate(240 18 18)"/>
+              <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--gold)" opacity=".5" transform="rotate(300 18 18)"/>
+              <circle cx="18" cy="18" r="4" fill="var(--gold)" opacity=".7"/>
+            </svg>
+          </div>
+          <div>
+            <p class="serif tracking-widest" style="color:var(--rose2);letter-spacing:.12em">MAGNOLIA</p>
+            <p class="text-xs uppercase tracking-widest" style="color:rgba(201,160,96,.5);font-size:.52rem;letter-spacing:.2em">Wedding Organizer</p>
+          </div>
+        </div>
+        <p class="text-sm leading-relaxed mb-6 serif2 italic" style="color:var(--muted);max-width:240px;font-weight:300">
+          Crafting extraordinary weddings since 2012. Jakarta · Bali · Beyond.
+        </p>
+        <div class="flex gap-3">
+          <a href="#" class="w-9 h-9 glass-dark rounded-full flex items-center justify-center border transition-all hover:border-yellow-600/50" style="border-color:var(--border);color:var(--muted)">
+            <i data-lucide="instagram" style="width:15px;height:15px"></i>
+          </a>
+          <a href="#" class="w-9 h-9 glass-dark rounded-full flex items-center justify-center border transition-all hover:border-yellow-600/50" style="border-color:var(--border);color:var(--muted)">
+            <i data-lucide="twitter" style="width:15px;height:15px"></i>
+          </a>
+          <a href="#" class="w-9 h-9 glass-dark rounded-full flex items-center justify-center border transition-all hover:border-yellow-600/50" style="border-color:var(--border);color:var(--muted)">
+            <i data-lucide="youtube" style="width:15px;height:15px"></i>
+          </a>
+          <a href="#" class="w-9 h-9 glass-dark rounded-full flex items-center justify-center border transition-all hover:border-yellow-600/50" style="border-color:var(--border);color:var(--muted)">
+            <i data-lucide="pinterest" style="width:15px;height:15px"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div>
+        <p class="text-xs font-light uppercase tracking-widest mb-5" style="color:rgba(201,160,96,.4)">Services</p>
+        <ul class="space-y-3 text-sm serif2 italic" style="color:var(--muted);font-weight:300">
+          <li><a href="#" class="hover:text-white transition-colors">The Garden Affair</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">The Grand Romance</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">The Unforgettable</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Day-Of Coordination</a></li>
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div>
+        <p class="text-xs font-light uppercase tracking-widest mb-5" style="color:rgba(201,160,96,.4)">Company</p>
+        <ul class="space-y-3 text-sm" style="color:var(--muted);font-weight:300">
+          <li><a href="#" class="hover:text-white transition-colors">Our Story</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Portfolio</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Press</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+        </ul>
+      </div>
+
+      <!-- Info -->
+      <div>
+        <p class="text-xs font-light uppercase tracking-widest mb-5" style="color:rgba(201,160,96,.4)">Information</p>
+        <ul class="space-y-3 text-sm" style="color:var(--muted);font-weight:300">
+          <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom ornament + copyright -->
+    <div class="ornament mb-6 reveal">✦ Every Love Story Deserves to be Beautiful ✦</div>
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 border-t" style="border-color:var(--border)">
+      <p class="text-xs serif2 italic" style="color:rgba(201,160,96,.25)">© 2026 Magnolia Events. All rights reserved.</p>
+      <div class="flex gap-5 text-xs" style="color:rgba(201,160,96,.25)">
+        <a href="#" class="hover:text-white transition-colors">Privacy</a>
+        <a href="#" class="hover:text-white transition-colors">Terms</a>
+        <a href="#" class="hover:text-white transition-colors">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+  // Init Lucide
+  lucide.createIcons();
+
+  // Scroll reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.07, rootMargin: '0px 0px -35px 0px' });
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-scale').forEach(el => io.observe(el));
+
+  // Navbar shrink on scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      navbar.style.paddingTop = '6px';
+      navbar.querySelector('.glass-dark').style.boxShadow = '0 8px 40px rgba(0,0,0,.6)';
+    } else {
+      navbar.style.paddingTop = '1.4rem';
+      navbar.querySelector('.glass-dark').style.boxShadow = 'none';
+    }
+  }, { passive: true });
+
+  // Countdown timer — target: Dec 31 2025
+  const target = new Date('2025-12-31T23:59:59');
+  function tick() {
+    const now  = new Date();
+    const diff = Math.max(0, target - now);
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    const pad = n => String(n).padStart(2,'0');
+    document.getElementById('cd-days').textContent  = pad(d);
+    document.getElementById('cd-hours').textContent = pad(h);
+    document.getElementById('cd-mins').textContent  = pad(m);
+    document.getElementById('cd-secs').textContent  = pad(s);
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>

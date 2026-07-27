@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pesantren Al-Nuur — Cahaya Ilmu, Akhlak Mulia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>html{opacity:0;transition:opacity .35s ease}</style>
+  <script type="module">
+    import { windrunner } from "../dist/index.esm.js";
+    windrunner({ autoStart: true, onReady: () => document.documentElement.style.opacity = "1" });
+  </script>
+  <style>
+    /* ── Variables ── */
+    :root {
+      --emerald:   #0d4a35;
+      --emerald2:  #0a3828;
+      --emerald3:  #052318;
+      --leaf:      #1a6647;
+      --gold:      #c9a227;
+      --gold2:     #e8bf5a;
+      --gold3:     #f5dfa0;
+      --cream:     #faf6ed;
+      --cream2:    #f0e8d4;
+      --parchment: #e8dcc4;
+      --ink:       #1a1208;
+      --border:    rgba(201,162,39,.2);
+      --border2:   rgba(201,162,39,.4);
+      --muted:     rgba(250,246,237,.55);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--emerald3);
+      color: var(--cream);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .serif  { font-family: 'Cormorant Garamond', Georgia, serif; }
+    .arabic { font-family: 'Amiri', serif; direction: rtl; }
+    .thumb  { width: 100%; height: 100%; object-fit: cover; display: block; }
+    i[data-lucide] { display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;flex-shrink:0 }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--emerald3); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(26px)} to{opacity:1;transform:none} }
+    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+    @keyframes shimmer  { 0%{background-position:200% center} 100%{background-position:-200% center} }
+    @keyframes floatY   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    @keyframes rotateSlow { to{transform:rotate(360deg)} }
+    @keyframes pulse2   { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .fu1{animation:fadeUp .8s .05s ease both}
+    .fu2{animation:fadeUp .8s .2s  ease both}
+    .fu3{animation:fadeUp .8s .35s ease both}
+    .fu4{animation:fadeUp .8s .5s  ease both}
+    .fi {animation:fadeIn 1.2s ease both}
+
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .75s ease,transform .75s ease}
+    .reveal.visible{opacity:1;transform:none}
+    .reveal-left{opacity:0;transform:translateX(-26px);transition:opacity .75s ease,transform .75s ease}
+    .reveal-left.visible{opacity:1;transform:none}
+    .reveal-scale{opacity:0;transform:scale(.95);transition:opacity .75s ease,transform .75s ease}
+    .reveal-scale.visible{opacity:1;transform:none}
+
+    /* ── Gold gradient text ── */
+    .text-gold {
+      background: linear-gradient(135deg, var(--gold3) 0%, var(--gold) 40%, var(--gold2) 70%, var(--gold3) 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .text-gold-shimmer {
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold3) 30%, var(--gold) 60%, var(--gold3) 90%);
+      background-size: 200% auto;
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      animation: shimmer 4s linear infinite;
+    }
+
+    /* ── Glass panels ── */
+    .glass {
+      background: rgba(13,74,53,.55);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+    }
+    .glass-cream {
+      background: rgba(250,246,237,.06);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+    }
+    .glass-hover {
+      transition: background .3s, border-color .3s, transform .3s, box-shadow .3s;
+    }
+    .glass-hover:hover {
+      background: rgba(201,162,39,.1);
+      border-color: var(--border2);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(201,162,39,.12);
+    }
+
+    /* ── Buttons ── */
+    .btn-gold {
+      display:inline-flex; align-items:center; gap:.55rem;
+      padding:.9rem 2.2rem; border-radius:.45rem;
+      background: linear-gradient(135deg, var(--gold), #a07c1a);
+      color: var(--emerald3); font-size:.82rem; font-weight:700;
+      letter-spacing:.06em; text-transform:uppercase; text-decoration:none;
+      transition: opacity .2s, transform .2s, box-shadow .2s;
+      box-shadow: 0 8px 28px rgba(201,162,39,.35);
+    }
+    .btn-gold:hover { opacity:.9; transform:translateY(-2px); box-shadow:0 14px 36px rgba(201,162,39,.45); }
+
+    .btn-outline {
+      display:inline-flex; align-items:center; gap:.55rem;
+      padding:.9rem 2.2rem; border-radius:.45rem;
+      border: 1px solid var(--border2);
+      color: var(--cream2); font-size:.82rem; font-weight:500;
+      letter-spacing:.06em; text-transform:uppercase; text-decoration:none;
+      transition: background .2s, border-color .2s, transform .2s;
+    }
+    .btn-outline:hover { background:rgba(201,162,39,.1); border-color:var(--gold); transform:translateY(-2px); }
+
+    /* ── Ornament divider ── */
+    .ornament {
+      display:flex; align-items:center; gap:1rem;
+      color:var(--gold); font-size:.55rem; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
+    }
+    .ornament::before, .ornament::after {
+      content:''; flex:1; height:1px;
+      background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    }
+
+    /* ── Section label ── */
+    .sec-label {
+      display:inline-flex; align-items:center; gap:.6rem;
+      font-size:.62rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--gold);
+      margin-bottom:1.25rem;
+    }
+    .sec-label::before { content:''; width:20px; height:1px; background:var(--gold); }
+
+    /* ── Card lift ── */
+    .card-lift { transition:transform .3s,box-shadow .3s,border-color .3s; }
+    .card-lift:hover { transform:translateY(-5px); box-shadow:0 20px 50px rgba(201,162,39,.15); border-color:var(--border2)!important; }
+
+    /* ── Geometric SVG pattern tile ── */
+    .geo-bg {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='rgba(201,162,39,0.07)' stroke-width='1'%3E%3Cpolygon points='40,4 76,22 76,58 40,76 4,58 4,22'/%3E%3Cpolygon points='40,14 66,27 66,53 40,66 14,53 14,27'/%3E%3Cline x1='40' y1='4' x2='40' y2='76'/%3E%3Cline x1='4' y1='22' x2='76' y2='58'/%3E%3Cline x1='4' y1='58' x2='76' y2='22'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* ── Noise ── */
+    body::before {
+      content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+      opacity:.45;
+    }
+
+    /* ── Input ── */
+    input, select, textarea {
+      font-family:'Inter',system-ui,sans-serif;
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold) !important;
+      box-shadow: 0 0 0 3px rgba(201,162,39,.15);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<header id="navbar" class="fixed top-0 inset-x-0 z-50 transition-all duration-500" style="padding-top:1.2rem">
+  <nav class="mx-auto px-8" style="max-width:1320px">
+    <div class="glass rounded-2xl px-7 h-16 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-3">
+        <!-- Arabic calligraphy-style monogram -->
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,var(--gold),#a07c1a)">
+          <span class="arabic font-bold text-lg" style="color:var(--emerald3);line-height:1">ن</span>
+        </div>
+        <div>
+          <p class="serif font-bold tracking-wide" style="font-size:1rem;color:var(--cream);line-height:1.1">Al-Nuur</p>
+          <p class="text-xs uppercase tracking-widest" style="color:rgba(201,162,39,.7);font-size:.55rem">Pesantren Modern</p>
+        </div>
+      </a>
+
+      <!-- Nav links -->
+      <ul class="hidden lg:flex items-center gap-8 text-xs font-semibold uppercase tracking-widest" style="color:var(--muted)">
+        <li><a href="#tentang"  class="hover:text-white transition-colors">Tentang</a></li>
+        <li><a href="#program"  class="hover:text-white transition-colors">Program</a></li>
+        <li><a href="#fasilitas" class="hover:text-white transition-colors">Fasilitas</a></li>
+        <li><a href="#santri"   class="hover:text-white transition-colors">Santri</a></li>
+        <li><a href="#daftar"   class="hover:text-white transition-colors">Pendaftaran</a></li>
+      </ul>
+
+      <!-- CTA -->
+      <div class="flex items-center gap-3">
+        <a href="tel:+62" class="hidden md:flex items-center gap-2 text-xs font-medium transition-colors hover:text-white" style="color:var(--muted)">
+          <i data-lucide="phone" style="width:13px;height:13px;color:var(--gold)"></i> Hubungi Kami
+        </a>
+        <a href="#daftar" class="btn-gold py-2.5 px-5 text-xs">
+          Daftar Sekarang
+        </a>
+        <button class="lg:hidden" style="color:var(--muted)">
+          <i data-lucide="menu" style="width:20px;height:20px"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="relative min-h-screen flex items-center overflow-hidden" style="background:var(--emerald3)">
+
+  <!-- Background image -->
+  <div class="absolute inset-0">
+    <img src="https://picsum.photos/seed/islamic-school-mosque/1600/900" alt="" class="thumb" style="filter:brightness(.32) saturate(1.1)" />
+    <div class="absolute inset-0" style="background:linear-gradient(to right,rgba(5,35,24,.92) 45%,rgba(5,35,24,.4) 100%)"></div>
+    <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(5,35,24,.8) 0%,transparent 50%)"></div>
+  </div>
+
+  <!-- Islamic geometric overlay (SVG) -->
+  <div class="absolute inset-0 geo-bg opacity-60"></div>
+
+  <!-- Arabesque SVG top-right corner decoration -->
+  <div class="absolute top-0 right-0 pointer-events-none opacity-20" style="width:500px;height:500px">
+    <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+      <g stroke="var(--gold)" stroke-width=".8" fill="none" opacity=".9">
+        <!-- Layered star polygon -->
+        <polygon points="200,20 240,80 310,80 270,130 290,200 230,165 200,220 170,165 110,200 130,130 90,80 160,80" />
+        <polygon points="200,45 232,93 295,93 258,133 275,193 220,162 200,205 180,162 125,193 142,133 105,93 168,93" />
+        <circle cx="200" cy="120" r="80" />
+        <circle cx="200" cy="120" r="55" />
+        <circle cx="200" cy="120" r="30" />
+        <!-- Radiating lines -->
+        <line x1="200" y1="20" x2="200" y2="0"/><line x1="290" y1="200" x2="380" y2="240"/>
+        <line x1="110" y1="200" x2="20" y2="240"/><line x1="200" y1="220" x2="200" y2="400"/>
+        <line x1="310" y1="80" x2="400" y2="40"/><line x1="90" y1="80" x2="0" y2="40"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Bottom-left ornament mirror -->
+  <div class="absolute bottom-0 left-0 pointer-events-none opacity-15" style="width:350px;height:350px;transform:rotate(180deg)">
+    <svg viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+      <g stroke="var(--gold)" stroke-width=".8">
+        <polygon points="150,15 180,65 235,65 200,100 215,155 165,125 150,170 135,125 85,155 100,100 65,65 120,65"/>
+        <circle cx="150" cy="95" r="60"/><circle cx="150" cy="95" r="38"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Gold orb glow -->
+  <div class="absolute pointer-events-none" style="width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,162,39,.08) 0%,transparent 65%);top:10%;right:5%;filter:blur(60px)"></div>
+
+  <div class="relative z-10 w-full mx-auto px-8 pt-32 pb-28" style="max-width:1320px">
+    <div class="grid lg:grid-cols-[1.2fr_1fr] gap-16 items-center">
+
+      <!-- Left copy -->
+      <div>
+        <!-- Arabic bismillah -->
+        <p class="arabic fu1 mb-5" style="font-size:1.8rem;color:var(--gold2);letter-spacing:.05em;text-shadow:0 2px 20px rgba(201,162,39,.3)">
+          بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
+        </p>
+
+        <!-- Eyebrow -->
+        <div class="flex items-center gap-3 mb-7 fu2">
+          <div class="h-px w-10" style="background:var(--gold)"></div>
+          <span class="text-xs font-semibold uppercase tracking-[.22em]" style="color:var(--gold)">Pesantren Modern Terpadu · Est. 1998</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="serif fu3" style="font-size:clamp(3rem,5.5vw,5.2rem);font-weight:300;line-height:1.05;color:var(--cream)">
+          Tempat Cahaya<br/>
+          <em class="text-gold not-italic" style="font-weight:700">Ilmu &amp; Iman</em><br/>
+          <span style="color:var(--muted);font-weight:300">Berpadu.</span>
+        </h1>
+
+        <p class="fu4 mt-7 leading-relaxed" style="font-size:1rem;color:var(--muted);max-width:420px;font-weight:300">
+          Pondok Pesantren Al-Nuur mencetak generasi Qur'ani yang unggul dalam ilmu agama, sains, dan teknologi — berbekal akhlak mulia dan jiwa kepemimpinan.
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap gap-4 mt-10 fu4">
+          <a href="#daftar" class="btn-gold">
+            <i data-lucide="book-open" style="width:16px;height:16px"></i>
+            Daftar PPDB 2025
+          </a>
+          <a href="#tentang" class="btn-outline">
+            <i data-lucide="play-circle" style="width:16px;height:16px"></i>
+            Profil Pesantren
+          </a>
+        </div>
+
+        <!-- Trust badges -->
+        <div class="flex flex-wrap gap-3 mt-10 fu4">
+          <div class="glass-cream rounded-full px-4 py-2 flex items-center gap-2 text-xs" style="color:var(--muted)">
+            <i data-lucide="award" style="width:13px;height:13px;color:var(--gold)"></i> Terakreditasi A
+          </div>
+          <div class="glass-cream rounded-full px-4 py-2 flex items-center gap-2 text-xs" style="color:var(--muted)">
+            <i data-lucide="users" style="width:13px;height:13px;color:var(--gold)"></i> 1.200+ Santri Aktif
+          </div>
+          <div class="glass-cream rounded-full px-4 py-2 flex items-center gap-2 text-xs" style="color:var(--muted)">
+            <i data-lucide="graduation-cap" style="width:13px;height:13px;color:var(--gold)"></i> Kurikulum Kemendikbud + Kemenag
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: floating info cards -->
+      <div class="hidden lg:flex flex-col gap-5 items-end fu3">
+
+        <!-- Al-Qur'an card -->
+        <div class="glass rounded-2xl p-6 w-76" style="border-color:var(--border2);max-width:300px">
+          <p class="arabic text-center leading-loose mb-3" style="font-size:1.2rem;color:var(--gold2);direction:rtl">
+            وَعَلَّمَ آدَمَ الْأَسْمَاءَ كُلَّهَا
+          </p>
+          <p class="text-xs text-center" style="color:var(--muted)">
+            "Dan Dia mengajarkan kepada Adam nama-nama (benda) semuanya." — Al-Baqarah: 31
+          </p>
+        </div>
+
+        <!-- Pencapaian card -->
+        <div class="glass rounded-2xl p-5 w-72" style="max-width:288px">
+          <p class="text-xs uppercase tracking-widest mb-4" style="color:var(--gold)">Pencapaian 2024</p>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs" style="color:var(--muted)">Hafidz Qur'an 30 Juz</span>
+              <span class="serif font-bold" style="color:var(--gold2)">124 santri</span>
+            </div>
+            <div class="h-px" style="background:var(--border)"></div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs" style="color:var(--muted)">Juara OSN Nasional</span>
+              <span class="serif font-bold" style="color:var(--gold2)">8 medali</span>
+            </div>
+            <div class="h-px" style="background:var(--border)"></div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs" style="color:var(--muted)">Alumni PTN Unggulan</span>
+              <span class="serif font-bold" style="color:var(--gold2)">93%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PPDB status card -->
+        <div class="glass rounded-2xl p-5 w-64" style="max-width:256px;border-color:var(--border2)">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-xs uppercase tracking-widest" style="color:var(--gold)">PPDB 2025/2026</p>
+            <span class="flex items-center gap-1.5 text-xs" style="color:#4ade80">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400 block" style="animation:pulse2 1.5s infinite"></span>
+              Dibuka
+            </span>
+          </div>
+          <p class="serif font-bold" style="font-size:2rem;color:var(--cream);line-height:1">47 <span class="text-sm font-normal" style="color:var(--muted)">kursi tersisa</span></p>
+          <div class="mt-3 h-1.5 rounded-full" style="background:rgba(255,255,255,.08)">
+            <div class="h-full rounded-full" style="width:68%;background:linear-gradient(90deg,var(--gold),#a07c1a)"></div>
+          </div>
+          <p class="text-xs mt-2" style="color:var(--muted)">Penutupan: 30 Agustus 2025</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 fi" style="animation-delay:.9s">
+    <span class="text-xs uppercase tracking-[.22em]" style="color:rgba(201,162,39,.4)">Telusuri</span>
+    <div class="w-px h-10" style="background:linear-gradient(to bottom,var(--gold),transparent)"></div>
+  </div>
+</section>
+
+<!-- ═══ MARQUEE — nilai pesantren ═══ -->
+<div class="overflow-hidden py-5 border-y" style="background:rgba(201,162,39,.08);border-color:var(--border)">
+  <div style="display:inline-block;white-space:nowrap;animation:marqueeScroll 25s linear infinite">
+    <span class="inline-flex items-center gap-8 text-xs font-semibold uppercase tracking-widest px-8" style="color:var(--gold2)">
+      <span>✦ Tahfizh Al-Qur'an</span>
+      <span>✦ Bahasa Arab &amp; Inggris</span>
+      <span>✦ Sains &amp; Teknologi</span>
+      <span>✦ Kepemimpinan</span>
+      <span>✦ Kewirausahaan</span>
+      <span>✦ Akhlak Mulia</span>
+      <span>✦ Riyadhoh &amp; Seni</span>
+      <span>✦ Tahfizh Al-Qur'an</span>
+      <span>✦ Bahasa Arab &amp; Inggris</span>
+      <span>✦ Sains &amp; Teknologi</span>
+      <span>✦ Kepemimpinan</span>
+      <span>✦ Kewirausahaan</span>
+      <span>✦ Akhlak Mulia</span>
+      <span>✦ Riyadhoh &amp; Seni</span>
+    </span>
+  </div>
+</div>
+<style>
+  @keyframes marqueeScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+</style>
+
+<!-- ═══ TENTANG / ABOUT ═══ -->
+<section id="tentang" class="relative py-32 px-8 overflow-hidden" style="background:var(--emerald3)">
+  <div class="absolute inset-0 geo-bg opacity-30"></div>
+  <div class="absolute pointer-events-none" style="width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(201,162,39,.06) 0%,transparent 65%);top:-10%;right:-10%;filter:blur(80px)"></div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="grid lg:grid-cols-2 gap-20 items-center">
+
+      <!-- Left: image collage -->
+      <div class="relative reveal-scale" style="min-height:560px">
+        <!-- Main image -->
+        <div class="rounded-2xl overflow-hidden" style="height:420px;border:1px solid var(--border)">
+          <img src="https://picsum.photos/seed/madrasa-students-studying/700/420" alt="Santri belajar" class="thumb" style="filter:brightness(.85) saturate(1.05)" />
+        </div>
+        <!-- Floating second image -->
+        <div class="absolute rounded-xl overflow-hidden shadow-2xl" style="width:210px;height:255px;bottom:-40px;right:-16px;border:3px solid var(--emerald3);box-shadow:0 24px 60px rgba(0,0,0,.5)">
+          <img src="https://picsum.photos/seed/quran-reading-light/210/255" alt="Membaca Al-Qur'an" class="thumb" style="filter:brightness(.9)" />
+        </div>
+        <!-- Gold vertical accent -->
+        <div class="absolute" style="width:3px;height:130px;background:linear-gradient(to bottom,var(--gold),transparent);top:30px;left:-18px;border-radius:2px"></div>
+        <!-- Tahun berdiri badge -->
+        <div class="absolute glass rounded-xl px-5 py-4 text-center" style="top:18px;right:18px;border-color:var(--border2)">
+          <p class="serif font-bold" style="font-size:2.2rem;color:var(--gold);line-height:1">1998</p>
+          <p class="text-xs uppercase tracking-widest mt-1" style="color:var(--muted)">Berdiri Sejak</p>
+        </div>
+        <!-- Hexagon ornament bottom-left -->
+        <div class="absolute" style="bottom:60px;left:-30px;opacity:.15">
+          <svg width="80" height="92" viewBox="0 0 80 92"><polygon points="40,2 78,22 78,70 40,90 2,70 2,22" fill="none" stroke="var(--gold)" stroke-width="1.5"/><polygon points="40,14 66,28 66,64 40,78 14,64 14,28" fill="none" stroke="var(--gold)" stroke-width="1"/></svg>
+        </div>
+      </div>
+
+      <!-- Right: copy -->
+      <div class="reveal">
+        <div class="sec-label">Tentang Kami</div>
+        <h2 class="serif mb-7" style="font-size:clamp(2.2rem,3.8vw,3.4rem);font-weight:300;line-height:1.1;color:var(--cream)">
+          Mendidik dengan<br/>
+          <em class="text-gold not-italic" style="font-weight:600">Hati &amp; Ilmu</em><br/>
+          <span style="color:var(--muted)">sejak 27 Tahun.</span>
+        </h2>
+
+        <div class="space-y-5 leading-relaxed" style="color:var(--muted);font-weight:300;font-size:.95rem">
+          <p>Pondok Pesantren Al-Nuur hadir sebagai institusi pendidikan Islam terpadu yang menyatukan kurikulum nasional Kemendikbud dengan pendidikan diniyah mendalam. Kami percaya bahwa keunggulan akademik dan keteguhan iman bukan pilihan — keduanya adalah keniscayaan.</p>
+          <p>Dengan pendekatan holistik, santri kami tidak hanya ditempa menjadi hafidz dan hafidzah, tetapi juga disiapkan untuk bersaing di perguruan tinggi terbaik nasional dan internasional, serta menjadi pemimpin umat yang berkarakter.</p>
+        </div>
+
+        <!-- 4 nilai inti -->
+        <div class="grid grid-cols-2 gap-4 mt-10">
+          <div class="glass glass-hover rounded-xl p-5" style="border-color:var(--border)">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style="background:rgba(201,162,39,.1);border:1px solid var(--border)">
+              <i data-lucide="book-open" style="width:18px;height:18px;color:var(--gold)"></i>
+            </div>
+            <h4 class="serif font-semibold text-white mb-1" style="font-size:1rem">Ilmu</h4>
+            <p class="text-xs leading-relaxed" style="color:var(--muted)">Kurikulum komprehensif, sains, teknologi, dan kitab kuning</p>
+          </div>
+          <div class="glass glass-hover rounded-xl p-5" style="border-color:var(--border)">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style="background:rgba(201,162,39,.1);border:1px solid var(--border)">
+              <i data-lucide="heart" style="width:18px;height:18px;color:var(--gold)"></i>
+            </div>
+            <h4 class="serif font-semibold text-white mb-1" style="font-size:1rem">Iman</h4>
+            <p class="text-xs leading-relaxed" style="color:var(--muted)">Tahfizh Al-Qur'an, fiqh, aqidah, dan amaliah harian</p>
+          </div>
+          <div class="glass glass-hover rounded-xl p-5" style="border-color:var(--border)">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style="background:rgba(201,162,39,.1);border:1px solid var(--border)">
+              <i data-lucide="star" style="width:18px;height:18px;color:var(--gold)"></i>
+            </div>
+            <h4 class="serif font-semibold text-white mb-1" style="font-size:1rem">Akhlak</h4>
+            <p class="text-xs leading-relaxed" style="color:var(--muted)">Pembentukan karakter mulia dalam kehidupan asrama 24 jam</p>
+          </div>
+          <div class="glass glass-hover rounded-xl p-5" style="border-color:var(--border)">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style="background:rgba(201,162,39,.1);border:1px solid var(--border)">
+              <i data-lucide="trophy" style="width:18px;height:18px;color:var(--gold)"></i>
+            </div>
+            <h4 class="serif font-semibold text-white mb-1" style="font-size:1rem">Prestasi</h4>
+            <p class="text-xs leading-relaxed" style="color:var(--muted)">Juara olimpiade sains, MTQ, dan kompetisi internasional</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS STRIP ═══ -->
+<section class="py-20 px-8 border-y relative" style="background:linear-gradient(135deg,var(--emerald2),var(--emerald3));border-color:var(--border)">
+  <div class="absolute inset-0 geo-bg opacity-20"></div>
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="ornament mb-14 reveal">· Angka Berbicara ·</div>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-px rounded-2xl overflow-hidden reveal" style="border:1px solid var(--border)">
+      <div class="flex flex-col items-center justify-center py-12 px-6 text-center" style="background:rgba(201,162,39,.04)">
+        <p class="serif font-bold mb-2" style="font-size:3.2rem;color:var(--gold);line-height:1">27<span style="font-size:1.8rem;color:var(--gold2)">+</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:var(--muted)">Tahun Berdiri</p>
+      </div>
+      <div class="flex flex-col items-center justify-center py-12 px-6 text-center" style="background:rgba(201,162,39,.04)">
+        <p class="serif font-bold mb-2" style="font-size:3.2rem;color:var(--gold);line-height:1">1.2K<span style="font-size:1.8rem;color:var(--gold2)">+</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:var(--muted)">Santri Aktif</p>
+      </div>
+      <div class="flex flex-col items-center justify-center py-12 px-6 text-center" style="background:rgba(201,162,39,.04)">
+        <p class="serif font-bold mb-2" style="font-size:3.2rem;color:var(--gold);line-height:1">8K<span style="font-size:1.8rem;color:var(--gold2)">+</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:var(--muted)">Alumni Tersebar</p>
+      </div>
+      <div class="flex flex-col items-center justify-center py-12 px-6 text-center" style="background:rgba(201,162,39,.04)">
+        <p class="serif font-bold mb-2" style="font-size:3.2rem;color:var(--gold);line-height:1">93<span style="font-size:1.8rem;color:var(--gold2)">%</span></p>
+        <p class="text-xs uppercase tracking-widest" style="color:var(--muted)">Masuk PTN Terbaik</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROGRAM UNGGULAN ═══ -->
+<section id="program" class="relative py-32 px-8 overflow-hidden" style="background:var(--emerald2)">
+  <div class="absolute inset-0 geo-bg opacity-25"></div>
+  <div class="absolute pointer-events-none" style="width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,162,39,.05) 0%,transparent 65%);bottom:-10%;left:-8%;filter:blur(80px)"></div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="text-center mb-20 reveal">
+      <div class="ornament mb-6">· Program Unggulan ·</div>
+      <h2 class="serif" style="font-size:clamp(2.2rem,3.8vw,3.4rem);font-weight:300;color:var(--cream);line-height:1.1">
+        Tiga Jalur Menuju<br/>
+        <em class="text-gold not-italic" style="font-weight:600">Kemuliaan</em>
+      </h2>
+      <p class="mt-5 mx-auto leading-relaxed" style="color:var(--muted);max-width:480px;font-size:.95rem;font-weight:300">
+        Setiap santri memilih jalur yang sesuai minat dan potensinya, dengan fondasi keimanan dan akhlak yang sama.
+      </p>
+    </div>
+
+    <!-- 3 program cards — staggered heights -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- Program 1: Tahfizh -->
+      <div class="glass card-lift rounded-2xl overflow-hidden reveal" style="border-color:var(--border)">
+        <div class="relative" style="height:240px">
+          <img src="https://picsum.photos/seed/quran-memorization-class/500/240" alt="Tahfizh" class="thumb" style="filter:brightness(.6) saturate(1.1)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(5,35,24,.95) 0%,transparent 55%)"></div>
+          <div class="absolute top-5 left-5">
+            <span class="text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full" style="background:rgba(201,162,39,.2);color:var(--gold2);border:1px solid var(--border)">Program A</span>
+          </div>
+          <!-- Arabic text overlay -->
+          <div class="absolute bottom-5 left-5">
+            <p class="arabic" style="font-size:1.3rem;color:var(--gold2)">تَحْفِيظُ الْقُرْآن</p>
+          </div>
+        </div>
+        <div class="p-7">
+          <h3 class="serif font-semibold text-white mb-3" style="font-size:1.35rem">Program Tahfizh</h3>
+          <p class="text-sm leading-relaxed mb-5" style="color:var(--muted)">Fokus penghafalan Al-Qur'an 30 juz dengan metode Talaqqi dan Muroja'ah intensif. Ditambah pelajaran Tajwid, Qiro'at, dan Tafsir mendalam.</p>
+          <ul class="space-y-2 mb-6">
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)">
+              <i data-lucide="check-circle" style="width:13px;height:13px;color:var(--gold)"></i> Target 30 juz dalam 3 tahun
+            </li>
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)">
+              <i data-lucide="check-circle" style="width:13px;height:13px;color:var(--gold)"></i> Musyrif hafidz berpengalaman
+            </li>
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)">
+              <i data-lucide="check-circle" style="width:13px;height:13px;color:var(--gold)"></i> Ujian sanad bersambung
+            </li>
+          </ul>
+          <div class="pt-5 border-t flex items-center justify-between" style="border-color:var(--border)">
+            <span class="text-xs" style="color:var(--muted)">Jenjang: MTs &amp; MA</span>
+            <a href="#daftar" class="text-xs font-semibold flex items-center gap-1 transition-colors hover:text-white" style="color:var(--gold)">
+              Daftar <i data-lucide="arrow-right" style="width:12px;height:12px"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Program 2: Sains (featured) -->
+      <div class="card-lift rounded-2xl overflow-hidden reveal relative" style="background:linear-gradient(145deg,rgba(201,162,39,.12),rgba(10,56,40,.8));border:1px solid var(--border2);box-shadow:0 0 60px rgba(201,162,39,.1),inset 0 1px 0 rgba(201,162,39,.15)">
+        <!-- Glow top -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none" style="width:200px;height:150px;background:radial-gradient(circle,rgba(201,162,39,.1) 0%,transparent 70%);filter:blur(20px)"></div>
+        <!-- Most popular badge -->
+        <div class="absolute top-5 right-5 px-3 py-1 rounded-full text-xs font-bold" style="background:linear-gradient(135deg,var(--gold),#a07c1a);color:var(--emerald3)">Paling Diminati</div>
+
+        <div class="relative" style="height:240px">
+          <img src="https://picsum.photos/seed/science-lab-students/500/240" alt="Sains" class="thumb" style="filter:brightness(.6) saturate(1.1)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(5,35,24,.95) 0%,transparent 55%)"></div>
+          <div class="absolute top-5 left-5">
+            <span class="text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full" style="background:rgba(201,162,39,.25);color:var(--gold2);border:1px solid var(--border2)">Program B</span>
+          </div>
+          <div class="absolute bottom-5 left-5">
+            <p class="arabic" style="font-size:1.3rem;color:var(--gold2)">الْعِلْمُ وَالتَّكْنُولُوجِيَا</p>
+          </div>
+        </div>
+        <div class="p-7">
+          <h3 class="serif font-semibold text-white mb-3" style="font-size:1.35rem">Program Sains & Teknologi</h3>
+          <p class="text-sm leading-relaxed mb-5" style="color:rgba(245,230,200,.65)">Kurikulum penuh plus pendalaman STEM, coding, robotika, dan riset ilmiah. Persiapan OSN dan olimpiade internasional.</p>
+          <ul class="space-y-2 mb-6">
+            <li class="flex items-center gap-2 text-xs" style="color:rgba(245,230,200,.6)">
+              <i data-lucide="check-circle" style="width:13px;height:13px;color:var(--gold)"></i> Lab sains & komputer modern
+            </li>
+            <li class="flex items-center gap-2 text-xs" style="color:rgba(245,230,200,.6)">
+              <i data-lucide="check-circle" style="width:13px;height:13px;color:var(--gold)"></i> Mentoring olimpiade intensif
+            </li>
+            <li class="flex items-center gap-2 text-xs" style="color:rgba(245,230,200,.6)">
+              <i data-lucide="check-circle" style="width:13px;height:13px;color:var(--gold)"></i> 8 medali OSN nasional 2024
+            </li>
+          </ul>
+          <div class="pt-5 border-t flex items-center justify-between" style="border-color:var(--border)">
+            <span class="text-xs" style="color:var(--muted)">Jenjang: MTs &amp; MA</span>
+            <a href="#daftar" class="text-xs font-semibold flex items-center gap-1 transition-colors hover:text-white" style="color:var(--gold)">
+              Daftar <i data-lucide="arrow-right" style="width:12px;height:12px"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Program 3: Bahasa -->
+      <div class="glass card-lift rounded-2xl overflow-hidden reveal" style="border-color:var(--border)">
+        <div class="relative" style="height:240px">
+          <img src="https://picsum.photos/seed/language-class-arabic/500/240" alt="Bahasa" class="thumb" style="filter:brightness(.6) saturate(1.1)" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(5,35,24,.95) 0%,transparent 55%)"></div>
+          <div class="absolute top-5 left-5">
+            <span class="text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full" style="background:rgba(201,162,39,.2);color:var(--gold2);border:1px solid var(--border)">Program C</span>
+          </div>
+          <div class="absolute bottom-5 left-5">
+            <p class="arabic" style="font-size:1.3rem;color:var(--gold2)">اللُّغَةُ وَالآدَاب</p>
+          </div>
+        </div>
+        <div class="p-7">
+          <h3 class="serif font-semibold text-white mb-3" style="font-size:1.35rem">Program Bahasa & Sastra</h3>
+          <p class="text-sm leading-relaxed mb-5" style="color:var(--muted)">Penguasaan Bahasa Arab, Inggris, dan sastra klasik Islam. Bekal untuk melanjutkan ke universitas Timur Tengah dan Eropa.</p>
+          <ul class="space-y-2 mb-6">
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)">
+              <i data-lucide="check-circle" style="width:13px;height:13px;color:var(--gold)"></i> Lingkungan berbahasa Arab 24 jam
+            </li>
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)">
+              <i data-lucide="check-circle" style="width:13px;height:13px;color:var(--gold)"></i> Beasiswa ke Mesir & Madinah
+            </li>
+            <li class="flex items-center gap-2 text-xs" style="color:var(--muted)">
+              <i data-lucide="check-circle" style="width:13px;height:13px;color:var(--gold)"></i> Kelas debat & pidato internasional
+            </li>
+          </ul>
+          <div class="pt-5 border-t flex items-center justify-between" style="border-color:var(--border)">
+            <span class="text-xs" style="color:var(--muted)">Jenjang: MTs &amp; MA</span>
+            <a href="#daftar" class="text-xs font-semibold flex items-center gap-1 transition-colors hover:text-white" style="color:var(--gold)">
+              Daftar <i data-lucide="arrow-right" style="width:12px;height:12px"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FASILITAS ═══ -->
+<section id="fasilitas" class="relative py-32 px-8 overflow-hidden" style="background:var(--emerald3)">
+  <div class="absolute inset-0 geo-bg opacity-25"></div>
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="text-center mb-20 reveal">
+      <div class="ornament mb-6">· Fasilitas Unggulan ·</div>
+      <h2 class="serif" style="font-size:clamp(2.2rem,3.8vw,3.2rem);font-weight:300;color:var(--cream);line-height:1.1">
+        Lingkungan Belajar yang<br/><em class="text-gold not-italic" style="font-weight:600">Menginspirasi</em>
+      </h2>
+    </div>
+
+    <!-- Full-width campus image -->
+    <div class="relative rounded-3xl overflow-hidden mb-12 reveal-scale" style="height:420px;border:1px solid var(--border)">
+      <img src="https://picsum.photos/seed/islamic-campus-building/1300/420" alt="Kampus Al-Nuur" class="thumb" style="filter:brightness(.6) saturate(1.05)" />
+      <div class="absolute inset-0" style="background:linear-gradient(to right,rgba(5,35,24,.75) 0%,transparent 50%,rgba(5,35,24,.4) 100%)"></div>
+      <div class="absolute top-8 left-8 glass rounded-2xl px-6 py-5" style="border-color:var(--border2)">
+        <p class="text-xs uppercase tracking-widest mb-1" style="color:var(--gold)">Luas Kampus</p>
+        <p class="serif font-bold text-white" style="font-size:1.8rem;line-height:1">4.2 Ha</p>
+        <p class="text-xs mt-1" style="color:var(--muted)">Jombang, Jawa Timur</p>
+      </div>
+    </div>
+
+    <!-- 6 fasilitas cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="glass glass-hover card-lift rounded-2xl p-6 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(201,162,39,.1);border:1px solid var(--border)">
+          <i data-lucide="home" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-2" style="font-size:1.1rem">Asrama Nyaman</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Kamar ber-AC dengan kapasitas 4–6 santri, lemari pribadi, dan area belajar mandiri yang tenang.</p>
+      </div>
+      <div class="glass glass-hover card-lift rounded-2xl p-6 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(201,162,39,.1);border:1px solid var(--border)">
+          <i data-lucide="mosque" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-2" style="font-size:1.1rem">Masjid Agung</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Masjid berkapasitas 2.000 jama'ah dengan desain arsitektur Islam kontemporer yang megah.</p>
+      </div>
+      <div class="glass glass-hover card-lift rounded-2xl p-6 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(201,162,39,.1);border:1px solid var(--border)">
+          <i data-lucide="flask-conical" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-2" style="font-size:1.1rem">Laboratorium Sains</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Lab fisika, kimia, biologi, dan komputer dengan peralatan mutakhir untuk praktikum dan riset.</p>
+      </div>
+      <div class="glass glass-hover card-lift rounded-2xl p-6 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(201,162,39,.1);border:1px solid var(--border)">
+          <i data-lucide="library" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-2" style="font-size:1.1rem">Perpustakaan Digital</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">50.000+ koleksi buku fisik dan akses digital ke jurnal internasional, kitab kuning, dan e-book.</p>
+      </div>
+      <div class="glass glass-hover card-lift rounded-2xl p-6 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(201,162,39,.1);border:1px solid var(--border)">
+          <i data-lucide="dumbbell" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-2" style="font-size:1.1rem">Sarana Olahraga</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Lapangan futsal, basket, voli, kolam renang, dan area riyadhoh terbuka seluas 1 hektar.</p>
+      </div>
+      <div class="glass glass-hover card-lift rounded-2xl p-6 reveal" style="border-color:var(--border)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(201,162,39,.1);border:1px solid var(--border)">
+          <i data-lucide="utensils" style="width:22px;height:22px;color:var(--gold)"></i>
+        </div>
+        <h3 class="serif font-semibold text-white mb-2" style="font-size:1.1rem">Dapur & Kantin Sehat</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Menu bergizi 3× sehari, diawasi ahli gizi. 100% halal, tanpa pengawet, dan fresh setiap hari.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PENDAFTARAN CTA ═══ -->
+<section id="daftar" class="relative py-32 px-8 overflow-hidden" style="background:linear-gradient(135deg,var(--emerald2),var(--emerald3))">
+  <div class="absolute inset-0 geo-bg opacity-40"></div>
+  <div class="absolute pointer-events-none" style="width:700px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,162,39,.08) 0%,transparent 65%);top:-20%;left:50%;transform:translateX(-50%);filter:blur(80px)"></div>
+  <!-- Arabesque corner -->
+  <div class="absolute bottom-0 right-0 opacity-10 pointer-events-none" style="width:320px;height:320px">
+    <svg viewBox="0 0 320 320" fill="none"><g stroke="var(--gold)" stroke-width=".8"><polygon points="160,10 300,85 300,235 160,310 20,235 20,85"/><polygon points="160,40 270,100 270,220 160,280 50,220 50,100"/><circle cx="160" cy="160" r="80"/><circle cx="160" cy="160" r="50"/></g></svg>
+  </div>
+
+  <div class="relative z-10 mx-auto" style="max-width:1100px">
+    <div class="grid lg:grid-cols-2 gap-16 items-start">
+
+      <!-- Left: copy + steps -->
+      <div class="reveal">
+        <div class="ornament mb-8" style="justify-content:flex-start">· Penerimaan Santri Baru ·</div>
+        <h2 class="serif mb-6" style="font-size:clamp(2.2rem,3.5vw,3.2rem);font-weight:300;color:var(--cream);line-height:1.1">
+          Mulai Perjalanan<br/>
+          <em class="text-gold not-italic" style="font-weight:600">Luar Biasa</em><br/>
+          <span style="color:var(--muted)">Anak Anda.</span>
+        </h2>
+        <p class="leading-relaxed mb-10" style="color:var(--muted);font-size:.95rem;max-width:380px">
+          Pendaftaran PPDB 2025/2026 sudah dibuka. Tempat terbatas. Segera daftarkan putra-putri Anda sebelum kuota habis.
+        </p>
+
+        <!-- Alur pendaftaran -->
+        <div class="space-y-6">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 serif font-bold text-sm" style="background:linear-gradient(135deg,var(--gold),#a07c1a);color:var(--emerald3)">1</div>
+            <div>
+              <p class="font-semibold text-white text-sm mb-1">Isi Formulir Online</p>
+              <p class="text-xs leading-relaxed" style="color:var(--muted)">Lengkapi data santri dan orang tua melalui portal pendaftaran digital kami</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 serif font-bold text-sm" style="background:rgba(201,162,39,.15);color:var(--gold);border:1px solid var(--border2)">2</div>
+            <div>
+              <p class="font-semibold text-white text-sm mb-1">Upload Berkas</p>
+              <p class="text-xs leading-relaxed" style="color:var(--muted)">Ijazah, rapor, foto, dan surat keterangan sehat</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 serif font-bold text-sm" style="background:rgba(201,162,39,.15);color:var(--gold);border:1px solid var(--border2)">3</div>
+            <div>
+              <p class="font-semibold text-white text-sm mb-1">Tes Seleksi</p>
+              <p class="text-xs leading-relaxed" style="color:var(--muted)">Tes tertulis (Qur'an, Bahasa Arab, Matematika) dan wawancara</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 serif font-bold text-sm" style="background:rgba(201,162,39,.15);color:var(--gold);border:1px solid var(--border2)">4</div>
+            <div>
+              <p class="font-semibold text-white text-sm mb-1">Pengumuman & Daftar Ulang</p>
+              <p class="text-xs leading-relaxed" style="color:var(--muted)">Hasil seleksi diumumkan 7 hari setelah tes. Daftar ulang dalam 3 hari</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div class="glass rounded-2xl p-8 reveal" style="border-color:var(--border2)">
+        <p class="serif font-semibold text-white mb-1" style="font-size:1.3rem">Formulir Pendaftaran Awal</p>
+        <p class="text-xs mb-8" style="color:var(--muted)">Tim kami akan menghubungi Anda dalam 1×24 jam.</p>
+
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-medium block mb-1.5" style="color:var(--gold)">Nama Calon Santri</label>
+              <input type="text" placeholder="Nama lengkap" class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(255,255,255,.06);border-color:var(--border);color:var(--cream)" />
+            </div>
+            <div>
+              <label class="text-xs font-medium block mb-1.5" style="color:var(--gold)">Jenjang</label>
+              <select class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(5,35,24,.9);border-color:var(--border);color:var(--cream)">
+                <option>MTs (SMP)</option>
+                <option>MA (SMA)</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-medium block mb-1.5" style="color:var(--gold)">Nama Orang Tua / Wali</label>
+            <input type="text" placeholder="Nama lengkap" class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(255,255,255,.06);border-color:var(--border);color:var(--cream)" />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-medium block mb-1.5" style="color:var(--gold)">No. WhatsApp</label>
+              <input type="tel" placeholder="08xx-xxxx-xxxx" class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(255,255,255,.06);border-color:var(--border);color:var(--cream)" />
+            </div>
+            <div>
+              <label class="text-xs font-medium block mb-1.5" style="color:var(--gold)">Program Pilihan</label>
+              <select class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(5,35,24,.9);border-color:var(--border);color:var(--cream)">
+                <option>Program Tahfizh</option>
+                <option>Program Sains & Teknologi</option>
+                <option>Program Bahasa & Sastra</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-medium block mb-1.5" style="color:var(--gold)">Asal Kota / Provinsi</label>
+            <input type="text" placeholder="Contoh: Surabaya, Jawa Timur" class="w-full px-4 py-3 rounded-xl text-sm border" style="background:rgba(255,255,255,.06);border-color:var(--border);color:var(--cream)" />
+          </div>
+          <button class="btn-gold w-full justify-center mt-2">
+            <i data-lucide="send" style="width:15px;height:15px"></i>
+            Kirim Pendaftaran
+          </button>
+          <p class="text-xs text-center" style="color:var(--muted)">Atau hubungi via WhatsApp: <span style="color:var(--gold)">0812-3456-7890</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIAL SANTRI ═══ -->
+<section id="santri" class="relative py-28 px-8 overflow-hidden" style="background:var(--emerald2)">
+  <div class="absolute inset-0 geo-bg opacity-20"></div>
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+    <div class="text-center mb-16 reveal">
+      <div class="ornament mb-6">· Kata Mereka ·</div>
+      <h2 class="serif" style="font-size:clamp(2rem,3.2vw,2.8rem);font-weight:300;color:var(--cream)">
+        Alumni &amp; Wali Santri<br/><em class="text-gold not-italic" style="font-weight:600">Berbicara</em>
+      </h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- T1 -->
+      <div class="glass card-lift rounded-2xl p-7 flex flex-col reveal" style="border-color:var(--border)">
+        <div class="arabic text-4xl mb-4 leading-none" style="color:rgba(201,162,39,.2)">"</div>
+        <p class="serif italic text-sm leading-relaxed flex-1 mb-7" style="color:var(--muted);font-weight:300">
+          "Anak saya masuk sebagai siswa biasa. Keluar sebagai hafidz 30 juz sekaligus peraih medali emas OSN Fisika. Al-Nuur benar-benar luar biasa."
+        </p>
+        <div class="flex items-center gap-3 pt-5 border-t" style="border-color:var(--border)">
+          <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+            <img src="https://picsum.photos/seed/muslim-father-portrait/40/40" alt="" class="thumb" />
+          </div>
+          <div>
+            <p class="text-sm font-semibold" style="color:var(--cream)">H. Bambang Sugiarto</p>
+            <p class="text-xs" style="color:var(--muted)">Wali Santri · Surabaya</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- T2 -->
+      <div class="glass card-lift rounded-2xl p-7 flex flex-col reveal" style="border-color:var(--border)">
+        <div class="arabic text-4xl mb-4 leading-none" style="color:rgba(201,162,39,.2)">"</div>
+        <p class="serif italic text-sm leading-relaxed flex-1 mb-7" style="color:var(--muted);font-weight:300">
+          "Tiga tahun di Al-Nuur mengubah cara saya memandang dunia. Saya diterima di Universitas Al-Azhar Kairo sekaligus mendapat beasiswa penuh. Alhamdulillah."
+        </p>
+        <div class="flex items-center gap-3 pt-5 border-t" style="border-color:var(--border)">
+          <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+            <img src="https://picsum.photos/seed/young-muslim-student/40/40" alt="" class="thumb" />
+          </div>
+          <div>
+            <p class="text-sm font-semibold" style="color:var(--cream)">Ahmad Fauzi Ramadhan</p>
+            <p class="text-xs" style="color:var(--muted)">Alumni 2022 · Al-Azhar Cairo</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- T3 -->
+      <div class="glass card-lift rounded-2xl p-7 flex flex-col reveal" style="border-color:var(--border)">
+        <div class="arabic text-4xl mb-4 leading-none" style="color:rgba(201,162,39,.2)">"</div>
+        <p class="serif italic text-sm leading-relaxed flex-1 mb-7" style="color:var(--muted);font-weight:300">
+          "Para ustadz benar-benar peduli. Bukan hanya nilai akademik, tapi juga kesehatan mental dan kebahagiaan anak saya. Ini yang membedakan Al-Nuur."
+        </p>
+        <div class="flex items-center gap-3 pt-5 border-t" style="border-color:var(--border)">
+          <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+            <img src="https://picsum.photos/seed/muslim-mother-hijab/40/40" alt="" class="thumb" />
+          </div>
+          <div>
+            <p class="text-sm font-semibold" style="color:var(--cream)">Ibu Siti Rahayu, M.Pd</p>
+            <p class="text-xs" style="color:var(--muted)">Wali Santri · Jakarta Selatan</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="relative border-t py-16 px-8" style="background:var(--emerald3);border-color:var(--border)">
+  <div class="absolute inset-0 geo-bg opacity-20"></div>
+  <div class="relative z-10 mx-auto" style="max-width:1320px">
+
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-10 mb-14">
+      <!-- Brand -->
+      <div class="col-span-2">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,var(--gold),#a07c1a)">
+            <span class="arabic font-bold text-lg" style="color:var(--emerald3);line-height:1">ن</span>
+          </div>
+          <div>
+            <p class="serif font-bold" style="color:var(--cream)">Pesantren Al-Nuur</p>
+            <p class="text-xs uppercase tracking-widest" style="color:var(--muted);font-size:.55rem">Cahaya Ilmu, Akhlak Mulia</p>
+          </div>
+        </div>
+        <p class="text-sm leading-relaxed mb-5" style="color:var(--muted);max-width:260px;font-weight:300">
+          Jl. K.H. Ahmad Dahlan No. 47, Jombang, Jawa Timur 61419
+        </p>
+        <div class="flex gap-3">
+          <a href="#" class="w-9 h-9 glass rounded-full flex items-center justify-center border transition-all hover:border-yellow-500/50" style="border-color:var(--border);color:var(--muted)">
+            <i data-lucide="instagram" style="width:15px;height:15px"></i>
+          </a>
+          <a href="#" class="w-9 h-9 glass rounded-full flex items-center justify-center border transition-all hover:border-yellow-500/50" style="border-color:var(--border);color:var(--muted)">
+            <i data-lucide="youtube" style="width:15px;height:15px"></i>
+          </a>
+          <a href="#" class="w-9 h-9 glass rounded-full flex items-center justify-center border transition-all hover:border-yellow-500/50" style="border-color:var(--border);color:var(--muted)">
+            <i data-lucide="facebook" style="width:15px;height:15px"></i>
+          </a>
+        </div>
+      </div>
+      <!-- Links -->
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest mb-5" style="color:var(--muted)">Program</p>
+        <ul class="space-y-3 text-sm" style="color:var(--muted);font-weight:300">
+          <li><a href="#" class="hover:text-white transition-colors">Tahfizh Al-Qur'an</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Sains & Teknologi</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Bahasa & Sastra</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Ekstrakurikuler</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest mb-5" style="color:var(--muted)">Informasi</p>
+        <ul class="space-y-3 text-sm" style="color:var(--muted);font-weight:300">
+          <li><a href="#" class="hover:text-white transition-colors">PPDB 2025/2026</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Biaya Pendidikan</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Beasiswa</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest mb-5" style="color:var(--muted)">Kontak</p>
+        <ul class="space-y-3 text-sm" style="color:var(--muted);font-weight:300">
+          <li class="flex items-center gap-2"><i data-lucide="phone" style="width:13px;height:13px;color:var(--gold)"></i> 0812-3456-7890</li>
+          <li class="flex items-center gap-2"><i data-lucide="mail" style="width:13px;height:13px;color:var(--gold)"></i> info@alnuur.sch.id</li>
+          <li class="flex items-center gap-2"><i data-lucide="clock" style="width:13px;height:13px;color:var(--gold)"></i> Senin–Sabtu, 08–16 WIB</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ornament mb-6 reveal">· بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ ·</div>
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 border-t" style="border-color:var(--border)">
+      <p class="text-xs" style="color:rgba(201,162,39,.3)">© 2026 Pondok Pesantren Al-Nuur. Hak cipta dilindungi.</p>
+      <div class="flex gap-5 text-xs" style="color:rgba(201,162,39,.3)">
+        <a href="#" class="hover:text-white transition-colors">Kebijakan Privasi</a>
+        <a href="#" class="hover:text-white transition-colors">Syarat & Ketentuan</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  lucide.createIcons();
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.07, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.reveal,.reveal-left,.reveal-scale').forEach(el => io.observe(el));
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.style.paddingTop = window.scrollY > 80 ? '6px' : '1.2rem';
+    nav.querySelector('.glass').style.boxShadow = window.scrollY > 80 ? '0 8px 40px rgba(0,0,0,.5)' : 'none';
+  }, { passive: true });
+</script>
+</body>
+</html>
