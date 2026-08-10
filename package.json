@@ -1,6 +1,6 @@
 {
   "name": "windrunner",
-  "version": "1.1.8",
+  "version": "2.0.0",
   "description": "Zero-config Tailwind v4 runtime — compile utility classes on-demand in the browser, no build step required",
   "type": "module",
   "main": "dist/index.js",
@@ -15,6 +15,10 @@
       "import": "./dist/index.esm.js",
       "require": "./dist/index.js"
     },
+    "./lite": {
+      "import": "./dist/lite.esm.js",
+      "require": "./dist/lite.js"
+    },
     "./react": {
       "import": "./dist/react.esm.js",
       "require": "./dist/react.js"
@@ -22,8 +26,13 @@
     "./min": {
       "import": "./dist/index.min.js"
     },
+    "./lite/min": {
+      "import": "./dist/lite.min.js"
+    },
     "./dist/index.esm.js": "./dist/index.esm.js",
-    "./dist/index.min.js": "./dist/index.min.js"
+    "./dist/index.min.js": "./dist/index.min.js",
+    "./dist/lite.esm.js": "./dist/lite.esm.js",
+    "./dist/lite.min.js": "./dist/lite.min.js"
   },
   "files": [
     "dist/"

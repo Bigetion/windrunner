@@ -31,40 +31,32 @@ import { compileClass } from './compiler.js';
  */
 export function useWindrunner(options = {}) {
   const runtimeRef = useRef(null);
-  const isStartedRef = useRef(false);
   
-  // Memoize options to prevent unnecessary re-initialization
-  // Use JSON.stringify for deep comparison (simple but effective for config objects)
-  const optionsKey = useMemo(
-    () => JSON.stringify(options),
-    [options]
-  );
+  // Create instance eagerly outside useEffect so it's available on first render
+  // useRef ensures the same instance survives across re-renders
+  if (!runtimeRef.current) {
+    runtimeRef.current = createWindrunner({
+      autoStart: false, // Manual control via useEffect
+      ...options,
+    });
+  }
   
-  // Initialize runtime once
+  // Mount/unmount lifecycle with empty deps for StrictMode safety
+  // In StrictMode: mount → cleanup → remount
+  // The ref-stored instance persists; we just start/disconnect the observer
   useEffect(() => {
-    if (!runtimeRef.current) {
-      runtimeRef.current = createWindrunner({
-        autoStart: false, // We'll start manually
-        ...options,
-      });
-    }
+    const instance = runtimeRef.current;
+    if (!instance) return;
     
     // Start observing on mount
-    if (!isStartedRef.current && runtimeRef.current) {
-      runtimeRef.current.start();
-      isStartedRef.current = true;
-    }
+    instance.start();
     
-    // Cleanup on unmount
+    // Cleanup: disconnect observer on unmount
     return () => {
-      if (runtimeRef.current) {
-        runtimeRef.current.disconnect();
-        isStartedRef.current = false;
-      }
+      instance.disconnect();
     };
-  }, [optionsKey]); // Re-initialize if options change
+  }, []); // Empty deps: only run on mount/unmount
   
-  // Return stable reference
   return runtimeRef.current;
 }
 
@@ -182,18 +174,14 @@ export function useScanElement(elementRef, options = {}) {
  *   );
  * }
  */
-import { createContext, useContext } from 'react';
+import { createContext, useContext, createElement } from 'react';
 
 const WindrunnerContext = createContext(null);
 
 export function WindrunnerProvider({ children, ...options }) {
   const runtime = useWindrunner(options);
   
-  return (
-    <WindrunnerContext.Provider value={runtime}>
-      {children}
-    </WindrunnerContext.Provider>
-  );
+  return createElement(WindrunnerContext.Provider, { value: runtime }, children);
 }
 
 /**

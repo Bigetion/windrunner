@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Windrunner v2.0 — FOUC Prevention Strategies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet" />
+
+  <!--
+    ═══════════════════════════════════════════════════════════════════════════
+    WINDRUNNER v2.0 — FOUC Prevention Demo
+    ═══════════════════════════════════════════════════════════════════════════
+    
+    FOUC (Flash of Unstyled Content) happens when the page renders before
+    Windrunner has compiled and injected CSS. The built-in FOUCManager
+    provides three strategies:
+    
+    1. 'opacity'    — Hides content with opacity:0, fades in after scan
+    2. 'visibility' — Hides with visibility:hidden, reveals after scan
+    3. 'none'       — No FOUC prevention (opt-out)
+    
+    The FOUCManager uses double requestAnimationFrame timing to ensure
+    the reveal happens after the browser paint.
+  -->
+
+  <!-- FOUC prevention for the page itself (demo sections handle themselves) -->
+  <style>html{opacity:0;transition:opacity .2s ease}</style>
+
+  <script type="module">
+    import { windrunner } from "../../dist/index.esm.js";
+
+    // ─── Page-level windrunner with onReady for overall visibility ──────────
+    windrunner({
+      autoStart: true,
+      onReady: () => document.documentElement.style.opacity = "1",
+    });
+
+    // ─── Strategy 1: Opacity (recommended) ─────────────────────────────────
+    // This is the default and most common strategy.
+    // Content fades in smoothly after first scan completes.
+    const instance1 = windrunner({
+      autoStart: true,
+      id: "demo-opacity",
+      fouc: {
+        strategy: "opacity",   // Hide with opacity: 0
+        duration: 300,         // Transition duration in ms
+        selector: "#demo-opacity-section",  // Target element(s)
+      },
+      onReady: () => {
+        document.getElementById("status-opacity").textContent = "✓ Revealed (opacity fade-in)";
+        document.getElementById("status-opacity").classList.add("text-green-400");
+      }
+    });
+
+    // ─── Strategy 2: Visibility ────────────────────────────────────────────
+    // Content is completely hidden, then appears instantly.
+    // Good for layout-sensitive situations (opacity:0 still takes space).
+    const instance2 = windrunner({
+      autoStart: true,
+      id: "demo-visibility",
+      fouc: {
+        strategy: "visibility",  // Hide with visibility: hidden
+        duration: 0,             // Instant reveal (no transition)
+        selector: "#demo-visibility-section",
+      },
+      onReady: () => {
+        document.getElementById("status-visibility").textContent = "✓ Revealed (visibility instant)";
+        document.getElementById("status-visibility").classList.add("text-green-400");
+      }
+    });
+
+    // ─── Strategy 3: None (opt-out) ────────────────────────────────────────
+    // No FOUC prevention. Content shows immediately.
+    // Useful when you have your own FOUC handling or don't care about flash.
+    const instance3 = windrunner({
+      autoStart: true,
+      id: "demo-none",
+      fouc: {
+        strategy: "none",  // No hiding at all
+      },
+      onReady: () => {
+        document.getElementById("status-none").textContent = "✓ Ready (no FOUC handling)";
+        document.getElementById("status-none").classList.add("text-green-400");
+      }
+    });
+  </script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .code { font-family: 'Courier New', monospace; font-size: 0.85em; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-8">
+
+  <!-- Header -->
+  <header class="max-w-4xl mx-auto mb-12">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="px-3 py-1 rounded-full bg-violet-600/20 text-violet-400 text-xs font-semibold uppercase tracking-wider">v2.0</span>
+      <span class="text-slate-500 text-sm">FOUC Prevention</span>
+    </div>
+    <h1 class="text-4xl font-bold text-white mb-3">FOUC Prevention Strategies</h1>
+    <p class="text-slate-400 text-lg leading-relaxed max-w-2xl">
+      The built-in <span class="code text-violet-300">FOUCManager</span> prevents flash of unstyled content 
+      by hiding elements until Windrunner has finished its first compilation scan.
+    </p>
+  </header>
+
+  <main class="max-w-4xl mx-auto space-y-12">
+
+    <!-- Strategy 1: Opacity -->
+    <section class="rounded-xl border border-slate-800 overflow-hidden">
+      <div class="bg-slate-900/50 px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-semibold text-white">Strategy: <span class="text-violet-400">opacity</span></h2>
+          <p class="text-slate-500 text-sm mt-1">Hides with opacity:0, fades in with CSS transition</p>
+        </div>
+        <span id="status-opacity" class="text-sm text-slate-500">Waiting...</span>
+      </div>
+      <div id="demo-opacity-section" class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="rounded-lg bg-slate-800/50 p-5 border border-slate-700/50">
+            <h3 class="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">Configuration</h3>
+            <pre class="code text-sm text-slate-300 leading-relaxed"><span class="text-violet-400">fouc</span>: {
+  <span class="text-emerald-400">strategy</span>: "opacity",
+  <span class="text-emerald-400">duration</span>: 300,
+  <span class="text-emerald-400">selector</span>: "#my-app"
+}</pre>
+          </div>
+          <div class="rounded-lg bg-slate-800/50 p-5 border border-slate-700/50">
+            <h3 class="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">How it works</h3>
+            <ol class="space-y-2 text-sm text-slate-400">
+              <li class="flex items-start gap-2">
+                <span class="text-violet-400 font-bold">1.</span>
+                Sets <span class="code text-slate-300">opacity: 0</span> on target before scan
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-violet-400 font-bold">2.</span>
+                Windrunner compiles and injects all CSS rules
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-violet-400 font-bold">3.</span>
+                Double rAF ensures browser has painted
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-violet-400 font-bold">4.</span>
+                Sets <span class="code text-slate-300">opacity: 1</span> with smooth transition
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Strategy 2: Visibility -->
+    <section class="rounded-xl border border-slate-800 overflow-hidden">
+      <div class="bg-slate-900/50 px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-semibold text-white">Strategy: <span class="text-emerald-400">visibility</span></h2>
+          <p class="text-slate-500 text-sm mt-1">Hides with visibility:hidden, reveals instantly</p>
+        </div>
+        <span id="status-visibility" class="text-sm text-slate-500">Waiting...</span>
+      </div>
+      <div id="demo-visibility-section" class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="rounded-lg bg-slate-800/50 p-5 border border-slate-700/50">
+            <h3 class="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">Configuration</h3>
+            <pre class="code text-sm text-slate-300 leading-relaxed"><span class="text-violet-400">fouc</span>: {
+  <span class="text-emerald-400">strategy</span>: "visibility",
+  <span class="text-emerald-400">duration</span>: 0,
+  <span class="text-emerald-400">selector</span>: "#my-app"
+}</pre>
+          </div>
+          <div class="rounded-lg bg-slate-800/50 p-5 border border-slate-700/50">
+            <h3 class="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">How it works</h3>
+            <ol class="space-y-2 text-sm text-slate-400">
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">1.</span>
+                Sets <span class="code text-slate-300">visibility: hidden</span> on target
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">2.</span>
+                Layout is preserved (no content shift)
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">3.</span>
+                After scan completes, sets <span class="code text-slate-300">visibility: visible</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">4.</span>
+                Instant reveal — no transition delay
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Strategy 3: None -->
+    <section class="rounded-xl border border-slate-800 overflow-hidden">
+      <div class="bg-slate-900/50 px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-semibold text-white">Strategy: <span class="text-amber-400">none</span></h2>
+          <p class="text-slate-500 text-sm mt-1">No FOUC prevention — content shows immediately</p>
+        </div>
+        <span id="status-none" class="text-sm text-slate-500">Waiting...</span>
+      </div>
+      <div id="demo-none-section" class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="rounded-lg bg-slate-800/50 p-5 border border-slate-700/50">
+            <h3 class="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">Configuration</h3>
+            <pre class="code text-sm text-slate-300 leading-relaxed"><span class="text-violet-400">fouc</span>: {
+  <span class="text-amber-400">strategy</span>: "none"
+}
+
+<span class="text-slate-500">// Or simply omit the fouc option:</span>
+windrunner({ autoStart: true })</pre>
+          </div>
+          <div class="rounded-lg bg-slate-800/50 p-5 border border-slate-700/50">
+            <h3 class="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wide">When to use</h3>
+            <ul class="space-y-2 text-sm text-slate-400">
+              <li class="flex items-start gap-2">
+                <span class="text-amber-400">•</span>
+                You have your own FOUC handling (like the v1 pattern)
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-400">•</span>
+                Server-rendered pages with critical CSS already inlined
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-400">•</span>
+                Development/prototyping where flash is acceptable
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-400">•</span>
+                Pages where content above the fold is minimal
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison Card -->
+    <section class="rounded-xl border border-slate-800 bg-slate-900/30 p-6">
+      <h2 class="text-xl font-semibold text-white mb-4">Strategy Comparison</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-slate-400 border-b border-slate-800">
+              <th class="pb-3 pr-6 font-medium">Strategy</th>
+              <th class="pb-3 pr-6 font-medium">Layout Preserved</th>
+              <th class="pb-3 pr-6 font-medium">Smooth Transition</th>
+              <th class="pb-3 pr-6 font-medium">CLS Impact</th>
+              <th class="pb-3 font-medium">Best For</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-300">
+            <tr class="border-b border-slate-800/50">
+              <td class="py-3 pr-6 font-medium text-violet-400">opacity</td>
+              <td class="py-3 pr-6">Yes</td>
+              <td class="py-3 pr-6">Yes (configurable)</td>
+              <td class="py-3 pr-6 text-green-400">None</td>
+              <td class="py-3">Most applications</td>
+            </tr>
+            <tr class="border-b border-slate-800/50">
+              <td class="py-3 pr-6 font-medium text-emerald-400">visibility</td>
+              <td class="py-3 pr-6">Yes</td>
+              <td class="py-3 pr-6">No (instant)</td>
+              <td class="py-3 pr-6 text-green-400">None</td>
+              <td class="py-3">When instant reveal preferred</td>
+            </tr>
+            <tr>
+              <td class="py-3 pr-6 font-medium text-amber-400">none</td>
+              <td class="py-3 pr-6">N/A</td>
+              <td class="py-3 pr-6">N/A</td>
+              <td class="py-3 pr-6 text-amber-400">Possible</td>
+              <td class="py-3">SSR / custom FOUC handling</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="max-w-4xl mx-auto mt-16 pt-8 border-t border-slate-800 text-center text-slate-500 text-sm">
+    Windrunner v2.0 — FOUC Prevention Demo
+  </footer>
+
+</body>
+</html>
