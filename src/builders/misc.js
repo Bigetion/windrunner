@@ -17,7 +17,7 @@ import {
   APPEARANCE_MAP,
   OUTLINE_STYLE_MAP,
 } from "../maps/interactivity.maps.js";
-import { resolveThemeValue, resolveColorWithOpacity, resolveArbitraryValue } from "../resolvers.js";
+import { resolveThemeValue, resolveColorWithOpacity, resolveArbitraryValue, parseNamedVariant } from "../resolvers.js";
 
 export function buildAnimationDeclaration(baseToken) {
   if (!baseToken.startsWith("animate-")) return undefined;
@@ -153,26 +153,34 @@ export function buildBorderSpacingDeclaration(baseToken, theme) {
 
 // ─── Scroll snap ──────────────────────────────────────────────────────────────
 
-const SNAP_TYPE_MAP = {
-  none:      "scroll-snap-type: none;",
-  x:         "scroll-snap-type: x var(--tw-scroll-snap-strictness);",
-  y:         "scroll-snap-type: y var(--tw-scroll-snap-strictness);",
-  both:      "scroll-snap-type: both var(--tw-scroll-snap-strictness);",
-  mandatory: "--tw-scroll-snap-strictness: mandatory;",
-  proximity: "--tw-scroll-snap-strictness: proximity;",
-};
+const SNAP_TYPE_MAP = (() => {
+  const map = {
+    none: "scroll-snap-type: none;",
+    mandatory: "--tw-scroll-snap-strictness: mandatory;",
+    proximity: "--tw-scroll-snap-strictness: proximity;",
+  };
+  for (const axis of ["x", "y", "both"]) {
+    map[axis] = `scroll-snap-type: ${axis} var(--tw-scroll-snap-strictness);`;
+  }
+  return map;
+})();
 
-const SNAP_ALIGN_MAP = {
-  start:      "scroll-snap-align: start;",
-  end:        "scroll-snap-align: end;",
-  center:     "scroll-snap-align: center;",
-  "align-none": "scroll-snap-align: none;",
-};
+const SNAP_ALIGN_MAP = (() => {
+  const map = {};
+  for (const value of ["start", "end", "center"]) {
+    map[value] = `scroll-snap-align: ${value};`;
+  }
+  map["align-none"] = "scroll-snap-align: none;";
+  return map;
+})();
 
-const SNAP_STOP_MAP = {
-  normal: "scroll-snap-stop: normal;",
-  always: "scroll-snap-stop: always;",
-};
+const SNAP_STOP_MAP = (() => {
+  const map = {};
+  for (const value of ["normal", "always"]) {
+    map[value] = `scroll-snap-stop: ${value};`;
+  }
+  return map;
+})();
 
 export function buildScrollSnapDeclaration(baseToken) {
   if (!baseToken.startsWith("snap-")) return undefined;
@@ -192,5 +200,27 @@ export function buildAccessibilityDeclaration(baseToken) {
   if (baseToken === "not-sr-only") {
     return "position: static; width: auto; height: auto; padding: 0; margin: 0; overflow: visible; clip: auto; white-space: normal;";
   }
+  return undefined;
+}
+
+/**
+ * Build named group/peer marker classes
+ * Handles patterns like group/[name] and peer/[name]
+ * These are marker classes that don't need CSS declarations,
+ * but they need to be recognized as valid utilities
+ * 
+ * @param {string} baseToken - e.g., "group/sidebar", "peer/toggle"
+ * @returns {string|undefined} - Empty string for valid markers, undefined otherwise
+ */
+export function buildNamedVariantMarkerDeclaration(baseToken) {
+  // Check if this is a named group or peer marker pattern
+  const parsed = parseNamedVariant(baseToken);
+  
+  if (parsed && !parsed.state) {
+    // This is a marker class (no state) like group/sidebar or peer/toggle
+    // Return an empty declaration - the marker just needs a selector with no properties
+    return "";
+  }
+  
   return undefined;
 }

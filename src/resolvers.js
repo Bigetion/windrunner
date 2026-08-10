@@ -193,12 +193,32 @@ export function appendImportant(declaration, isImportant) {
   });
 }
 
-// ─── Variant delimiter splitter ───────────────────────────────────────────────
-// Splits "md:hover:bg-blue-500" into ["md", "hover", "bg-blue-500"]
-// but respects brackets so "bg-[url(a:b)]" stays as one token.
-// Optimized: uses index slicing instead of character concatenation for better performance
-
-export function splitByVariantDelimiter(token) {
+// ─── Bracket-aware variant delimiter splitter ─────────────────────────────────
+/**
+ * Split class name by variant delimiter (colon) with bracket-aware parsing.
+ * 
+ * This function correctly handles arbitrary variants with nested brackets by tracking
+ * bracket depth and only splitting on colons that are outside of bracket context.
+ * 
+ * Examples:
+ * - "md:hover:bg-blue-500" → ["md", "hover", "bg-blue-500"]
+ * - "[@media(min-width:768px)]:bg-blue-500" → ["[@media(min-width:768px)]", "bg-blue-500"]
+ * - "[&>span]:text-red-500" → ["[&>span]", "text-red-500"]
+ * - "bg-[rgb(255:128:64)]" → ["bg-[rgb(255:128:64)]"]
+ * - "md:[@media(hover:hover)]:[&>span]:hover:text-blue-500" → ["md", "[@media(hover:hover)]", "[&>span]", "hover", "text-blue-500"]
+ * 
+ * The implementation:
+ * 1. Tracks bracket depth as it iterates through the string
+ * 2. Only treats colons as delimiters when bracket depth is 0
+ * 3. Safely handles unmatched brackets by never letting depth go negative
+ * 
+ * Requirement 7.3: Parse arbitrary variants using bracket-aware delimiter splitting
+ * to correctly handle nested brackets like [@media(min-width:768px)]:bg-blue-500
+ * 
+ * @param {string} token - Class name token to split
+ * @returns {string[]} - Array of variant parts and base utility
+ */
+export function splitByVariantDelimiterBracketAware(token) {
   const parts = [];
   let start = 0;
   let bracketDepth = 0;
@@ -208,12 +228,300 @@ export function splitByVariantDelimiter(token) {
     if (char === "[") {
       bracketDepth += 1;
     } else if (char === "]") {
+      // Safely decrement, never go below 0 to handle malformed input gracefully
       bracketDepth = Math.max(0, bracketDepth - 1);
     } else if (char === ":" && bracketDepth === 0) {
+      // Only split on colons outside brackets
       parts.push(token.slice(start, i));
       start = i + 1;
     }
   }
   parts.push(token.slice(start));
   return parts;
+}
+
+/**
+ * Alias for splitByVariantDelimiterBracketAware for backward compatibility
+ * @deprecated Use splitByVariantDelimiterBracketAware for clarity
+ */
+export const splitByVariantDelimiter = splitByVariantDelimiterBracketAware;
+
+// ─── Named group/peer variant parser ──────────────────────────────────────────
+/**
+ * Parse named group or peer variant
+ * Supports patterns:
+ * - group/[name] → marker class
+ * - peer/[name] → marker class
+ * - group-[state]/[name] → state-based group variant
+ * - peer-[state]/[name] → state-based peer variant
+ * 
+ * @param {string} variant - e.g., "group-hover/sidebar", "peer-checked/toggle", "group/nav", "peer/input"
+ * @returns {{ type: 'group'|'peer', state: string|null, name: string } | null}
+ */
+export function parseNamedVariant(variant) {
+  if (typeof variant !== "string" || !variant) return null;
+
+  // Match pattern: (group|peer)(-state)?/name
+  // Examples:
+  // - group/sidebar → type=group, state=null, name=sidebar
+  // - group-hover/sidebar → type=group, state=hover, name=sidebar
+  // - peer/toggle → type=peer, state=null, name=toggle
+  // - peer-checked/toggle → type=peer, state=checked, name=toggle
+  const match = variant.match(/^(group|peer)(?:-([a-zA-Z0-9_-]+))?\/([a-zA-Z0-9_-]+)$/);
+  
+  if (!match) return null;
+  
+  const [, type, state, name] = match;
+  
+  return {
+    type,                    // 'group' or 'peer'
+    state: state || null,    // hover, focus, checked, etc. (or null for marker)
+    name,                    // sidebar, toggle, nav, etc.
+  };
+}
+
+// ─── Advanced variant parser (has-*, data-*, aria-*) ──────────────────────────
+/**
+ * Parse advanced state variant
+ * Supports patterns:
+ * - has-[selector] → :has() pseudo-class
+ * - group-has-[selector] → .group:has(selector) .class
+ * - peer-has-[selector] → .peer:has(selector) ~ .class
+ * - data-[attr] → [data-attr] attribute selector
+ * - data-[attr=value] → [data-attr="value"] attribute selector
+ * - aria-[attr] → [aria-attr] attribute selector
+ * - aria-[attr=value] → [aria-attr="value"] attribute selector
+ * 
+ * @param {string} variant - e.g., "has-[:checked]", "data-[state=open]", "aria-[expanded=true]"
+ * @returns {{ type: string, content?: string, attribute?: string, value?: string|null } | null}
+ */
+export function parseAdvancedVariant(variant) {
+  if (typeof variant !== "string" || !variant) return null;
+
+  // Helper function to extract bracketed content with nested bracket support
+  const extractBracketContent = (str, prefix) => {
+    if (!str.startsWith(prefix + '[') || !str.endsWith(']')) return null;
+    
+    let bracketDepth = 0;
+    let startIdx = prefix.length;
+    
+    for (let i = startIdx; i < str.length; i++) {
+      if (str[i] === '[') {
+        if (bracketDepth === 0) startIdx = i + 1;
+        bracketDepth++;
+      } else if (str[i] === ']') {
+        bracketDepth--;
+        if (bracketDepth === 0) {
+          const content = str.slice(startIdx, i);
+          // Return null for empty content
+          return content.length > 0 ? content : null;
+        }
+      }
+    }
+    return null;
+  };
+
+  // Match has-[...] pattern with nested bracket support
+  if (variant.startsWith('has-[')) {
+    const content = extractBracketContent(variant, 'has-');
+    if (content !== null) {
+      return {
+        type: 'has',
+        content
+      };
+    }
+  }
+  
+  // Match group-has-[...] pattern with nested bracket support
+  if (variant.startsWith('group-has-[')) {
+    const content = extractBracketContent(variant, 'group-has-');
+    if (content !== null) {
+      return {
+        type: 'group-has',
+        content
+      };
+    }
+  }
+  
+  // Match peer-has-[...] pattern with nested bracket support
+  if (variant.startsWith('peer-has-[')) {
+    const content = extractBracketContent(variant, 'peer-has-');
+    if (content !== null) {
+      return {
+        type: 'peer-has',
+        content
+      };
+    }
+  }
+  
+  // Match data-[attr] or data-[attr=value] pattern (no nested brackets expected)
+  const dataMatch = variant.match(/^data-\[([^\]=]+)(?:=([^\]]+))?\]$/);
+  if (dataMatch) {
+    return {
+      type: 'data',
+      attribute: dataMatch[1],
+      value: dataMatch[2] || null
+    };
+  }
+  
+  // Match aria-[attr] or aria-[attr=value] pattern (no nested brackets expected)
+  const ariaMatch = variant.match(/^aria-\[([^\]=]+)(?:=([^\]]+))?\]$/);
+  if (ariaMatch) {
+    return {
+      type: 'aria',
+      attribute: ariaMatch[1],
+      value: ariaMatch[2] || null
+    };
+  }
+  
+  return null;
+}
+
+// ─── Arbitrary variant parser ─────────────────────────────────────────────────
+/**
+ * Parse arbitrary variant
+ * 
+ * Supports patterns:
+ * - [&>selector] → arbitrary selector variant (& represents base selector)
+ * - [@media(...)] → arbitrary media query variant
+ * - [@container(...)] → arbitrary container query variant
+ * - [@supports(...)] → arbitrary supports query variant
+ * 
+ * Examples:
+ * - "[&>span]" → { type: 'selector', content: '&>span' }
+ * - "[@media(hover:hover)]" → { type: 'media', content: '(hover:hover)' }
+ * - "[@container(min-width:768px)]" → { type: 'container', content: '(min-width:768px)' }
+ * - "[@supports(display:grid)]" → { type: 'supports', content: '(display:grid)' }
+ * 
+ * Requirement 7.1: Detect [&...] pattern for arbitrary selectors
+ * Requirement 7.2: Detect [@media(...)] pattern for arbitrary media queries
+ * Requirement 7.2: Support [@container(...)] and [@supports(...)] patterns
+ * 
+ * @param {string} variant - e.g., "[&>span]", "[@media(hover:hover)]"
+ * @returns {{ type: 'selector'|'media'|'container'|'supports', content: string } | null}
+ */
+export function parseArbitraryVariant(variant) {
+  if (typeof variant !== "string" || !variant) return null;
+  
+  // Must start and end with brackets
+  if (!variant.startsWith('[') || !variant.endsWith(']')) {
+    return null;
+  }
+  
+  // Extract content between outer brackets
+  const content = variant.slice(1, -1);
+  
+  // Empty or whitespace-only content is invalid
+  if (!content || !content.trim()) return null;
+  
+  // Detect media query pattern: [@media(...)]
+  if (content.startsWith('@media')) {
+    const queryContent = content.slice(6).trim(); // Remove "@media" prefix
+    return {
+      type: 'media',
+      content: queryContent
+    };
+  }
+  
+  // Detect container query pattern: [@container(...)]
+  if (content.startsWith('@container')) {
+    const queryContent = content.slice(10).trim(); // Remove "@container" prefix
+    return {
+      type: 'container',
+      content: queryContent
+    };
+  }
+  
+  // Detect supports query pattern: [@supports(...)]
+  if (content.startsWith('@supports')) {
+    const queryContent = content.slice(9).trim(); // Remove "@supports" prefix
+    return {
+      type: 'supports',
+      content: queryContent
+    };
+  }
+  
+  // Otherwise treat as arbitrary selector
+  return {
+    type: 'selector',
+    content
+  };
+}
+
+// ─── Arbitrary variant CSS generation ─────────────────────────────────────────
+/**
+ * Apply arbitrary variant to selector
+ * 
+ * For selector variants: Replaces & with base selector
+ * For at-rule variants: Returns wrapper object to be processed by compiler
+ * 
+ * Examples:
+ * - applyArbitraryVariant('.class', { type: 'selector', content: '&>span' })
+ *   → '.class>span'
+ * 
+ * - applyArbitraryVariant('.class', { type: 'selector', content: '& p' })
+ *   → '.class p'
+ * 
+ * - applyArbitraryVariant('.class', { type: 'media', content: '(hover:hover)' })
+ *   → { __type: 'media-wrapper', query: '(hover:hover)', selector: '.class' }
+ * 
+ * - applyArbitraryVariant('.class', { type: 'container', content: '(min-width:768px)' })
+ *   → { __type: 'container-wrapper', query: '(min-width:768px)', selector: '.class' }
+ * 
+ * Requirement 7.4: Replace & with base selector in arbitrary selector variants
+ * Requirement 7.5: Return wrapper objects for media/container/supports queries
+ * Requirement 7.7: Preserve variant order when multiple arbitrary variants present
+ * 
+ * @param {string} selector - Base CSS selector (e.g., '.class')
+ * @param {{ type: string, content: string }} parsed - Parsed arbitrary variant
+ * @returns {string | object} - Modified selector or wrapper object for at-rules
+ */
+export function applyArbitraryVariant(selector, parsed) {
+  if (!parsed || typeof parsed !== 'object') return selector;
+  
+  const { type, content } = parsed;
+  
+  switch (type) {
+    case 'selector': {
+      // Replace & with base selector
+      // Examples:
+      // - '&>span' → '.class>span'
+      // - '& p' → '.class p'
+      // - '&:hover' → '.class:hover'
+      // - '&::before' → '.class::before'
+      // - '[&>span]:text-red-500' → '.class>span'
+      const transformed = content.replace(/&/g, selector);
+      return transformed;
+    }
+    
+    case 'media':
+      // Return wrapper indicator for media query
+      // The compiler will wrap the CSS rule in @media
+      return {
+        __type: 'media-wrapper',
+        query: content,
+        selector
+      };
+      
+    case 'container':
+      // Return wrapper indicator for container query
+      // The compiler will wrap the CSS rule in @container
+      return {
+        __type: 'container-wrapper',
+        query: content,
+        selector
+      };
+      
+    case 'supports':
+      // Return wrapper indicator for supports query
+      // The compiler will wrap the CSS rule in @supports
+      return {
+        __type: 'supports-wrapper',
+        query: content,
+        selector
+      };
+      
+    default:
+      return selector;
+  }
 }

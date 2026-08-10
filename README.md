@@ -47,33 +47,6 @@ npm install windrunner
 </script>
 ```
 
-### Live demo / Example landing page
-
-Try the example landing page:
-
-- CodeSandbox (example landing): https://xj6q66.csb.app
-
-
-### React / Vue
-
-```js
-import { useEffect } from "react";
-import { windrunner } from "windrunner";
-
-export default function App() {
-  useEffect(() => {
-    const wind = windrunner({ id: "my-app", autoStart: true });
-    return () => wind.disconnect();
-  }, []);
-
-  return (
-    <main className="min-h-screen bg-slate-50 p-8">
-      <h1 className="text-3xl font-bold text-slate-900">React + Windrunner</h1>
-    </main>
-  );
-}
-```
-
 ### Manual control
 
 ```js
@@ -89,7 +62,168 @@ wind.processClassList("flex items-center justify-between gap-4");
 wind.scan(); // scan entire document
 wind.observe(); // start watching DOM mutations
 wind.disconnect(); // stop watching
+wind.getStats(); // { cacheSize, hitRate, compileTimes, failedClasses }
 ```
+
+---
+
+## What's New in v2.0
+
+### FOUC Manager
+
+Built-in flash-of-unstyled-content prevention. No more manual `html { opacity: 0 }` hacks.
+
+```js
+windrunner({
+  autoStart: true,
+  fouc: { strategy: "opacity" } // or "visibility" | "none"
+});
+```
+
+Three strategies: `opacity` (smooth fade-in), `visibility` (instant reveal), `none` (disabled). The FOUCManager uses double-rAF timing to reveal after the browser paints.
+
+### Advanced Variants
+
+Named groups, peers, and attribute-driven selectors:
+
+```html
+<!-- Named groups/peers -->
+<div class="group/sidebar">
+  <span class="group-hover/sidebar:text-blue-500">Sidebar link</span>
+</div>
+
+<input class="peer/toggle" type="checkbox" />
+<div class="peer-checked/toggle:bg-green-500">Active</div>
+
+<!-- has-*, data-*, aria-* -->
+<div class="has-[:checked]:bg-green-100">
+<div class="data-[state=open]:block">
+<button class="aria-[expanded=true]:rotate-180">
+
+<!-- Arbitrary selectors -->
+<div class="[&>span]:text-red-500 [&:nth-child(2)]:bg-blue-100">
+<div class="[@media(hover:hover)]:underline">
+<div class="[@container(min-width:400px)]:grid-cols-2">
+```
+
+### Debug Mode & Observability
+
+```js
+const wind = windrunner({
+  autoStart: true,
+  debug: true,   // console logging
+  strict: true,  // throw on errors
+  onWarning: (msg, ctx) => console.warn(msg, ctx),
+  onError: (err, ctx) => reportToSentry(err),
+});
+
+wind.getStats();
+// → { cacheSize: 142, hitRate: 0.87, compileTimes: [...], failedClasses: [] }
+
+// DevTools global
+window.__WINDRUNNER__; // access instance, stats, cache
+```
+
+### React StrictMode Safety
+
+```jsx
+import { useWindrunner, WindrunnerProvider } from "windrunner/react";
+
+// Hook — safe in StrictMode (no duplicate observers/style tags)
+function App() {
+  const { stats } = useWindrunner({ debug: true });
+
+  return (
+    <main className="min-h-screen bg-slate-50 p-8">
+      <h1 className="text-3xl font-bold text-slate-900">React + Windrunner</h1>
+      <p className="text-sm text-slate-500">{stats.cacheSize} classes compiled</p>
+    </main>
+  );
+}
+
+// Or wrap with Provider for shared config
+function Root() {
+  return (
+    <WindrunnerProvider config={{ debug: true, fouc: { strategy: "opacity" } }}>
+      <App />
+    </WindrunnerProvider>
+  );
+}
+```
+
+### Lite Build
+
+Smaller bundle (~82KB) with core utilities only — excludes transforms, filters, transitions, and animations.
+
+```html
+<script type="module">
+  import windrunner from "windrunner/lite";
+  windrunner({ autoStart: true });
+</script>
+```
+
+Use this when you only need layout, spacing, typography, and colors.
+
+### Hybrid Mode
+
+Pre-generate CSS at build time via plugins, then use the runtime only for dynamic classes.
+
+```js
+// vite.config.js
+import { windrunnerVite } from "windrunner/build-plugins/vite";
+
+export default {
+  plugins: [
+    windrunnerVite({
+      include: ["./src/**/*.{html,jsx,tsx}"],
+      output: "./dist/windrunner.css",
+    })
+  ]
+};
+```
+
+At runtime, Windrunner detects existing pre-compiled rules and skips re-compilation — only truly dynamic classes compile on-the-fly.
+
+Also available for [Webpack](./build-plugins/webpack.js) and [Rollup](./build-plugins/rollup.js).
+
+### Critical CSS API
+
+Extract and compile only the CSS needed for initial render:
+
+```js
+import { compileCriticalCss, compileCriticalCssFromHtml, compileCriticalCssFromFiles } from "windrunner";
+
+// From class list
+const css = compileCriticalCss(["flex", "items-center", "bg-blue-500"]);
+
+// From HTML string
+const css = compileCriticalCssFromHtml(`<div class="flex items-center bg-blue-500">Hello</div>`);
+
+// From files (Node.js)
+const css = await compileCriticalCssFromFiles(["./dist/index.html", "./dist/app.html"]);
+```
+
+### Performance
+
+- **LRU cache** with adaptive sizing based on usage patterns
+- **Microtask batching** — DOM mutations are coalesced before compilation
+- **Lazy loading** — theme and builder modules load on first use, not at import
+
+### Enhanced Error Handling
+
+```js
+windrunner({
+  strict: true, // throws on invalid classes
+  onWarning: (message, context) => {
+    // context: { className, rule, source }
+  },
+  onError: (error, context) => {
+    // ErrorContext with full stack trace and class info
+  }
+});
+```
+
+---
 
 ## API
 
@@ -102,7 +236,15 @@ windrunner({
   id?: string,            // style tag id, default: "tailwind-runtime-css"
   autoStart?: boolean,    // default: true
   preflight?: boolean,    // include CSS reset/preflight, default: true
-  plugins?: Plugin[],     // custom plugins (see Plugin System)
+  debug?: boolean,        // enable console logging
+  strict?: boolean,       // throw on invalid classes
+  fouc?: {                // FOUC prevention
+    strategy: "opacity" | "visibility" | "none"
+  },
+  plugins?: Plugin[],     // custom plugins
+  onReady?: () => void,   // fires after first scan
+  onWarning?: (msg, ctx) => void,
+  onError?: (err, ctx) => void,
   observerOptions?: {     // MutationObserver tuning
     childList?: boolean,
     subtree?: boolean,
@@ -116,52 +258,6 @@ windrunner({
   }
 })
 ```
-
-### Plugin System (NEW in v1.1.0)
-
-Create custom utilities and variants:
-
-```js
-import { windrunner, plugin } from 'windrunner';
-
-// Define a plugin
-const myPlugin = plugin(({ addUtility, addVariant, theme }) => {
-  // Add custom utility
-  addUtility('glass', 'backdrop-filter: blur(10px); background: rgba(255,255,255,0.1);');
-  
-  // Add pattern-based utility
-  addUtility(/^text-stroke-(\d+)$/, (match) => {
-    return `-webkit-text-stroke-width: ${match[1]}px;`;
-  });
-  
-  // Add custom variant
-  addVariant('parent-hover', (selector) => `.parent:hover ${selector}`);
-  
-  // Access theme
-  const colors = theme('colors');
-  addUtility('brand-bg', `background-color: ${colors.brand};`);
-});
-
-// Use the plugin
-windrunner({
-  autoStart: true,
-  plugins: [myPlugin]
-});
-```
-
-See [Plugin Examples](./examples/plugins/) for ready-to-use plugins:
-- **text-stroke** - Text outline effects
-- **glass-morphism** - Glassmorphism effects  
-- **custom-variants** - parent-hover, loading, and more
-
-**Plugin API:**
-- `addUtility(pattern, handler)` - Add custom utility
-- `addUtilities(utilities)` - Add multiple utilities
-- `addVariant(name, handler)` - Add custom variant
-- `theme(key)` - Access theme values
-- `config()` - Access full configuration
-
-Full plugin documentation: [Plugin System Guide](./docs/guides/plugins.md) (coming soon)
 
 ### `createWindrunner(options?)`
 
@@ -179,6 +275,7 @@ Returns a runtime instance with manual control methods:
 | `disconnect()` | Stop observer, cleanup |
 | `getCacheSize()` | Number of compiled classes in cache |
 | `getInsertedRuleCount()` | Number of CSS rules injected |
+| `getStats()` | Full stats: cache size, hit rate, compile times, failed classes |
 
 ### `compileClass(className, options?)`
 
@@ -201,24 +298,31 @@ parseClass("md:hover:mt-4", { md: "768px" })
 
 ### `compileCriticalCssFromHtml(html, options?)`
 
-Compile critical CSS from a raw HTML string by extracting class names first.
-
-```js
-import { compileCriticalCssFromHtml } from "windrunner";
-
-const html = `<div class="flex items-center bg-blue-500">Hello</div>`;
-const css = compileCriticalCssFromHtml(html);
-```
+Compile critical CSS from a raw HTML string.
 
 ### `compileCriticalCssFromFiles(filePaths, options?)`
 
-Compile critical CSS from one or more file paths in Node.js.
+Compile critical CSS from file paths (Node.js).
+
+### Plugin System
+
+Create custom utilities and variants:
 
 ```js
-import { compileCriticalCssFromFiles } from "windrunner";
+import { windrunner, plugin } from 'windrunner';
 
-const css = await compileCriticalCssFromFiles(["./dist/index.html", "./dist/app.html"]);
+const myPlugin = plugin(({ addUtility, addVariant, theme }) => {
+  addUtility('glass', 'backdrop-filter: blur(10px); background: rgba(255,255,255,0.1);');
+  addUtility(/^text-stroke-(\d+)$/, (match) => `-webkit-text-stroke-width: ${match[1]}px;`);
+  addVariant('parent-hover', (selector) => `.parent:hover ${selector}`);
+});
+
+windrunner({ autoStart: true, plugins: [myPlugin] });
 ```
+
+See [Plugin Examples](./examples/plugins/) and [Plugin Guide](./docs/guides/plugins.md).
+
+---
 
 ## Supported utilities
 
@@ -241,6 +345,7 @@ Full Tailwind v4 coverage including:
 - **Interactivity** — cursor, select, resize, outline, pointer-events, appearance, touch-action, scroll-behavior, scroll-margin/padding, will-change
 - **v4 New** — field-sizing-*, mask-*, @container, @container breakpoints (@sm: @md: etc.)
 - **Variants** — hover, focus, focus-visible, active, visited, disabled, dark, group-hover/focus, peer-*, not-hover/focus/disabled, in-hover, starting: (@starting-style), first/last/odd/even, before/after, placeholder
+- **v2.0 New** — named group/peer (`group/name`, `peer/name`), has-*, data-*, aria-*, arbitrary selectors (`[&>span]:`, `[&:nth-child(2)]:`), arbitrary at-rules (`[@media(...)]`, `[@container(...)]`, `[@supports(...)]`)
 
 ## Custom theme
 
@@ -265,71 +370,43 @@ windrunner({
 });
 ```
 
-## Preventing FOUC
-
-Because windrunner compiles CSS at runtime, browsers may briefly render unstyled content before styles are injected (Flash of Unstyled Content). The recommended fix:
-
-```html
-<head>
-  <!-- 1. Hide the page before styles are ready -->
-  <style>html { opacity: 0; transition: opacity 0.2s ease; }</style>
-
-  <!-- 2. Reveal after windrunner finishes its first scan -->
-  <script type="module">
-    import { windrunner } from "windrunner";
-    windrunner({
-      autoStart: true,
-      onReady: () => document.documentElement.style.opacity = "1",
-    });
-  </script>
-</head>
-```
-
-The `onReady` callback fires after the initial DOM scan completes and CSS rules are injected, ensuring the page is fully styled before it becomes visible. The `transition` gives a smooth 200ms fade-in instead of an abrupt pop.
-
-## Preflight
-
-windrunner injects a CSS reset (based on Tailwind's preflight) automatically. To opt out:
-
-```js
-windrunner({ autoStart: true, preflight: false });
-```
-
 ## vs Tailwind Play CDN
 
 | | windrunner | Tailwind Play CDN |
 |---|---|---|
-| Size | ~78 KB min | ~350 KB |
+| Size | ~101KB core / ~82KB lite | ~350 KB |
 | Dependencies | 0 | 0 |
 | Tailwind version | v4 | v4 |
 | Works in Node.js | ✓ (compile only) | ✗ |
 | Custom theme | ✓ | ✓ |
 | Arbitrary values | ✓ | ✓ |
 | Preflight | ✓ | ✓ |
-| FOUC prevention | ✓ (onReady) | ✗ |
+| FOUC prevention | ✓ (built-in manager) | ✗ |
 | Plugins | ✓ | ✓ |
+| Debug / Observability | ✓ | ✗ |
+| Hybrid build mode | ✓ | ✗ |
+| React StrictMode safe | ✓ | ✗ |
 | Full utility coverage | ✓ | ✓ |
 
-## 📚 Documentation
+## Documentation
 
-**New to Windrunner?** Start here:
-
-- **[Quick Start Guide](./docs/getting-started/quick-start.md)** - Get running in 5 minutes
-- **[React Integration](./docs/frameworks/react.md)** - Best practices for React apps
-- **[FOUC Prevention](./docs/guides/fouc-prevention.md)** - 5 strategies to prevent flash of unstyled content
-- **[Full Documentation](./docs/)** - Complete guides, API reference, and recipes
+- **[Quick Start Guide](./docs/getting-started/quick-start.md)** — Get running in 5 minutes
+- **[React Integration](./docs/frameworks/react.md)** — useWindrunner hook, Provider, StrictMode safety
+- **[FOUC Prevention](./docs/guides/fouc-prevention.md)** — Built-in strategies and customization
+- **[Performance Guide](./docs/guides/performance.md)** — LRU cache, batching, lazy loading
+- **[Plugin System](./docs/guides/plugins.md)** — Custom utilities and variants
+- **[Full Documentation](./docs/)** — Complete guides, API reference, and recipes
 
 ### Example Projects
 
-Learn by example with our sample applications:
-
-1. **[Landing Page](./examples/landing.html)** - Modern marketing page with animations
-2. **[Todo App](./examples/todo-app/)** - React app with dark mode and local storage
-3. **[Coverage Demo](./examples/coverage/)** - Showcase of utility class coverage
+- **[Landing Page](./examples/landing.html)** — Modern marketing page with animations
+- **[Todo App](./examples/todo-app/)** — React app with dark mode
+- **[Coverage Demo](./examples/coverage/)** — Utility class coverage showcase
+- **[v2.0 Feature Examples](./examples/v2-features/)** — FOUC, variants, debug, hybrid, lite, critical CSS, React
 
 ## When to Use Windrunner
 
-✅ **Perfect for:**
+**Perfect for:**
 - Rapid prototyping and MVPs
 - Landing pages and marketing sites
 - Internal tools and dashboards
@@ -337,13 +414,10 @@ Learn by example with our sample applications:
 - Projects without build tooling
 - Learning Tailwind v4
 
-⚠️ **Consider traditional Tailwind for:**
+**Consider traditional Tailwind for:**
 - Large production apps with strict performance budgets
-- SEO-critical pages (requires FOUC prevention)
-- Projects already using PostCSS/build tools
+- SEO-critical pages (use hybrid mode to mitigate)
 - Enterprise applications requiring battle-tested solutions
-
-See the [documentation](./docs/) for detailed use case analysis and migration guides.
 
 ## Contributing
 

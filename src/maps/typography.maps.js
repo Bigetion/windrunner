@@ -1,31 +1,34 @@
-export const TEXT_ALIGN_MAP = {
-  left: "text-align: left;",
-  center: "text-align: center;",
-  right: "text-align: right;",
-  justify: "text-align: justify;",
-  start: "text-align: start;",
-  end: "text-align: end;",
-};
+// ─── Factory Helpers for Compressed Maps ──────────────────────────────────────
+// Generate maps with repetitive patterns to reduce bundle size after minification
+
+/**
+ * Create a map from array of values with simple property pattern
+ * @param {string} prop - CSS property name
+ * @param {string[]} values - Array of CSS values
+ */
+function createSimpleMap(prop, values) {
+  const map = {};
+  for (const value of values) {
+    map[value] = `${prop}: ${value};`;
+  }
+  return map;
+}
+
+export const TEXT_ALIGN_MAP = createSimpleMap("text-align", [
+  "left", "center", "right", "justify", "start", "end"
+]);
 
 export const TEXT_DECORATION_MAP = {
-  underline: "text-decoration-line: underline;",
-  overline: "text-decoration-line: overline;",
-  "line-through": "text-decoration-line: line-through;",
+  ...createSimpleMap("text-decoration-line", ["underline", "overline", "line-through"]),
   "no-underline": "text-decoration-line: none;",
 };
 
-export const TEXT_DECORATION_STYLE_MAP = {
-  solid: "text-decoration-style: solid;",
-  double: "text-decoration-style: double;",
-  dotted: "text-decoration-style: dotted;",
-  dashed: "text-decoration-style: dashed;",
-  wavy: "text-decoration-style: wavy;",
-};
+export const TEXT_DECORATION_STYLE_MAP = createSimpleMap("text-decoration-style", [
+  "solid", "double", "dotted", "dashed", "wavy"
+]);
 
 export const TEXT_TRANSFORM_MAP = {
-  uppercase: "text-transform: uppercase;",
-  lowercase: "text-transform: lowercase;",
-  capitalize: "text-transform: capitalize;",
+  ...createSimpleMap("text-transform", ["uppercase", "lowercase", "capitalize"]),
   "normal-case": "text-transform: none;",
 };
 
@@ -36,14 +39,9 @@ export const TEXT_OVERFLOW_MAP = {
   "text-clip": "text-overflow: clip;",
 };
 
-export const WHITESPACE_MAP = {
-  normal: "white-space: normal;",
-  nowrap: "white-space: nowrap;",
-  pre: "white-space: pre;",
-  "pre-line": "white-space: pre-line;",
-  "pre-wrap": "white-space: pre-wrap;",
-  "break-spaces": "white-space: break-spaces;",
-};
+export const WHITESPACE_MAP = createSimpleMap("white-space", [
+  "normal", "nowrap", "pre", "pre-line", "pre-wrap", "break-spaces"
+]);
 
 export const WORD_BREAK_MAP = {
   "break-normal": "overflow-wrap: normal; word-break: normal;",
@@ -57,63 +55,35 @@ export const FONT_STYLE_MAP = {
   "not-italic": "font-style: normal;",
 };
 
-export const FONT_STRETCH_MAP = {
-  "ultra-condensed": "font-stretch: ultra-condensed;",
-  "extra-condensed": "font-stretch: extra-condensed;",
-  condensed: "font-stretch: condensed;",
-  "semi-condensed": "font-stretch: semi-condensed;",
-  normal: "font-stretch: normal;",
-  "semi-expanded": "font-stretch: semi-expanded;",
-  expanded: "font-stretch: expanded;",
-  "extra-expanded": "font-stretch: extra-expanded;",
-  "ultra-expanded": "font-stretch: ultra-expanded;",
-};
+export const FONT_STRETCH_MAP = createSimpleMap("font-stretch", [
+  "ultra-condensed", "extra-condensed", "condensed", "semi-condensed",
+  "normal", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded"
+]);
 
-export const FONT_VARIANT_NUMERIC_MAP = {
-  ordinal: "font-variant-numeric: ordinal;",
-  "slashed-zero": "font-variant-numeric: slashed-zero;",
-  "lining-nums": "font-variant-numeric: lining-nums;",
-  "oldstyle-nums": "font-variant-numeric: oldstyle-nums;",
-  "proportional-nums": "font-variant-numeric: proportional-nums;",
-  "tabular-nums": "font-variant-numeric: tabular-nums;",
-  "diagonal-fractions": "font-variant-numeric: diagonal-fractions;",
-  "stacked-fractions": "font-variant-numeric: stacked-fractions;",
-};
+export const FONT_VARIANT_NUMERIC_MAP = createSimpleMap("font-variant-numeric", [
+  "ordinal", "slashed-zero", "lining-nums", "oldstyle-nums",
+  "proportional-nums", "tabular-nums", "diagonal-fractions", "stacked-fractions"
+]);
 
 export const LIST_STYLE_IMAGE_MAP = {
   none: "list-style-image: none;",
 };
 
-export const TEXT_WRAP_MAP = {
-  wrap: "text-wrap: wrap;",
-  nowrap: "text-wrap: nowrap;",
-  balance: "text-wrap: balance;",
-  pretty: "text-wrap: pretty;",
-};
+export const TEXT_WRAP_MAP = createSimpleMap("text-wrap", [
+  "wrap", "nowrap", "balance", "pretty"
+]);
 
-export const HYPHENS_MAP = {
-  none: "hyphens: none;",
-  manual: "hyphens: manual;",
-  auto: "hyphens: auto;",
-};
+export const HYPHENS_MAP = createSimpleMap("hyphens", ["none", "manual", "auto"]);
 
 export const FONT_SMOOTHING_MAP = {
   antialiased: "-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;",
   "subpixel-antialiased": "-webkit-font-smoothing: auto; -moz-osx-font-smoothing: auto;",
 };
 
-export const LIST_STYLE_POSITION_MAP = {
-  inside: "list-style-position: inside;",
-  outside: "list-style-position: outside;",
-};
+export const LIST_STYLE_POSITION_MAP = createSimpleMap("list-style-position", [
+  "inside", "outside"
+]);
 
-export const VERTICAL_ALIGN_MAP = {
-  baseline: "vertical-align: baseline;",
-  top: "vertical-align: top;",
-  middle: "vertical-align: middle;",
-  bottom: "vertical-align: bottom;",
-  "text-top": "vertical-align: text-top;",
-  "text-bottom": "vertical-align: text-bottom;",
-  sub: "vertical-align: sub;",
-  super: "vertical-align: super;",
-};
+export const VERTICAL_ALIGN_MAP = createSimpleMap("vertical-align", [
+  "baseline", "top", "middle", "bottom", "text-top", "text-bottom", "sub", "super"
+]);

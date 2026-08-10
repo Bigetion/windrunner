@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Windrunner v2.0 — Debug Mode & Observability</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet" />
+
+  <!--
+    ═══════════════════════════════════════════════════════════════════════════
+    WINDRUNNER v2.0 — Debug Mode & Observability Demo
+    ═══════════════════════════════════════════════════════════════════════════
+    
+    Debug features in v2.0:
+    
+    1. debug: true         — Enables console logging of compilation events
+    2. strict: true        — Throws errors instead of silently skipping failures
+    3. window.__WINDRUNNER__ — Global debug object with instance access
+    4. getStats()          — Runtime statistics (cache hits, compile times, etc.)
+    5. onError callback    — Rich error context for failed compilations
+    6. onWarning callback  — Warnings for recoverable issues
+    
+    Open DevTools Console to see debug output!
+  -->
+
+  <style>html{opacity:0;transition:opacity .2s ease}</style>
+  <script type="module">
+    import { windrunner } from "../../dist/index.esm.js";
+
+    // ─── Dashboard Logic ───────────────────────────────────────────────────
+    let compileCount = 0;
+
+    // ─── Debug Mode Configuration ──────────────────────────────────────────
+    const runtime = windrunner({
+      autoStart: true,
+
+      // Enable debug mode — logs compilation events to console
+      debug: true,
+
+      // Strict mode: throw errors instead of silently skipping
+      // (Uncomment to test — will throw on invalid classes)
+      // strict: true,
+
+      // Error callback — called for every failed class compilation
+      onError: (className, context) => {
+        logToPanel('error', `Failed: "${className}" — ${context.reason}`, context);
+      },
+
+      // Warning callback — called for recoverable issues
+      onWarning: (message, context) => {
+        logToPanel('warning', message, context);
+      },
+
+      // Compile callback — called after each successful compilation  
+      onCompile: (className, rule) => {
+        compileCount++;
+        updateCounters();
+      },
+
+      // Ready callback
+      onReady: () => {
+        document.documentElement.style.opacity = "1";
+        logToPanel('info', 'Windrunner ready — first scan complete');
+        updateStats();
+      }
+    });
+
+    function updateCounters() {
+      const el = document.getElementById('compile-count');
+      if (el) el.textContent = compileCount;
+    }
+
+    function updateStats() {
+      const stats = runtime.getStats();
+      const container = document.getElementById('stats-output');
+      if (!container) return;
+
+      container.innerHTML = `<pre class="text-xs text-slate-300 leading-relaxed">${JSON.stringify(stats, null, 2)}</pre>`;
+
+      // Also update the counter displays
+      document.getElementById('stat-cache').textContent = stats.cacheSize;
+      document.getElementById('stat-rules').textContent = stats.insertedRuleCount;
+      document.getElementById('stat-observing').textContent = stats.isObserving ? 'Yes' : 'No';
+      
+      if (stats.cacheHitRate !== undefined) {
+        document.getElementById('stat-hitrate').textContent = (stats.cacheHitRate * 100).toFixed(1) + '%';
+      }
+      if (stats.avgCompileTimeMs !== undefined) {
+        document.getElementById('stat-avgtime').textContent = stats.avgCompileTimeMs.toFixed(3) + 'ms';
+      }
+    }
+
+    function logToPanel(type, message, context) {
+      const panel = document.getElementById('log-panel');
+      if (!panel) return;
+
+      const colors = { info: 'text-blue-400', warning: 'text-amber-400', error: 'text-red-400' };
+      const badges = { info: 'bg-blue-500/10', warning: 'bg-amber-500/10', error: 'bg-red-500/10' };
+
+      const entry = document.createElement('div');
+      entry.className = `flex items-start gap-2 py-1.5 border-b border-slate-800/50 text-xs`;
+      entry.innerHTML = `
+        <span class="px-1.5 py-0.5 rounded ${badges[type]} ${colors[type]} font-medium uppercase text-[10px]">${type}</span>
+        <span class="text-slate-300 flex-1">${message}</span>
+      `;
+      panel.prepend(entry);
+
+      // Keep only last 50 entries
+      while (panel.children.length > 50) {
+        panel.removeChild(panel.lastChild);
+      }
+    }
+
+    // Expose for button handlers
+    window.updateStats = updateStats;
+    window.clearCache = () => {
+      runtime.clearCache();
+      logToPanel('info', 'Cache cleared');
+      updateStats();
+    };
+    window.triggerError = () => {
+      // Manually add an invalid class to trigger onError
+      const el = document.createElement('div');
+      el.className = 'invalid-class-xyz-999 bg-nonexistent-color-9000';
+      document.body.appendChild(el);
+      setTimeout(() => document.body.removeChild(el), 100);
+    };
+    window.checkGlobal = () => {
+      if (window.__WINDRUNNER__) {
+        logToPanel('info', `__WINDRUNNER__ global found — version: ${window.__WINDRUNNER__.version}`);
+        logToPanel('info', `Instance methods: ${Object.keys(window.__WINDRUNNER__.instance || {}).join(', ')}`);
+      } else {
+        logToPanel('warning', '__WINDRUNNER__ not found (debug mode may not be enabled)');
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .code { font-family: 'Courier New', monospace; font-size: 0.85em; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-8">
+
+  <!-- Header -->
+  <header class="max-w-5xl mx-auto mb-12">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="px-3 py-1 rounded-full bg-violet-600/20 text-violet-400 text-xs font-semibold uppercase tracking-wider">v2.0</span>
+      <span class="text-slate-500 text-sm">Debug & Observability</span>
+    </div>
+    <h1 class="text-4xl font-bold text-white mb-3">Debug Mode &amp; Observability</h1>
+    <p class="text-slate-400 text-lg leading-relaxed max-w-3xl">
+      Monitor compilation in real-time. Track cache performance, failed classes, 
+      and runtime statistics. Open DevTools console for full debug output.
+    </p>
+  </header>
+
+  <main class="max-w-5xl mx-auto space-y-8">
+
+    <!-- Stats Dashboard -->
+    <section class="rounded-xl border border-slate-800 overflow-hidden">
+      <div class="bg-slate-900/50 px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-white">Runtime Statistics</h2>
+        <button onclick="updateStats()" class="px-3 py-1.5 rounded-lg bg-violet-600/20 text-violet-400 text-xs font-medium hover:bg-violet-600/30 transition-colors">
+          Refresh Stats
+        </button>
+      </div>
+      <div class="p-6">
+        <!-- Stat cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
+          <div class="rounded-lg bg-slate-800/50 border border-slate-700/50 p-4 text-center">
+            <span class="text-2xl font-bold text-violet-400" id="stat-cache">0</span>
+            <span class="block text-xs text-slate-500 mt-1">Cache Size</span>
+          </div>
+          <div class="rounded-lg bg-slate-800/50 border border-slate-700/50 p-4 text-center">
+            <span class="text-2xl font-bold text-emerald-400" id="stat-rules">0</span>
+            <span class="block text-xs text-slate-500 mt-1">Inserted Rules</span>
+          </div>
+          <div class="rounded-lg bg-slate-800/50 border border-slate-700/50 p-4 text-center">
+            <span class="text-2xl font-bold text-blue-400" id="stat-hitrate">—</span>
+            <span class="block text-xs text-slate-500 mt-1">Cache Hit Rate</span>
+          </div>
+          <div class="rounded-lg bg-slate-800/50 border border-slate-700/50 p-4 text-center">
+            <span class="text-2xl font-bold text-amber-400" id="stat-avgtime">—</span>
+            <span class="block text-xs text-slate-500 mt-1">Avg Compile Time</span>
+          </div>
+          <div class="rounded-lg bg-slate-800/50 border border-slate-700/50 p-4 text-center">
+            <span class="text-2xl font-bold text-white" id="stat-observing">—</span>
+            <span class="block text-xs text-slate-500 mt-1">Observing</span>
+          </div>
+        </div>
+
+        <!-- Raw stats output -->
+        <div class="rounded-lg bg-slate-900 border border-slate-800 p-4">
+          <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">getStats() Output</h3>
+          <div id="stats-output" class="text-xs text-slate-500">
+            <pre>Click "Refresh Stats" to load...</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Action Buttons + Log Panel -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Actions -->
+      <div class="rounded-xl border border-slate-800 overflow-hidden">
+        <div class="bg-slate-900/50 px-6 py-4 border-b border-slate-800">
+          <h2 class="text-lg font-semibold text-white">Actions</h2>
+        </div>
+        <div class="p-6 space-y-3">
+          <button onclick="updateStats()" class="w-full px-4 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm text-white hover:bg-slate-700 transition-colors text-left">
+            📊 Refresh Stats
+          </button>
+          <button onclick="clearCache()" class="w-full px-4 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm text-white hover:bg-slate-700 transition-colors text-left">
+            🗑️ Clear Cache
+          </button>
+          <button onclick="triggerError()" class="w-full px-4 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm text-white hover:bg-slate-700 transition-colors text-left">
+            ⚠️ Trigger Error (invalid class)
+          </button>
+          <button onclick="checkGlobal()" class="w-full px-4 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-sm text-white hover:bg-slate-700 transition-colors text-left">
+            🔍 Check __WINDRUNNER__ Global
+          </button>
+        </div>
+      </div>
+
+      <!-- Event Log -->
+      <div class="lg:col-span-2 rounded-xl border border-slate-800 overflow-hidden">
+        <div class="bg-slate-900/50 px-6 py-4 border-b border-slate-800">
+          <h2 class="text-lg font-semibold text-white">Event Log</h2>
+          <p class="text-xs text-slate-500 mt-1">Live feed from onError, onWarning, and runtime events</p>
+        </div>
+        <div id="log-panel" class="p-4 max-h-[300px] overflow-y-auto space-y-0">
+          <div class="text-xs text-slate-500 py-2">Waiting for events...</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Configuration Reference -->
+    <section class="rounded-xl border border-slate-800 bg-slate-900/30 p-6">
+      <h2 class="text-xl font-semibold text-white mb-4">Configuration Reference</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div class="rounded-lg bg-slate-800/50 p-4">
+          <h3 class="text-sm font-semibold text-violet-400 mb-3">Debug Mode</h3>
+          <pre class="code text-xs text-slate-300 leading-relaxed">windrunner({
+  <span class="text-emerald-400">debug</span>: true,
+  <span class="text-slate-500">// Logs cache hits, compile times,
+  // failures to console.
+  // Exposes window.__WINDRUNNER__
+  // Enables extended getStats() data</span>
+});</pre>
+        </div>
+
+        <div class="rounded-lg bg-slate-800/50 p-4">
+          <h3 class="text-sm font-semibold text-amber-400 mb-3">Strict Mode</h3>
+          <pre class="code text-xs text-slate-300 leading-relaxed">windrunner({
+  <span class="text-emerald-400">strict</span>: true,
+  <span class="text-slate-500">// Throws errors on failed compilation
+  // instead of silently skipping.
+  // Great for development/CI to catch
+  // typos in class names early.</span>
+});</pre>
+        </div>
+
+        <div class="rounded-lg bg-slate-800/50 p-4">
+          <h3 class="text-sm font-semibold text-emerald-400 mb-3">Error Callbacks</h3>
+          <pre class="code text-xs text-slate-300 leading-relaxed">windrunner({
+  <span class="text-emerald-400">onError</span>: (className, context) =&gt; {
+    <span class="text-slate-500">// context.reason: 'parse-error',
+    //   'unknown-utility', 'unknown-variant',
+    //   'compilation-error', 'lite-mode-excluded'
+    // context.rawClass: original class string
+    // context.variant: failed variant (if any)</span>
+  },
+  <span class="text-emerald-400">onWarning</span>: (message, context) =&gt; {
+    <span class="text-slate-500">// context.severity: 'low'|'medium'|'high'
+    // context.timestamp: when it occurred</span>
+  }
+});</pre>
+        </div>
+
+        <div class="rounded-lg bg-slate-800/50 p-4">
+          <h3 class="text-sm font-semibold text-blue-400 mb-3">__WINDRUNNER__ Global</h3>
+          <pre class="code text-xs text-slate-300 leading-relaxed"><span class="text-slate-500">// Available when debug: true</span>
+window.__WINDRUNNER__ = {
+  <span class="text-emerald-400">version</span>: '2.0.0',
+  <span class="text-emerald-400">instance</span>: {
+    getStats(),
+    getCacheSize(),
+    getInsertedRuleCount(),
+    clearCache(),
+    scan(element),
+    disconnect()
+  }
+};</pre>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto mt-16 pt-8 border-t border-slate-800 text-center text-slate-500 text-sm">
+    Windrunner v2.0 — Debug Mode &amp; Observability Demo
+  </footer>
+
+</body>
+</html>

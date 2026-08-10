@@ -1,3 +1,33 @@
+// ─── Factory Helpers for Compressed Maps ──────────────────────────────────────
+// Generate maps with repetitive patterns to reduce bundle size after minification
+
+/**
+ * Create a map from array of values with simple property pattern
+ * @param {string} prop - CSS property name
+ * @param {string[]} values - Array of CSS values
+ */
+function createSimpleMap(prop, values) {
+  const map = {};
+  for (const value of values) {
+    map[value] = `${prop}: ${value};`;
+  }
+  return map;
+}
+
+/**
+ * Create map with vendor prefixes
+ * @param {string} prop - CSS property name
+ * @param {string[]} values - Array of values
+ * @param {string} vendorPrefix - Vendor prefix (-webkit-, -moz-, etc.)
+ */
+function createVendorPrefixedMap(prop, values, vendorPrefix) {
+  const map = {};
+  for (const value of values) {
+    map[value] = `${prop}: ${value}; ${vendorPrefix}${prop}: ${value};`;
+  }
+  return map;
+}
+
 export const ANIMATE_MAP = {
   none: "animation: none;",
   spin: "animation: spin 1s linear infinite;",
@@ -24,65 +54,80 @@ export const PERSPECTIVE_MAP = {
   distant: "perspective: 1200px;",
 };
 
-export const PERSPECTIVE_ORIGIN_MAP = {
-  center: "perspective-origin: center;",
-  top: "perspective-origin: top;",
-  bottom: "perspective-origin: bottom;",
-  left: "perspective-origin: left;",
-  right: "perspective-origin: right;",
-  "top-left": "perspective-origin: top left;",
-  "top-right": "perspective-origin: top right;",
-  "bottom-left": "perspective-origin: bottom left;",
-  "bottom-right": "perspective-origin: bottom right;",
-};
+export const PERSPECTIVE_ORIGIN_MAP = createSimpleMap("perspective-origin", [
+  "center", "top", "bottom", "left", "right", "top-left", "top-right", 
+  "bottom-left", "bottom-right"
+]);
 
-export const MASK_CLIP_MAP = {
-  "mask-clip-border": "mask-clip: border; -webkit-mask-clip: border;",
-  "mask-clip-padding": "mask-clip: padding; -webkit-mask-clip: padding;",
-  "mask-clip-content": "mask-clip: content; -webkit-mask-clip: content;",
-  "mask-clip-text": "mask-clip: text; -webkit-mask-clip: text;",
-};
+// Mask utilities with vendor prefixes
+export const MASK_CLIP_MAP = (() => {
+  const map = {};
+  const values = { border: "border", padding: "padding", content: "content", text: "text" };
+  for (const [key, value] of Object.entries(values)) {
+    const fullKey = `mask-clip-${key}`;
+    map[fullKey] = `mask-clip: ${value}; -webkit-mask-clip: ${value};`;
+  }
+  return map;
+})();
 
-export const MASK_COMPOSITE_MAP = {
-  "mask-composite-add": "mask-composite: add; -webkit-mask-composite: add;",
-  "mask-composite-subtract": "mask-composite: subtract; -webkit-mask-composite: subtract;",
-  "mask-composite-intersect": "mask-composite: intersect; -webkit-mask-composite: intersect;",
-  "mask-composite-exclude": "mask-composite: exclude; -webkit-mask-composite: exclude;",
-  "mask-composite-replace": "mask-composite: replace; -webkit-mask-composite: replace;",
-  "mask-composite-xor": "mask-composite: xor; -webkit-mask-composite: xor;",
-};
+export const MASK_COMPOSITE_MAP = (() => {
+  const map = {};
+  const values = ["add", "subtract", "intersect", "exclude", "replace", "xor"];
+  for (const value of values) {
+    const key = `mask-composite-${value}`;
+    map[key] = `mask-composite: ${value}; -webkit-mask-composite: ${value};`;
+  }
+  return map;
+})();
 
-export const MASK_MODE_MAP = {
-  "mask-mode-alpha": "mask-mode: alpha; -webkit-mask-mode: alpha;",
-  "mask-mode-luminance": "mask-mode: luminance; -webkit-mask-mode: luminance;",
-  "mask-mode-match-source": "mask-mode: match-source; -webkit-mask-mode: match-source;",
-};
+export const MASK_MODE_MAP = (() => {
+  const map = {};
+  const values = ["alpha", "luminance", "match-source"];
+  for (const value of values) {
+    const key = `mask-mode-${value}`;
+    map[key] = `mask-mode: ${value}; -webkit-mask-mode: ${value};`;
+  }
+  return map;
+})();
 
-export const MASK_ORIGIN_MAP = {
-  "mask-origin-border": "mask-origin: border-box; -webkit-mask-origin: border-box;",
-  "mask-origin-padding": "mask-origin: padding-box; -webkit-mask-origin: padding-box;",
-  "mask-origin-content": "mask-origin: content-box; -webkit-mask-origin: content-box;",
-  "mask-origin-fill": "mask-origin: fill-box; -webkit-mask-origin: fill-box;",
-  "mask-origin-stroke": "mask-origin: stroke-box; -webkit-mask-origin: stroke-box;",
-  "mask-origin-view": "mask-origin: view-box; -webkit-mask-origin: view-box;",
-};
+export const MASK_ORIGIN_MAP = (() => {
+  const map = {};
+  const values = { 
+    border: "border-box", padding: "padding-box", content: "content-box",
+    fill: "fill-box", stroke: "stroke-box", view: "view-box"
+  };
+  for (const [key, value] of Object.entries(values)) {
+    const fullKey = `mask-origin-${key}`;
+    map[fullKey] = `mask-origin: ${value}; -webkit-mask-origin: ${value};`;
+  }
+  return map;
+})();
 
-export const MASK_TYPE_MAP = {
-  "mask-type-luminance": "mask-type: luminance; -webkit-mask-type: luminance;",
-  "mask-type-alpha": "mask-type: alpha; -webkit-mask-type: alpha;",
-};
+export const MASK_TYPE_MAP = (() => {
+  const map = {};
+  const values = ["luminance", "alpha"];
+  for (const value of values) {
+    const key = `mask-type-${value}`;
+    map[key] = `mask-type: ${value}; -webkit-mask-type: ${value};`;
+  }
+  return map;
+})();
 
-export const MASK_LINEAR_MAP = {
-  "mask-linear-to-t":  "mask-image: linear-gradient(to top, black, transparent); -webkit-mask-image: linear-gradient(to top, black, transparent);",
-  "mask-linear-to-tr": "mask-image: linear-gradient(to top right, black, transparent); -webkit-mask-image: linear-gradient(to top right, black, transparent);",
-  "mask-linear-to-r":  "mask-image: linear-gradient(to right, black, transparent); -webkit-mask-image: linear-gradient(to right, black, transparent);",
-  "mask-linear-to-br": "mask-image: linear-gradient(to bottom right, black, transparent); -webkit-mask-image: linear-gradient(to bottom right, black, transparent);",
-  "mask-linear-to-b":  "mask-image: linear-gradient(to bottom, black, transparent); -webkit-mask-image: linear-gradient(to bottom, black, transparent);",
-  "mask-linear-to-bl": "mask-image: linear-gradient(to bottom left, black, transparent); -webkit-mask-image: linear-gradient(to bottom left, black, transparent);",
-  "mask-linear-to-l":  "mask-image: linear-gradient(to left, black, transparent); -webkit-mask-image: linear-gradient(to left, black, transparent);",
-  "mask-linear-to-tl": "mask-image: linear-gradient(to top left, black, transparent); -webkit-mask-image: linear-gradient(to top left, black, transparent);",
-  "mask-none":         "mask-image: none; -webkit-mask-image: none;",
-};
+export const MASK_LINEAR_MAP = (() => {
+  const map = {};
+  const directions = {
+    "to-t": "to top", "to-tr": "to top right", "to-r": "to right",
+    "to-br": "to bottom right", "to-b": "to bottom", "to-bl": "to bottom left",
+    "to-l": "to left", "to-tl": "to top left"
+  };
+  for (const [key, direction] of Object.entries(directions)) {
+    const fullKey = `mask-linear-${key}`;
+    const gradient = `linear-gradient(${direction}, black, transparent)`;
+    map[fullKey] = `mask-image: ${gradient}; -webkit-mask-image: ${gradient};`;
+  }
+  map["mask-none"] = "mask-image: none; -webkit-mask-image: none;";
+  return map;
+})();
 
 export const MASK_RADIAL_POSITIONS = {
   center: "center",
@@ -96,88 +141,82 @@ export const MASK_RADIAL_POSITIONS = {
   "top-left": "top left",
 };
 
-export const MASK_REPEAT_MAP = {
-  "mask-repeat":       "mask-repeat: repeat; -webkit-mask-repeat: repeat;",
-  "mask-no-repeat":    "mask-repeat: no-repeat; -webkit-mask-repeat: no-repeat;",
-  "mask-repeat-x":     "mask-repeat: repeat-x; -webkit-mask-repeat: repeat-x;",
-  "mask-repeat-y":     "mask-repeat: repeat-y; -webkit-mask-repeat: repeat-y;",
-  "mask-repeat-round": "mask-repeat: round; -webkit-mask-repeat: round;",
-  "mask-repeat-space": "mask-repeat: space; -webkit-mask-repeat: space;",
-};
+export const MASK_REPEAT_MAP = (() => {
+  const map = {};
+  const values = { 
+    "mask-repeat": "repeat",
+    "mask-no-repeat": "no-repeat", 
+    "mask-repeat-x": "repeat-x",
+    "mask-repeat-y": "repeat-y",
+    "mask-repeat-round": "round",
+    "mask-repeat-space": "space"
+  };
+  for (const [key, value] of Object.entries(values)) {
+    map[key] = `mask-repeat: ${value}; -webkit-mask-repeat: ${value};`;
+  }
+  return map;
+})();
 
-export const MASK_SIZE_MAP = {
-  "mask-size-auto":    "mask-size: auto; -webkit-mask-size: auto;",
-  "mask-size-cover":   "mask-size: cover; -webkit-mask-size: cover;",
-  "mask-size-contain": "mask-size: contain; -webkit-mask-size: contain;",
-};
+export const MASK_SIZE_MAP = (() => {
+  const map = {};
+  const values = ["auto", "cover", "contain"];
+  for (const value of values) {
+    const key = `mask-size-${value}`;
+    map[key] = `mask-size: ${value}; -webkit-mask-size: ${value};`;
+  }
+  return map;
+})();
 
-export const BG_ATTACHMENT_MAP = {
-  fixed:  "background-attachment: fixed;",
-  local:  "background-attachment: local;",
-  scroll: "background-attachment: scroll;",
-};
+export const BG_ATTACHMENT_MAP = createSimpleMap("background-attachment", [
+  "fixed", "local", "scroll"
+]);
 
 export const BG_CLIP_MAP = {
-  border:  "background-clip: border-box;",
+  border: "background-clip: border-box;",
   padding: "background-clip: padding-box;",
   content: "background-clip: content-box;",
-  text:    "background-clip: text; -webkit-background-clip: text;",
+  text: "background-clip: text; -webkit-background-clip: text;",
 };
 
 export const BG_ORIGIN_MAP = {
-  border:  "background-origin: border-box;",
+  border: "background-origin: border-box;",
   padding: "background-origin: padding-box;",
   content: "background-origin: content-box;",
 };
 
 export const BG_REPEAT_MAP = {
-  repeat:         "background-repeat: repeat;",
-  "no-repeat":    "background-repeat: no-repeat;",
-  "repeat-x":     "background-repeat: repeat-x;",
-  "repeat-y":     "background-repeat: repeat-y;",
+  ...createSimpleMap("background-repeat", ["repeat", "no-repeat", "repeat-x", "repeat-y"]),
   "repeat-round": "background-repeat: round;",
   "repeat-space": "background-repeat: space;",
 };
 
-export const MIX_BLEND_MAP = {
-  "mix-blend-normal":       "mix-blend-mode: normal;",
-  "mix-blend-multiply":     "mix-blend-mode: multiply;",
-  "mix-blend-screen":       "mix-blend-mode: screen;",
-  "mix-blend-overlay":      "mix-blend-mode: overlay;",
-  "mix-blend-darken":       "mix-blend-mode: darken;",
-  "mix-blend-lighten":      "mix-blend-mode: lighten;",
-  "mix-blend-color-dodge":  "mix-blend-mode: color-dodge;",
-  "mix-blend-color-burn":   "mix-blend-mode: color-burn;",
-  "mix-blend-hard-light":   "mix-blend-mode: hard-light;",
-  "mix-blend-soft-light":   "mix-blend-mode: soft-light;",
-  "mix-blend-difference":   "mix-blend-mode: difference;",
-  "mix-blend-exclusion":    "mix-blend-mode: exclusion;",
-  "mix-blend-hue":          "mix-blend-mode: hue;",
-  "mix-blend-saturation":   "mix-blend-mode: saturation;",
-  "mix-blend-color":        "mix-blend-mode: color;",
-  "mix-blend-luminosity":   "mix-blend-mode: luminosity;",
-  "mix-blend-plus-darker":  "mix-blend-mode: plus-darker;",
-  "mix-blend-plus-lighter": "mix-blend-mode: plus-lighter;",
-};
+// Blend mode maps - use factory for repeated patterns
+export const MIX_BLEND_MAP = (() => {
+  const map = {};
+  const modes = [
+    "normal", "multiply", "screen", "overlay", "darken", "lighten",
+    "color-dodge", "color-burn", "hard-light", "soft-light",
+    "difference", "exclusion", "hue", "saturation", "color",
+    "luminosity", "plus-darker", "plus-lighter"
+  ];
+  for (const mode of modes) {
+    map[`mix-blend-${mode}`] = `mix-blend-mode: ${mode};`;
+  }
+  return map;
+})();
 
-export const BG_BLEND_MAP = {
-  "bg-blend-normal":       "background-blend-mode: normal;",
-  "bg-blend-multiply":     "background-blend-mode: multiply;",
-  "bg-blend-screen":       "background-blend-mode: screen;",
-  "bg-blend-overlay":      "background-blend-mode: overlay;",
-  "bg-blend-darken":       "background-blend-mode: darken;",
-  "bg-blend-lighten":      "background-blend-mode: lighten;",
-  "bg-blend-color-dodge":  "background-blend-mode: color-dodge;",
-  "bg-blend-color-burn":   "background-blend-mode: color-burn;",
-  "bg-blend-hard-light":   "background-blend-mode: hard-light;",
-  "bg-blend-soft-light":   "background-blend-mode: soft-light;",
-  "bg-blend-difference":   "background-blend-mode: difference;",
-  "bg-blend-exclusion":    "background-blend-mode: exclusion;",
-  "bg-blend-hue":          "background-blend-mode: hue;",
-  "bg-blend-saturation":   "background-blend-mode: saturation;",
-  "bg-blend-color":        "background-blend-mode: color;",
-  "bg-blend-luminosity":   "background-blend-mode: luminosity;",
-};
+export const BG_BLEND_MAP = (() => {
+  const map = {};
+  const modes = [
+    "normal", "multiply", "screen", "overlay", "darken", "lighten",
+    "color-dodge", "color-burn", "hard-light", "soft-light",
+    "difference", "exclusion", "hue", "saturation", "color", "luminosity"
+  ];
+  for (const mode of modes) {
+    map[`bg-blend-${mode}`] = `background-blend-mode: ${mode};`;
+  }
+  return map;
+})();
 
 export const TEXT_SHADOW_SIZES = {
   "2xs":  "0 1px 2px rgb(0 0 0 / 0.10)",

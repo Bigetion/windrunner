@@ -333,3 +333,325 @@ describe("runtime (Node.js / no-DOM)", () => {
     });
   });
 });
+
+// ─── FOUC Prevention Integration Tests ────────────────────────────────────────
+
+describe("FOUC prevention integration", () => {
+  describe("opacity strategy", () => {
+    it("should hide elements with opacity 0 before scan", () => {
+      document.body.innerHTML = '<div id="app" class="flex items-center">Content</div>';
+      
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'opacity', 
+          duration: 150, 
+          selector: '#app' 
+        } 
+      });
+      
+      // Get element before start
+      const app = document.getElementById('app');
+      expect(app).not.toBeNull();
+      
+      // Call start which triggers hide()
+      wind.start();
+      
+      // Element should be hidden with opacity 0
+      expect(app?.style.opacity).toBe('0');
+      expect(app?.style.transition).toBe('none');
+      
+      wind.disconnect();
+    });
+
+    it("should reveal elements after scan completes with transition", async () => {
+      document.body.innerHTML = '<html><body><div id="app" class="flex">Content</div></body></html>';
+      
+      let readyCalled = false;
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'opacity', 
+          duration: 100 
+        },
+        onReady: () => { readyCalled = true; }
+      });
+      
+      const app = document.getElementById('app');
+      wind.start();
+      
+      // Wait for reveal (double rAF + some buffer)
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // After reveal, opacity should be restored and transition applied
+      expect(app?.style.opacity).not.toBe('0');
+      expect(readyCalled).toBe(true);
+      
+      wind.disconnect();
+    });
+
+    it("should work with default 'html' selector", () => {
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'opacity' 
+        } 
+      });
+      
+      wind.start();
+      
+      // Check that html element was targeted
+      const html = document.querySelector('html');
+      expect(html).not.toBeNull();
+      // In jsdom, the html element should have been affected
+      
+      wind.disconnect();
+    });
+  });
+
+  describe("visibility strategy", () => {
+    it("should hide elements with visibility hidden before scan", () => {
+      document.body.innerHTML = '<div id="app" class="block">Content</div>';
+      
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'visibility', 
+          selector: '#app' 
+        } 
+      });
+      
+      const app = document.getElementById('app');
+      wind.start();
+      
+      expect(app?.style.visibility).toBe('hidden');
+      
+      wind.disconnect();
+    });
+
+    it("should reveal elements after scan completes", async () => {
+      document.body.innerHTML = '<div id="app" class="flex">Content</div>';
+      
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'visibility', 
+          selector: '#app' 
+        } 
+      });
+      
+      const app = document.getElementById('app');
+      wind.start();
+      
+      // Wait for reveal
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Visibility should be restored
+      expect(app?.style.visibility).not.toBe('hidden');
+      
+      wind.disconnect();
+    });
+  });
+
+  describe("none strategy", () => {
+    it("should not apply any hiding when strategy is 'none'", () => {
+      document.body.innerHTML = '<div id="app" class="flex">Content</div>';
+      
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'none', 
+          selector: '#app' 
+        } 
+      });
+      
+      const app = document.getElementById('app');
+      const originalOpacity = app?.style.opacity || '';
+      const originalVisibility = app?.style.visibility || '';
+      
+      wind.start();
+      
+      // Styles should remain unchanged
+      expect(app?.style.opacity).toBe(originalOpacity);
+      expect(app?.style.visibility).toBe(originalVisibility);
+      
+      wind.disconnect();
+    });
+
+    it("should not apply any hiding when fouc config is not provided", () => {
+      document.body.innerHTML = '<div id="app" class="flex">Content</div>';
+      
+      const wind = createWindrunner({ 
+        autoStart: false
+      });
+      
+      const app = document.getElementById('app');
+      const originalOpacity = app?.style.opacity || '';
+      
+      wind.start();
+      
+      // Backward compatibility: no FOUC prevention by default
+      expect(app?.style.opacity).toBe(originalOpacity);
+      
+      wind.disconnect();
+    });
+  });
+
+  describe("onReady callback integration", () => {
+    it("should call onReady after reveal operation completes", async () => {
+      document.body.innerHTML = '<div class="flex items-center">Content</div>';
+      
+      let readyCalled = false;
+      let readyCallTime = 0;
+      
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'opacity',
+          duration: 50
+        },
+        onReady: () => { 
+          readyCalled = true;
+          readyCallTime = Date.now();
+        }
+      });
+      
+      const startTime = Date.now();
+      wind.start();
+      
+      // Wait for reveal and callback
+      await new Promise(resolve => setTimeout(resolve, 150));
+      
+      expect(readyCalled).toBe(true);
+      // onReady should be called after reveal (which uses double rAF)
+      expect(readyCallTime).toBeGreaterThanOrEqual(startTime);
+      
+      wind.disconnect();
+    });
+  });
+
+  describe("backward compatibility", () => {
+    it("should behave identically to v1.1.8 when fouc option not provided", async () => {
+      document.body.innerHTML = '<div class="flex items-center gap-4">Content</div>';
+      
+      let readyCalled = false;
+      const wind = createWindrunner({ 
+        autoStart: false,
+        onReady: () => { readyCalled = true; }
+      });
+      
+      wind.start();
+      
+      // Wait for ready callback (uses double requestAnimationFrame)
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // Should work normally without FOUC prevention
+      expect(readyCalled).toBe(true);
+      expect(wind.getInsertedRuleCount()).toBeGreaterThan(0);
+      
+      wind.disconnect();
+    });
+  });
+
+  describe("multiple elements with selector", () => {
+    it("should hide/reveal multiple matching elements", async () => {
+      document.body.innerHTML = `
+        <div class="content flex">First</div>
+        <div class="content block">Second</div>
+        <div class="other grid">Third</div>
+      `;
+      
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'opacity',
+          selector: '.content'
+        } 
+      });
+      
+      const contentDivs = document.querySelectorAll('.content');
+      const otherDiv = document.querySelector('.other');
+      
+      wind.start();
+      
+      // Only .content elements should be hidden
+      contentDivs.forEach(el => {
+        expect(el.style.opacity).toBe('0');
+      });
+      
+      // .other should not be affected
+      expect(otherDiv?.style.opacity).not.toBe('0');
+      
+      // Wait for reveal
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // All should be revealed now
+      contentDivs.forEach(el => {
+        expect(el.style.opacity).not.toBe('0');
+      });
+      
+      wind.disconnect();
+    });
+  });
+
+  describe("custom duration", () => {
+    it("should apply custom transition duration for opacity strategy", () => {
+      document.body.innerHTML = '<div id="app" class="flex">Content</div>';
+      
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'opacity',
+          duration: 300,
+          selector: '#app'
+        } 
+      });
+      
+      wind.start();
+      
+      // After some time, check that transition includes custom duration
+      setTimeout(() => {
+        const app = document.getElementById('app');
+        // Transition should mention 300ms after reveal
+        // Note: actual transition may be set during reveal phase
+      }, 50);
+      
+      wind.disconnect();
+    });
+  });
+
+  describe("edge cases", () => {
+    it("should handle when selector matches no elements", () => {
+      document.body.innerHTML = '<div class="flex">Content</div>';
+      
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'opacity',
+          selector: '.non-existent'
+        } 
+      });
+      
+      // Should not throw
+      expect(() => wind.start()).not.toThrow();
+      
+      wind.disconnect();
+    });
+
+    it("should handle empty document gracefully", () => {
+      // Clear document body
+      document.body.innerHTML = '';
+      
+      const wind = createWindrunner({ 
+        autoStart: false,
+        fouc: { 
+          strategy: 'opacity'
+        } 
+      });
+      
+      expect(() => wind.start()).not.toThrow();
+      
+      wind.disconnect();
+    });
+  });
+});

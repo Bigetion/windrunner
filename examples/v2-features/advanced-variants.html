@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Windrunner v2.0 — Advanced Variants (has-*, data-*, aria-*)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet" />
+
+  <!--
+    ═══════════════════════════════════════════════════════════════════════════
+    WINDRUNNER v2.0 — Advanced Variants Demo
+    ═══════════════════════════════════════════════════════════════════════════
+    
+    New variant types in v2.0:
+    
+    1. has-[:selector]    — Style based on child/descendant state
+    2. group-has-[...]    — Style when group contains matching element
+    3. data-[attr=value]  — Style based on data attributes
+    4. aria-[attr=value]  — Style based on ARIA attributes
+    
+    These enable powerful conditional styling without JavaScript.
+  -->
+
+  <style>html{opacity:0;transition:opacity .2s ease}</style>
+  <script type="module">
+    import { windrunner } from "../../dist/index.esm.js";
+    windrunner({
+      autoStart: true,
+      onReady: () => document.documentElement.style.opacity = "1",
+    });
+
+    // Helper: toggle data attributes for the demos
+    window.toggleState = (el, attr, val1, val2) => {
+      const current = el.getAttribute(attr);
+      el.setAttribute(attr, current === val1 ? val2 : val1);
+    };
+
+    // Accordion toggle: propagates data-state to all children that use it
+    window.toggleAccordion = (btn) => {
+      const item = btn.parentElement;
+      const currentState = item.getAttribute('data-state');
+      const newState = currentState === 'open' ? 'closed' : 'open';
+
+      // Set on parent
+      item.setAttribute('data-state', newState);
+
+      // Propagate to all children that use data-state variants
+      item.querySelectorAll('[data-state]').forEach(el => {
+        el.setAttribute('data-state', newState);
+      });
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .code { font-family: 'Courier New', monospace; font-size: 0.85em; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-8">
+
+  <!-- Header -->
+  <header class="max-w-5xl mx-auto mb-12">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="px-3 py-1 rounded-full bg-violet-600/20 text-violet-400 text-xs font-semibold uppercase tracking-wider">v2.0</span>
+      <span class="text-slate-500 text-sm">Advanced Variants</span>
+    </div>
+    <h1 class="text-4xl font-bold text-white mb-3">has-*, data-*, aria-* Variants</h1>
+    <p class="text-slate-400 text-lg leading-relaxed max-w-3xl">
+      Style elements based on their descendants' state, data attributes, and ARIA properties. 
+      Build accessible, interactive UIs with pure CSS logic.
+    </p>
+  </header>
+
+  <main class="max-w-5xl mx-auto space-y-12">
+
+    <!-- Example 1: has-[:checked] — Checkbox cards -->
+    <section class="rounded-xl border border-slate-800 overflow-hidden">
+      <div class="bg-slate-900/50 px-6 py-4 border-b border-slate-800">
+        <h2 class="text-xl font-semibold text-white">has-[:checked] — Selection Cards</h2>
+        <p class="text-slate-500 text-sm mt-1">
+          Parent card changes style when its contained checkbox is checked
+        </p>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          
+          <!-- Card with has-[:checked] -->
+          <label class="has-[:checked]:bg-violet-500/10 has-[:checked]:border-violet-500 has-[:checked]:ring-1 has-[:checked]:ring-violet-500/50 rounded-lg border border-slate-700 p-5 cursor-pointer transition-all hover:border-slate-600">
+            <input type="checkbox" class="sr-only" />
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+              </div>
+              <div>
+                <span class="text-sm font-medium text-white block">Starter</span>
+                <span class="text-xs text-slate-500">Free forever</span>
+              </div>
+            </div>
+          </label>
+
+          <label class="has-[:checked]:bg-emerald-500/10 has-[:checked]:border-emerald-500 has-[:checked]:ring-1 has-[:checked]:ring-emerald-500/50 rounded-lg border border-slate-700 p-5 cursor-pointer transition-all hover:border-slate-600">
+            <input type="checkbox" class="sr-only" />
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              </div>
+              <div>
+                <span class="text-sm font-medium text-white block">Pro</span>
+                <span class="text-xs text-slate-500">$19/month</span>
+              </div>
+            </div>
+          </label>
+
+          <label class="has-[:checked]:bg-amber-500/10 has-[:checked]:border-amber-500 has-[:checked]:ring-1 has-[:checked]:ring-amber-500/50 rounded-lg border border-slate-700 p-5 cursor-pointer transition-all hover:border-slate-600">
+            <input type="checkbox" class="sr-only" />
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                <svg class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              <div>
+                <span class="text-sm font-medium text-white block">Enterprise</span>
+                <span class="text-xs text-slate-500">Custom pricing</span>
+              </div>
+            </div>
+          </label>
+
+        </div>
+        <p class="mt-4 text-xs text-slate-500 text-center">Click cards to select — parent styling changes via <span class="code text-violet-300">has-[:checked]</span></p>
+      </div>
+    </section>
+
+    <!-- Example 2: group-has-[:focus] — Form validation -->
+    <section class="rounded-xl border border-slate-800 overflow-hidden">
+      <div class="bg-slate-900/50 px-6 py-4 border-b border-slate-800">
+        <h2 class="text-xl font-semibold text-white">group-has-[:focus] — Form Focus Ring</h2>
+        <p class="text-slate-500 text-sm mt-1">
+          Container highlights when any child input is focused
+        </p>
+      </div>
+      <div class="p-6">
+        <div class="max-w-md mx-auto">
+          
+          <!-- Form group that responds to child focus -->
+          <div class="group rounded-lg bg-slate-800/30 border border-slate-700/50 p-6 group-has-[:focus]:border-violet-500/50 group-has-[:focus]:ring-2 group-has-[:focus]:ring-violet-500/20 transition-all">
+            <h3 class="text-sm font-semibold text-slate-300 mb-4 group-has-[:focus]:text-violet-400 transition-colors">Login Form</h3>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="text-xs text-slate-500 block mb-1.5">Email</label>
+                <input type="email" class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none" placeholder="you@example.com" />
+              </div>
+              <div>
+                <label class="text-xs text-slate-500 block mb-1.5">Password</label>
+                <input type="password" class="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none" placeholder="••••••••" />
+              </div>
+            </div>
+            
+            <p class="mt-4 text-xs text-slate-500">Focus any field — the container ring activates via <span class="code text-violet-300">group-has-[:focus]</span></p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Example 3: data-[state=...] — Accordion -->
+    <section class="rounded-xl border border-slate-800 overflow-hidden">
+      <div class="bg-slate-900/50 px-6 py-4 border-b border-slate-800">
+        <h2 class="text-xl font-semibold text-white">data-[state=...] — Accordion</h2>
+        <p class="text-slate-500 text-sm mt-1">
+          Toggle panels using <span class="code text-violet-300">data-[state=open]</span> and 
+          <span class="code text-violet-300">data-[state=closed]</span> variants
+        </p>
+      </div>
+      <div class="p-6">
+        <div class="max-w-lg mx-auto space-y-2">
+
+          <!-- Accordion item 1 -->
+          <div data-state="closed" class="rounded-lg border border-slate-700/50 overflow-hidden">
+            <button 
+              class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-slate-800/50 transition-colors"
+              onclick="toggleAccordion(this)"
+            >
+              <span class="text-sm font-medium text-white">What is Windrunner?</span>
+              <svg data-state="closed" class="w-4 h-4 text-slate-400 transition-transform data-[state=open]:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            <div data-state="closed" class="px-5 py-4 text-sm text-slate-400 data-[state=closed]:hidden">
+              Windrunner is a zero-config runtime CSS framework that compiles Tailwind-style utility classes on the fly — no build step required.
+            </div>
+          </div>
+
+          <!-- Accordion item 2 -->
+          <div data-state="closed" class="rounded-lg border border-slate-700/50 overflow-hidden">
+            <button 
+              class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-slate-800/50 transition-colors"
+              onclick="toggleAccordion(this)"
+            >
+              <span class="text-sm font-medium text-white">How does v2.0 differ?</span>
+              <svg data-state="closed" class="w-4 h-4 text-slate-400 transition-transform data-[state=open]:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            <div data-state="closed" class="px-5 py-4 text-sm text-slate-400 data-[state=closed]:hidden">
+              v2.0 adds FOUC prevention, named group/peer variants, advanced variants (has-*, data-*, aria-*, arbitrary), React StrictMode safety, and a 30% smaller bundle.
+            </div>
+          </div>
+
+          <!-- Accordion item 3 -->
+          <div data-state="closed" class="rounded-lg border border-slate-700/50 overflow-hidden">
+            <button 
+              class="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-slate-800/50 transition-colors"
+              onclick="toggleAccordion(this)"
+            >
+              <span class="text-sm font-medium text-white">Is it production-ready?</span>
+              <svg data-state="closed" class="w-4 h-4 text-slate-400 transition-transform data-[state=open]:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            <div data-state="closed" class="px-5 py-4 text-sm text-slate-400 data-[state=closed]:hidden">
+              Yes! v2.0 includes strict mode, comprehensive error handling, debug observability, and hybrid build-time/runtime compilation for maximum performance.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Example 4: aria-[expanded=true] — Dropdown -->
+    <section class="rounded-xl border border-slate-800 overflow-visible">
+      <div class="bg-slate-900/50 px-6 py-4 border-b border-slate-800">
+        <h2 class="text-xl font-semibold text-white">aria-[expanded=true] — Accessible Dropdown</h2>
+        <p class="text-slate-500 text-sm mt-1">
+          Chevron rotation and menu visibility driven by <span class="code text-violet-300">aria-expanded</span>
+        </p>
+      </div>
+      <div class="p-6">
+        <div class="max-w-xs mx-auto">
+          
+          <div class="relative">
+            <button 
+              aria-expanded="false"
+              class="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-left flex items-center justify-between hover:border-slate-600 transition-colors aria-[expanded=true]:border-violet-500 aria-[expanded=true]:ring-1 aria-[expanded=true]:ring-violet-500/50"
+              onclick="const expanded = this.getAttribute('aria-expanded') === 'true'; this.setAttribute('aria-expanded', !expanded); this.nextElementSibling.classList.toggle('hidden', expanded);"
+            >
+              <span class="text-sm text-white">Select framework</span>
+              <svg class="w-4 h-4 text-slate-400 transition-transform aria-[expanded=true]:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            
+            <!-- Dropdown menu -->
+            <div class="hidden absolute top-full left-0 right-0 mt-2 rounded-lg bg-slate-800 border border-slate-700 overflow-hidden shadow-xl z-10">
+              <button class="w-full px-4 py-2.5 text-sm text-left text-slate-300 hover:bg-slate-700/50 hover:text-white transition-colors">React</button>
+              <button class="w-full px-4 py-2.5 text-sm text-left text-slate-300 hover:bg-slate-700/50 hover:text-white transition-colors">Vue</button>
+              <button class="w-full px-4 py-2.5 text-sm text-left text-slate-300 hover:bg-slate-700/50 hover:text-white transition-colors">Svelte</button>
+              <button class="w-full px-4 py-2.5 text-sm text-left text-slate-300 hover:bg-slate-700/50 hover:text-white transition-colors">Solid</button>
+            </div>
+          </div>
+          
+          <p class="mt-4 text-xs text-slate-500 text-center">Click to toggle — styles driven by <span class="code text-violet-300">aria-[expanded=true]</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Code Reference -->
+    <section class="rounded-xl border border-slate-800 bg-slate-900/30 p-6">
+      <h2 class="text-xl font-semibold text-white mb-4">Syntax Reference</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="rounded-lg bg-slate-800/50 p-4">
+          <h3 class="text-sm font-semibold text-violet-400 mb-2">has-* variants</h3>
+          <pre class="code text-xs text-slate-300 leading-relaxed">has-[:checked]:bg-green-100
+has-[:focus]:ring-2
+has-[:disabled]:opacity-50
+group-has-[:focus]:border-blue-500
+peer-has-[:checked]:text-green-500</pre>
+        </div>
+        <div class="rounded-lg bg-slate-800/50 p-4">
+          <h3 class="text-sm font-semibold text-emerald-400 mb-2">data-* variants</h3>
+          <pre class="code text-xs text-slate-300 leading-relaxed">data-[state=open]:block
+data-[state=closed]:hidden
+data-[active]:bg-blue-500
+data-[size=lg]:text-xl
+data-[theme=dark]:bg-slate-900</pre>
+        </div>
+        <div class="rounded-lg bg-slate-800/50 p-4">
+          <h3 class="text-sm font-semibold text-amber-400 mb-2">aria-* variants</h3>
+          <pre class="code text-xs text-slate-300 leading-relaxed">aria-[expanded=true]:rotate-180
+aria-[selected=true]:bg-blue-500
+aria-[disabled=true]:opacity-50
+aria-[hidden=true]:hidden
+aria-[current=page]:font-bold</pre>
+        </div>
+        <div class="rounded-lg bg-slate-800/50 p-4">
+          <h3 class="text-sm font-semibold text-blue-400 mb-2">Combinations</h3>
+          <pre class="code text-xs text-slate-300 leading-relaxed">md:has-[:checked]:bg-blue-500
+hover:data-[state=open]:bg-blue-600
+group-hover:aria-[expanded=true]:scale-105
+data-[state=open]:!block</pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="max-w-5xl mx-auto mt-16 pt-8 border-t border-slate-800 text-center text-slate-500 text-sm">
+    Windrunner v2.0 — Advanced Variants Demo
+  </footer>
+
+</body>
+</html>
