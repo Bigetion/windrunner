@@ -69,18 +69,19 @@ wind.getStats(); // { cacheSize, hitRate, compileTimes, failedClasses }
 
 ## What's New in v2.0
 
-### FOUC Manager
+### Preventing FOUC
 
-Built-in flash-of-unstyled-content prevention. No more manual `html { opacity: 0 }` hacks.
+Because windrunner loads as a module script (async), browsers may briefly show unstyled content. The fix is two lines in `<head>`:
 
-```js
-windrunner({
-  autoStart: true,
-  fouc: { strategy: "opacity" } // or "visibility" | "none"
-});
+```html
+<style>html{opacity:0;transition:opacity .2s ease}</style>
+<script type="module">
+  import { windrunner } from "windrunner";
+  windrunner({ autoStart: true });
+</script>
 ```
 
-Three strategies: `opacity` (smooth fade-in), `visibility` (instant reveal), `none` (disabled). The FOUCManager uses double-rAF timing to reveal after the browser paints.
+That's it — windrunner automatically detects `opacity:0` on `<html>` and reveals the page after the first scan completes. No extra config needed.
 
 ### Advanced Variants
 
@@ -131,12 +132,12 @@ import { useWindrunner, WindrunnerProvider } from "windrunner/react";
 
 // Hook — safe in StrictMode (no duplicate observers/style tags)
 function App() {
-  const { stats } = useWindrunner({ debug: true });
+  const wind = useWindrunner({ debug: true });
 
   return (
     <main className="min-h-screen bg-slate-50 p-8">
       <h1 className="text-3xl font-bold text-slate-900">React + Windrunner</h1>
-      <p className="text-sm text-slate-500">{stats.cacheSize} classes compiled</p>
+      <p className="text-sm text-slate-500">{wind.getStats().cacheSize} classes compiled</p>
     </main>
   );
 }
@@ -144,7 +145,7 @@ function App() {
 // Or wrap with Provider for shared config
 function Root() {
   return (
-    <WindrunnerProvider config={{ debug: true, fouc: { strategy: "opacity" } }}>
+    <WindrunnerProvider debug={true}>
       <App />
     </WindrunnerProvider>
   );
@@ -170,11 +171,11 @@ Pre-generate CSS at build time via plugins, then use the runtime only for dynami
 
 ```js
 // vite.config.js
-import { windrunnerVite } from "windrunner/build-plugins/vite";
+import { windrunnerPlugin } from "./build-plugins/vite.js";
 
 export default {
   plugins: [
-    windrunnerVite({
+    windrunnerPlugin({
       include: ["./src/**/*.{html,jsx,tsx}"],
       output: "./dist/windrunner.css",
     })
@@ -381,7 +382,7 @@ windrunner({
 | Custom theme | ✓ | ✓ |
 | Arbitrary values | ✓ | ✓ |
 | Preflight | ✓ | ✓ |
-| FOUC prevention | ✓ (built-in manager) | ✗ |
+| FOUC prevention | ✓ (auto-reveal after scan) | ✗ |
 | Plugins | ✓ | ✓ |
 | Debug / Observability | ✓ | ✗ |
 | Hybrid build mode | ✓ | ✗ |
