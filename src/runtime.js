@@ -635,9 +635,35 @@ export function createWindrunner(options = {}) {
     if (preflight) injectPreflight(styleId);
 
     const fireReady = () => {
-      // Reveal content after scan completes
+      // 1. FOUCManager reveal (handles fouc: { strategy } config)
       foucManager.reveal();
-      
+
+      // 2. Auto-detect: if <html> has opacity:0 from an inline <style> tag,
+      //    reveal it automatically — no onReady or fouc config needed.
+      //    This is the recommended FOUC pattern: user adds the inline style,
+      //    windrunner auto-reveals after first scan.
+      if (typeof document === "object") {
+        const html = document.documentElement;
+        // Check computed opacity — if it's 0, we need to reveal
+        // Use getComputedStyle to catch opacity set via <style> tag (not just inline style)
+        const computedOpacity = typeof getComputedStyle === "function"
+          ? getComputedStyle(html).opacity
+          : null;
+        
+        if (computedOpacity === "0") {
+          // Reveal with transition via double rAF
+          if (typeof requestAnimationFrame === "function") {
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                html.style.opacity = "1";
+              });
+            });
+          } else {
+            setTimeout(() => { html.style.opacity = "1"; }, 16);
+          }
+        }
+      }
+
       if (typeof options.onReady !== "function") return;
       if (typeof requestAnimationFrame === "function") {
         requestAnimationFrame(() => requestAnimationFrame(() => options.onReady()));
